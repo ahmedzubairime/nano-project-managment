@@ -10,10 +10,13 @@ model Session {
   approvalStatus   ApprovalStatus @default(NOT_SUBMITTED)
   documentationUrl String?
   notes            String?
-  submittedAt      DateTime?
-  approvedAt       DateTime?
-  createdAt        DateTime       @default(now())
-  updatedAt        DateTime       @updatedAt
+  submittedAt            DateTime?
+  approvedAt             DateTime?
+  isManuallyAdjusted     Boolean        @default(false)
+  isLocked               Boolean        @default(false)
+  manualAdjustmentReason String?
+  createdAt              DateTime       @default(now())
+  updatedAt              DateTime       @updatedAt
 
   // Relations
   project   Project          @relation(fields: [projectId], references: [id], onDelete: Cascade)

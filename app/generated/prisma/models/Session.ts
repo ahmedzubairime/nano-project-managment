@@ -36,6 +36,9 @@ export type SessionMinAggregateOutputType = {
   notes: string | null
   submittedAt: Date | null
   approvedAt: Date | null
+  isManuallyAdjusted: boolean | null
+  isLocked: boolean | null
+  manualAdjustmentReason: string | null
   createdAt: Date | null
   updatedAt: Date | null
 }
@@ -52,6 +55,9 @@ export type SessionMaxAggregateOutputType = {
   notes: string | null
   submittedAt: Date | null
   approvedAt: Date | null
+  isManuallyAdjusted: boolean | null
+  isLocked: boolean | null
+  manualAdjustmentReason: string | null
   createdAt: Date | null
   updatedAt: Date | null
 }
@@ -68,6 +74,9 @@ export type SessionCountAggregateOutputType = {
   notes: number
   submittedAt: number
   approvedAt: number
+  isManuallyAdjusted: number
+  isLocked: number
+  manualAdjustmentReason: number
   createdAt: number
   updatedAt: number
   _all: number
@@ -86,6 +95,9 @@ export type SessionMinAggregateInputType = {
   notes?: true
   submittedAt?: true
   approvedAt?: true
+  isManuallyAdjusted?: true
+  isLocked?: true
+  manualAdjustmentReason?: true
   createdAt?: true
   updatedAt?: true
 }
@@ -102,6 +114,9 @@ export type SessionMaxAggregateInputType = {
   notes?: true
   submittedAt?: true
   approvedAt?: true
+  isManuallyAdjusted?: true
+  isLocked?: true
+  manualAdjustmentReason?: true
   createdAt?: true
   updatedAt?: true
 }
@@ -118,6 +133,9 @@ export type SessionCountAggregateInputType = {
   notes?: true
   submittedAt?: true
   approvedAt?: true
+  isManuallyAdjusted?: true
+  isLocked?: true
+  manualAdjustmentReason?: true
   createdAt?: true
   updatedAt?: true
   _all?: true
@@ -207,6 +225,9 @@ export type SessionGroupByOutputType = {
   notes: string | null
   submittedAt: Date | null
   approvedAt: Date | null
+  isManuallyAdjusted: boolean
+  isLocked: boolean
+  manualAdjustmentReason: string | null
   createdAt: Date
   updatedAt: Date
   _count: SessionCountAggregateOutputType | null
@@ -244,6 +265,9 @@ export type SessionWhereInput = {
   notes?: Prisma.StringNullableFilter<"Session"> | string | null
   submittedAt?: Prisma.DateTimeNullableFilter<"Session"> | Date | string | null
   approvedAt?: Prisma.DateTimeNullableFilter<"Session"> | Date | string | null
+  isManuallyAdjusted?: Prisma.BoolFilter<"Session"> | boolean
+  isLocked?: Prisma.BoolFilter<"Session"> | boolean
+  manualAdjustmentReason?: Prisma.StringNullableFilter<"Session"> | string | null
   createdAt?: Prisma.DateTimeFilter<"Session"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"Session"> | Date | string
   project?: Prisma.XOR<Prisma.ProjectScalarRelationFilter, Prisma.ProjectWhereInput>
@@ -264,6 +288,9 @@ export type SessionOrderByWithRelationInput = {
   notes?: Prisma.SortOrderInput | Prisma.SortOrder
   submittedAt?: Prisma.SortOrderInput | Prisma.SortOrder
   approvedAt?: Prisma.SortOrderInput | Prisma.SortOrder
+  isManuallyAdjusted?: Prisma.SortOrder
+  isLocked?: Prisma.SortOrder
+  manualAdjustmentReason?: Prisma.SortOrderInput | Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
   project?: Prisma.ProjectOrderByWithRelationInput
@@ -287,6 +314,9 @@ export type SessionWhereUniqueInput = Prisma.AtLeast<{
   notes?: Prisma.StringNullableFilter<"Session"> | string | null
   submittedAt?: Prisma.DateTimeNullableFilter<"Session"> | Date | string | null
   approvedAt?: Prisma.DateTimeNullableFilter<"Session"> | Date | string | null
+  isManuallyAdjusted?: Prisma.BoolFilter<"Session"> | boolean
+  isLocked?: Prisma.BoolFilter<"Session"> | boolean
+  manualAdjustmentReason?: Prisma.StringNullableFilter<"Session"> | string | null
   createdAt?: Prisma.DateTimeFilter<"Session"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"Session"> | Date | string
   project?: Prisma.XOR<Prisma.ProjectScalarRelationFilter, Prisma.ProjectWhereInput>
@@ -307,6 +337,9 @@ export type SessionOrderByWithAggregationInput = {
   notes?: Prisma.SortOrderInput | Prisma.SortOrder
   submittedAt?: Prisma.SortOrderInput | Prisma.SortOrder
   approvedAt?: Prisma.SortOrderInput | Prisma.SortOrder
+  isManuallyAdjusted?: Prisma.SortOrder
+  isLocked?: Prisma.SortOrder
+  manualAdjustmentReason?: Prisma.SortOrderInput | Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
   _count?: Prisma.SessionCountOrderByAggregateInput
@@ -329,6 +362,9 @@ export type SessionScalarWhereWithAggregatesInput = {
   notes?: Prisma.StringNullableWithAggregatesFilter<"Session"> | string | null
   submittedAt?: Prisma.DateTimeNullableWithAggregatesFilter<"Session"> | Date | string | null
   approvedAt?: Prisma.DateTimeNullableWithAggregatesFilter<"Session"> | Date | string | null
+  isManuallyAdjusted?: Prisma.BoolWithAggregatesFilter<"Session"> | boolean
+  isLocked?: Prisma.BoolWithAggregatesFilter<"Session"> | boolean
+  manualAdjustmentReason?: Prisma.StringNullableWithAggregatesFilter<"Session"> | string | null
   createdAt?: Prisma.DateTimeWithAggregatesFilter<"Session"> | Date | string
   updatedAt?: Prisma.DateTimeWithAggregatesFilter<"Session"> | Date | string
 }
@@ -342,6 +378,9 @@ export type SessionCreateInput = {
   notes?: string | null
   submittedAt?: Date | string | null
   approvedAt?: Date | string | null
+  isManuallyAdjusted?: boolean
+  isLocked?: boolean
+  manualAdjustmentReason?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   project: Prisma.ProjectCreateNestedOneWithoutSessionsInput
@@ -362,6 +401,9 @@ export type SessionUncheckedCreateInput = {
   notes?: string | null
   submittedAt?: Date | string | null
   approvedAt?: Date | string | null
+  isManuallyAdjusted?: boolean
+  isLocked?: boolean
+  manualAdjustmentReason?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   approvals?: Prisma.ApprovalRecordUncheckedCreateNestedManyWithoutSessionInput
@@ -376,6 +418,9 @@ export type SessionUpdateInput = {
   notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   submittedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   approvedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  isManuallyAdjusted?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  isLocked?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  manualAdjustmentReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   project?: Prisma.ProjectUpdateOneRequiredWithoutSessionsNestedInput
@@ -396,6 +441,9 @@ export type SessionUncheckedUpdateInput = {
   notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   submittedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   approvedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  isManuallyAdjusted?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  isLocked?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  manualAdjustmentReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   approvals?: Prisma.ApprovalRecordUncheckedUpdateManyWithoutSessionNestedInput
@@ -413,6 +461,9 @@ export type SessionCreateManyInput = {
   notes?: string | null
   submittedAt?: Date | string | null
   approvedAt?: Date | string | null
+  isManuallyAdjusted?: boolean
+  isLocked?: boolean
+  manualAdjustmentReason?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
 }
@@ -426,6 +477,9 @@ export type SessionUpdateManyMutationInput = {
   notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   submittedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   approvedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  isManuallyAdjusted?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  isLocked?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  manualAdjustmentReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -442,6 +496,9 @@ export type SessionUncheckedUpdateManyInput = {
   notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   submittedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   approvedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  isManuallyAdjusted?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  isLocked?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  manualAdjustmentReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -473,6 +530,9 @@ export type SessionCountOrderByAggregateInput = {
   notes?: Prisma.SortOrder
   submittedAt?: Prisma.SortOrder
   approvedAt?: Prisma.SortOrder
+  isManuallyAdjusted?: Prisma.SortOrder
+  isLocked?: Prisma.SortOrder
+  manualAdjustmentReason?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
 }
@@ -489,6 +549,9 @@ export type SessionMaxOrderByAggregateInput = {
   notes?: Prisma.SortOrder
   submittedAt?: Prisma.SortOrder
   approvedAt?: Prisma.SortOrder
+  isManuallyAdjusted?: Prisma.SortOrder
+  isLocked?: Prisma.SortOrder
+  manualAdjustmentReason?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
 }
@@ -505,6 +568,9 @@ export type SessionMinOrderByAggregateInput = {
   notes?: Prisma.SortOrder
   submittedAt?: Prisma.SortOrder
   approvedAt?: Prisma.SortOrder
+  isManuallyAdjusted?: Prisma.SortOrder
+  isLocked?: Prisma.SortOrder
+  manualAdjustmentReason?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
 }
@@ -662,6 +728,9 @@ export type SessionCreateWithoutActivityInput = {
   notes?: string | null
   submittedAt?: Date | string | null
   approvedAt?: Date | string | null
+  isManuallyAdjusted?: boolean
+  isLocked?: boolean
+  manualAdjustmentReason?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   project: Prisma.ProjectCreateNestedOneWithoutSessionsInput
@@ -680,6 +749,9 @@ export type SessionUncheckedCreateWithoutActivityInput = {
   notes?: string | null
   submittedAt?: Date | string | null
   approvedAt?: Date | string | null
+  isManuallyAdjusted?: boolean
+  isLocked?: boolean
+  manualAdjustmentReason?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   approvals?: Prisma.ApprovalRecordUncheckedCreateNestedManyWithoutSessionInput
@@ -726,6 +798,9 @@ export type SessionScalarWhereInput = {
   notes?: Prisma.StringNullableFilter<"Session"> | string | null
   submittedAt?: Prisma.DateTimeNullableFilter<"Session"> | Date | string | null
   approvedAt?: Prisma.DateTimeNullableFilter<"Session"> | Date | string | null
+  isManuallyAdjusted?: Prisma.BoolFilter<"Session"> | boolean
+  isLocked?: Prisma.BoolFilter<"Session"> | boolean
+  manualAdjustmentReason?: Prisma.StringNullableFilter<"Session"> | string | null
   createdAt?: Prisma.DateTimeFilter<"Session"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"Session"> | Date | string
 }
@@ -739,6 +814,9 @@ export type SessionCreateWithoutApprovalsInput = {
   notes?: string | null
   submittedAt?: Date | string | null
   approvedAt?: Date | string | null
+  isManuallyAdjusted?: boolean
+  isLocked?: boolean
+  manualAdjustmentReason?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   project: Prisma.ProjectCreateNestedOneWithoutSessionsInput
@@ -758,6 +836,9 @@ export type SessionUncheckedCreateWithoutApprovalsInput = {
   notes?: string | null
   submittedAt?: Date | string | null
   approvedAt?: Date | string | null
+  isManuallyAdjusted?: boolean
+  isLocked?: boolean
+  manualAdjustmentReason?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
 }
@@ -787,6 +868,9 @@ export type SessionUpdateWithoutApprovalsInput = {
   notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   submittedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   approvedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  isManuallyAdjusted?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  isLocked?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  manualAdjustmentReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   project?: Prisma.ProjectUpdateOneRequiredWithoutSessionsNestedInput
@@ -806,6 +890,9 @@ export type SessionUncheckedUpdateWithoutApprovalsInput = {
   notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   submittedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   approvedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  isManuallyAdjusted?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  isLocked?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  manualAdjustmentReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -819,6 +906,9 @@ export type SessionCreateWithoutCenterInput = {
   notes?: string | null
   submittedAt?: Date | string | null
   approvedAt?: Date | string | null
+  isManuallyAdjusted?: boolean
+  isLocked?: boolean
+  manualAdjustmentReason?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   project: Prisma.ProjectCreateNestedOneWithoutSessionsInput
@@ -837,6 +927,9 @@ export type SessionUncheckedCreateWithoutCenterInput = {
   notes?: string | null
   submittedAt?: Date | string | null
   approvedAt?: Date | string | null
+  isManuallyAdjusted?: boolean
+  isLocked?: boolean
+  manualAdjustmentReason?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   approvals?: Prisma.ApprovalRecordUncheckedCreateNestedManyWithoutSessionInput
@@ -877,6 +970,9 @@ export type SessionCreateWithoutProjectInput = {
   notes?: string | null
   submittedAt?: Date | string | null
   approvedAt?: Date | string | null
+  isManuallyAdjusted?: boolean
+  isLocked?: boolean
+  manualAdjustmentReason?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   activity: Prisma.ActivityCreateNestedOneWithoutSessionsInput
@@ -895,6 +991,9 @@ export type SessionUncheckedCreateWithoutProjectInput = {
   notes?: string | null
   submittedAt?: Date | string | null
   approvedAt?: Date | string | null
+  isManuallyAdjusted?: boolean
+  isLocked?: boolean
+  manualAdjustmentReason?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   approvals?: Prisma.ApprovalRecordUncheckedCreateNestedManyWithoutSessionInput
@@ -937,6 +1036,9 @@ export type SessionCreateManyActivityInput = {
   notes?: string | null
   submittedAt?: Date | string | null
   approvedAt?: Date | string | null
+  isManuallyAdjusted?: boolean
+  isLocked?: boolean
+  manualAdjustmentReason?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
 }
@@ -950,6 +1052,9 @@ export type SessionUpdateWithoutActivityInput = {
   notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   submittedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   approvedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  isManuallyAdjusted?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  isLocked?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  manualAdjustmentReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   project?: Prisma.ProjectUpdateOneRequiredWithoutSessionsNestedInput
@@ -968,6 +1073,9 @@ export type SessionUncheckedUpdateWithoutActivityInput = {
   notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   submittedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   approvedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  isManuallyAdjusted?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  isLocked?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  manualAdjustmentReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   approvals?: Prisma.ApprovalRecordUncheckedUpdateManyWithoutSessionNestedInput
@@ -984,6 +1092,9 @@ export type SessionUncheckedUpdateManyWithoutActivityInput = {
   notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   submittedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   approvedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  isManuallyAdjusted?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  isLocked?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  manualAdjustmentReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -999,6 +1110,9 @@ export type SessionCreateManyCenterInput = {
   notes?: string | null
   submittedAt?: Date | string | null
   approvedAt?: Date | string | null
+  isManuallyAdjusted?: boolean
+  isLocked?: boolean
+  manualAdjustmentReason?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
 }
@@ -1012,6 +1126,9 @@ export type SessionUpdateWithoutCenterInput = {
   notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   submittedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   approvedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  isManuallyAdjusted?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  isLocked?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  manualAdjustmentReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   project?: Prisma.ProjectUpdateOneRequiredWithoutSessionsNestedInput
@@ -1030,6 +1147,9 @@ export type SessionUncheckedUpdateWithoutCenterInput = {
   notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   submittedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   approvedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  isManuallyAdjusted?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  isLocked?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  manualAdjustmentReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   approvals?: Prisma.ApprovalRecordUncheckedUpdateManyWithoutSessionNestedInput
@@ -1046,6 +1166,9 @@ export type SessionUncheckedUpdateManyWithoutCenterInput = {
   notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   submittedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   approvedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  isManuallyAdjusted?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  isLocked?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  manualAdjustmentReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -1061,6 +1184,9 @@ export type SessionCreateManyProjectInput = {
   notes?: string | null
   submittedAt?: Date | string | null
   approvedAt?: Date | string | null
+  isManuallyAdjusted?: boolean
+  isLocked?: boolean
+  manualAdjustmentReason?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
 }
@@ -1074,6 +1200,9 @@ export type SessionUpdateWithoutProjectInput = {
   notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   submittedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   approvedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  isManuallyAdjusted?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  isLocked?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  manualAdjustmentReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   activity?: Prisma.ActivityUpdateOneRequiredWithoutSessionsNestedInput
@@ -1092,6 +1221,9 @@ export type SessionUncheckedUpdateWithoutProjectInput = {
   notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   submittedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   approvedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  isManuallyAdjusted?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  isLocked?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  manualAdjustmentReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   approvals?: Prisma.ApprovalRecordUncheckedUpdateManyWithoutSessionNestedInput
@@ -1108,6 +1240,9 @@ export type SessionUncheckedUpdateManyWithoutProjectInput = {
   notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   submittedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   approvedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  isManuallyAdjusted?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  isLocked?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  manualAdjustmentReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -1155,6 +1290,9 @@ export type SessionSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs 
   notes?: boolean
   submittedAt?: boolean
   approvedAt?: boolean
+  isManuallyAdjusted?: boolean
+  isLocked?: boolean
+  manualAdjustmentReason?: boolean
   createdAt?: boolean
   updatedAt?: boolean
   project?: boolean | Prisma.ProjectDefaultArgs<ExtArgs>
@@ -1176,6 +1314,9 @@ export type SessionSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Exten
   notes?: boolean
   submittedAt?: boolean
   approvedAt?: boolean
+  isManuallyAdjusted?: boolean
+  isLocked?: boolean
+  manualAdjustmentReason?: boolean
   createdAt?: boolean
   updatedAt?: boolean
   project?: boolean | Prisma.ProjectDefaultArgs<ExtArgs>
@@ -1195,6 +1336,9 @@ export type SessionSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Exten
   notes?: boolean
   submittedAt?: boolean
   approvedAt?: boolean
+  isManuallyAdjusted?: boolean
+  isLocked?: boolean
+  manualAdjustmentReason?: boolean
   createdAt?: boolean
   updatedAt?: boolean
   project?: boolean | Prisma.ProjectDefaultArgs<ExtArgs>
@@ -1214,11 +1358,14 @@ export type SessionSelectScalar = {
   notes?: boolean
   submittedAt?: boolean
   approvedAt?: boolean
+  isManuallyAdjusted?: boolean
+  isLocked?: boolean
+  manualAdjustmentReason?: boolean
   createdAt?: boolean
   updatedAt?: boolean
 }
 
-export type SessionOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "projectId" | "activityId" | "centerId" | "scheduledDate" | "status" | "approvalStatus" | "documentationUrl" | "notes" | "submittedAt" | "approvedAt" | "createdAt" | "updatedAt", ExtArgs["result"]["session"]>
+export type SessionOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "projectId" | "activityId" | "centerId" | "scheduledDate" | "status" | "approvalStatus" | "documentationUrl" | "notes" | "submittedAt" | "approvedAt" | "isManuallyAdjusted" | "isLocked" | "manualAdjustmentReason" | "createdAt" | "updatedAt", ExtArgs["result"]["session"]>
 export type SessionInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   project?: boolean | Prisma.ProjectDefaultArgs<ExtArgs>
   activity?: boolean | Prisma.ActivityDefaultArgs<ExtArgs>
@@ -1257,6 +1404,9 @@ export type $SessionPayload<ExtArgs extends runtime.Types.Extensions.InternalArg
     notes: string | null
     submittedAt: Date | null
     approvedAt: Date | null
+    isManuallyAdjusted: boolean
+    isLocked: boolean
+    manualAdjustmentReason: string | null
     createdAt: Date
     updatedAt: Date
   }, ExtArgs["result"]["session"]>
@@ -1697,6 +1847,9 @@ export interface SessionFieldRefs {
   readonly notes: Prisma.FieldRef<"Session", 'String'>
   readonly submittedAt: Prisma.FieldRef<"Session", 'DateTime'>
   readonly approvedAt: Prisma.FieldRef<"Session", 'DateTime'>
+  readonly isManuallyAdjusted: Prisma.FieldRef<"Session", 'Boolean'>
+  readonly isLocked: Prisma.FieldRef<"Session", 'Boolean'>
+  readonly manualAdjustmentReason: Prisma.FieldRef<"Session", 'String'>
   readonly createdAt: Prisma.FieldRef<"Session", 'DateTime'>
   readonly updatedAt: Prisma.FieldRef<"Session", 'DateTime'>
 }

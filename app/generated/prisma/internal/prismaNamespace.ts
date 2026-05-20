@@ -1225,6 +1225,9 @@ export const SessionScalarFieldEnum = {
   notes: 'notes',
   submittedAt: 'submittedAt',
   approvedAt: 'approvedAt',
+  isManuallyAdjusted: 'isManuallyAdjusted',
+  isLocked: 'isLocked',
+  manualAdjustmentReason: 'manualAdjustmentReason',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
 } as const

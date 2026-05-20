@@ -108,6 +108,14 @@ Update this file after every meaningful implementation change.
   - [x] Implement isolated session scheduling services (distribution, date-allocation, validation, delays)
   - [x] Update generation engine API to delegate to new scheduling services with structured logging
   - [x] Build minimal UI for session distribution summary, center allocation counts, and imperfect distribution warnings
+- Feature 11: Admin Manual Schedule Adjustments
+  - [x] Add `isManuallyAdjusted`, `isLocked`, and `manualAdjustmentReason` to Session model in prisma schema
+  - [x] Run database schema sync to apply the new schema fields
+  - [x] Create GET `/api/projects/[projectId]/sessions` API endpoint to load sessions with activity and center relations
+  - [x] Create PATCH `/api/sessions/[sessionId]` with date boundaries, active project, and participating center validations
+  - [x] Build data-dense Sessions Registry management table UI with advanced search, status filtering, and sorting
+  - [x] Build structured Edit Schedule dialog modal with native datepicker, center reassignment select, lock toggles, and live informational warning notifications (consecutive days and unbalanced center allocation)
+  - [x] Verify production build passes with zero errors
 
 ## In Progress
 
@@ -115,7 +123,7 @@ Update this file after every meaningful implementation change.
 
 ## Next Up
 
-- Feature 11
+- None.
 
 ## Open Questions
 
@@ -133,6 +141,7 @@ Update this file after every meaningful implementation change.
 - Feature 08: Added `startDate`, `endDate`, and `archivedAt` fields to `Activity` model for scheduling constraints and soft-deletes. Defined `ActivityCenter` join model representing branch participation. Developed activities collection and instance APIs under `/api/projects/[projectId]/activities/`. Created a premium Activities Planning dashboard table displaying core/volunteer scopes, center participations with mouse-hover tooltips, date parameters, and comprehensive Base UI CRUD dialogs.
 - Feature 09: Developed an isolated, deterministic round-robin session generation engine under `services/session-generation/`. Designed transactional triggers mapping spaced timestamps across target center counts. Exposed secure `POST` endpoints with duplicate generation blockers and created interactive dashboard triggers with status markers for planned items.
 - Feature 10: Created isolated scheduling modules under `services/session-scheduling/` (distribution, date-allocation, validation, and delay detection helpers). Integrated clean warnings and deterministic center preview lists into front-end Dialog modals to handle imperfect session divisions gracefully.
+- Feature 11: Enabled manual schedule overrides for project managers by adding trackable parameters to the Session model (`isLocked`, `isManuallyAdjusted`, `manualAdjustmentReason`). Created secure, fully-validated backend API handlers and a dense front-end grid workspace complete with live, informational warnings (consecutive date proximity and allocation imbalance).
 
 
 
