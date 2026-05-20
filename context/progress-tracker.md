@@ -8,7 +8,7 @@ Update this file after every meaningful implementation change.
 
 ## Current Goal
 
-- Feature 10: Session Scheduling Rules — ✅ Completed
+- Feature 13: Gantt Timeline View — ✅ Completed
 
 ## Completed
 
@@ -128,6 +128,19 @@ Update this file after every meaningful implementation change.
   - [x] Handle newly created projects without generated sessions gracefully via customized empty state directions
   - [x] Verify production build passes with 0 TypeScript/Lint compilation errors
 
+- Feature 13: Gantt Timeline View
+  - [x] Create timeline data service (`services/timeline/timeline-data.service.ts`) with activity/center grouping
+  - [x] Create GET `/api/projects/[projectId]/timeline` secure API route with `groupBy` param
+  - [x] Create `frappe-gantt` React wrapper component (`components/timeline/gantt-chart.tsx`) with SSR-safe dynamic import
+  - [x] Create design-token-based Gantt CSS overrides (`components/timeline/gantt-styles.css`) — no hardcoded colors
+  - [x] Add TypeScript type declaration for `frappe-gantt` module
+  - [x] Build full timeline page with Activity/Session view switcher, Activity/Center grouping, Week/Month/Quarter zoom
+  - [x] Build summary cards (activities, sessions, completed, delayed)
+  - [x] Build click-to-preview detail dialog with status badges, lock state, notes, documentation link
+  - [x] Build mobile fallback simplified list mode
+  - [x] Build status legend with design token colors
+  - [x] Verify production build passes with 0 TypeScript/Lint compilation errors
+
 ## In Progress
 
 - None.
@@ -154,6 +167,7 @@ Update this file after every meaningful implementation change.
 - Feature 10: Created isolated scheduling modules under `services/session-scheduling/` (distribution, date-allocation, validation, and delay detection helpers). Integrated clean warnings and deterministic center preview lists into front-end Dialog modals to handle imperfect session divisions gracefully.
 - Feature 11: Enabled manual schedule overrides for project managers by adding trackable parameters to the Session model (`isLocked`, `isManuallyAdjusted`, `manualAdjustmentReason`). Created secure, fully-validated backend API handlers and a dense front-end grid workspace complete with live, informational warnings (consecutive date proximity and allocation imbalance).
 - Feature 12: Implemented a high-performance aggregated Dashboard Query Service (`services/dashboard/`) leveraging parallel Prisma queries via `Promise.all` and single-pass traversals. Exposed these aggregates through a project-scoped `GET` route, and replaced the mock landing dashboard with a complete, operational grid environment displaying core progress, volunteer scopes, overdue delays, center matrix tables, and unified recent activity logs.
+- Feature 13: Built the operational Gantt Timeline View using `frappe-gantt` as the rendering engine, wrapped in a custom React component with SSR-safe dynamic imports. Created a dedicated timeline data service (`services/timeline/`) with activity-grouped and center-grouped task aggregation. Styled all Gantt bars using design token CSS variables mapped to session statuses (pending, completed, delayed, approved, rejected). Implemented a full toolbar with Activity/Session view switching, Activity/Center grouping, and Week/Month/Quarter zoom controls. Added click-to-preview detail dialog, summary metric cards, status legend, and mobile-responsive fallback list view.
 
 
 

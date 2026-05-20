@@ -1,0 +1,230 @@
+/* ============================================================
+   GANTT CHART — Custom styling for frappe-gantt
+   Uses design tokens only — no hardcoded colors.
+   ============================================================ */
+
+/* Container theming */
+.gantt-container {
+  background: var(--card);
+  border-radius: var(--radius);
+  overflow: hidden;
+}
+
+.gantt-container .gantt {
+  background: var(--card);
+}
+
+/* Grid and tick styling */
+.gantt .grid-header {
+  fill: var(--surface-muted);
+  stroke: var(--border);
+}
+
+.gantt .grid-row {
+  fill: var(--card);
+}
+
+.gantt .grid-row:nth-child(even) {
+  fill: var(--surface-muted);
+}
+
+.gantt .row-line {
+  stroke: var(--border-subtle);
+}
+
+.gantt .tick {
+  stroke: var(--border-subtle);
+  stroke-dasharray: 4;
+}
+
+.gantt .today-highlight {
+  fill: var(--brand-primary);
+  opacity: 0.06;
+}
+
+/* Lower and upper text in headers */
+.gantt .lower-text,
+.gantt .upper-text {
+  fill: var(--text-muted);
+  font-family: var(--font-sans);
+  font-size: 11px;
+  font-weight: 500;
+}
+
+.gantt .upper-text {
+  fill: var(--text-secondary);
+  font-weight: 600;
+  font-size: 12px;
+}
+
+/* ─── Status bar coloring ──────────────────────────────── */
+
+/* Default bar styling */
+.gantt .bar {
+  fill: var(--status-pending);
+  stroke: none;
+  rx: 4;
+  ry: 4;
+  transition: opacity 0.2s ease;
+}
+
+.gantt .bar-progress {
+  fill: var(--status-in-progress);
+  rx: 4;
+  ry: 4;
+}
+
+.gantt .bar-label {
+  fill: var(--text-primary);
+  font-family: var(--font-sans);
+  font-size: 11px;
+  font-weight: 600;
+  dominant-baseline: central;
+}
+
+/* Status-specific bar colors */
+.gantt .gantt-status-pending .bar {
+  fill: var(--status-pending);
+  opacity: 0.7;
+}
+
+.gantt .gantt-status-pending .bar-progress {
+  fill: var(--status-in-progress);
+}
+
+.gantt .gantt-status-pending .bar-label {
+  fill: var(--status-pending-foreground);
+}
+
+.gantt .gantt-status-in_progress .bar {
+  fill: var(--status-in-progress);
+  opacity: 0.75;
+}
+
+.gantt .gantt-status-in_progress .bar-progress {
+  fill: var(--status-in-progress);
+}
+
+.gantt .gantt-status-in_progress .bar-label {
+  fill: var(--status-in-progress-foreground);
+}
+
+.gantt .gantt-status-completed .bar {
+  fill: var(--status-completed);
+  opacity: 0.75;
+}
+
+.gantt .gantt-status-completed .bar-progress {
+  fill: var(--status-completed);
+}
+
+.gantt .gantt-status-completed .bar-label {
+  fill: var(--status-completed-foreground);
+}
+
+.gantt .gantt-status-delayed .bar {
+  fill: var(--status-delayed);
+  opacity: 0.85;
+}
+
+.gantt .gantt-status-delayed .bar-progress {
+  fill: var(--status-rejected);
+}
+
+.gantt .gantt-status-delayed .bar-label {
+  fill: var(--status-delayed-foreground);
+}
+
+.gantt .gantt-status-approved .bar {
+  fill: var(--status-approved);
+  opacity: 0.75;
+}
+
+.gantt .gantt-status-approved .bar-progress {
+  fill: var(--status-approved);
+}
+
+.gantt .gantt-status-approved .bar-label {
+  fill: var(--status-approved-foreground);
+}
+
+.gantt .gantt-status-rejected .bar {
+  fill: var(--status-rejected);
+  opacity: 0.8;
+}
+
+.gantt .gantt-status-rejected .bar-progress {
+  fill: var(--status-rejected);
+}
+
+.gantt .gantt-status-rejected .bar-label {
+  fill: var(--status-rejected-foreground);
+}
+
+/* ─── Bar hover effects ────────────────────────────────── */
+
+.gantt .bar-wrapper:hover .bar {
+  opacity: 1;
+  filter: brightness(1.1);
+}
+
+.gantt .bar-wrapper {
+  cursor: pointer;
+}
+
+/* ─── Popup styling ────────────────────────────────────── */
+
+.gantt .popup-wrapper {
+  background: var(--popover);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.12);
+  padding: 12px 16px;
+  font-family: var(--font-sans);
+  max-width: 280px;
+}
+
+.gantt .popup-wrapper .title {
+  color: var(--text-primary);
+  font-size: 13px;
+  font-weight: 600;
+  margin-bottom: 4px;
+}
+
+.gantt .popup-wrapper .subtitle {
+  color: var(--text-muted);
+  font-size: 11px;
+  margin-bottom: 8px;
+}
+
+/* ─── Scroll styling ───────────────────────────────────── */
+
+.gantt-container::-webkit-scrollbar {
+  height: 6px;
+}
+
+.gantt-container::-webkit-scrollbar-track {
+  background: var(--surface-muted);
+  border-radius: 3px;
+}
+
+.gantt-container::-webkit-scrollbar-thumb {
+  background: var(--border-strong);
+  border-radius: 3px;
+}
+
+.gantt-container::-webkit-scrollbar-thumb:hover {
+  background: var(--text-muted);
+}
+
+/* ─── Arrow styling (hidden per spec - no dependency arrows) */
+
+.gantt .arrow {
+  display: none;
+}
+
+/* ─── Handle and resize (disabled per spec) ────────────── */
+
+.gantt .handle-group {
+  display: none;
+}
