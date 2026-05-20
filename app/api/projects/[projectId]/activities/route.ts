@@ -47,6 +47,11 @@ export async function GET(
             },
           },
         },
+        _count: {
+          select: {
+            sessions: true,
+          },
+        },
       },
       orderBy: {
         createdAt: "desc",
@@ -240,6 +245,11 @@ export async function POST(
                   },
                 },
               },
+            },
+          },
+          _count: {
+            select: {
+              sessions: true,
             },
           },
         },

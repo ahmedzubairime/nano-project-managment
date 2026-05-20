@@ -4,11 +4,11 @@ Update this file after every meaningful implementation change.
 
 ## Current Phase
 
-- Complete
+- Development
 
 ## Current Goal
 
-- Feature 08: Activities Management — ✅ Completed
+- Feature 10: Session Scheduling Rules — In Progress
 
 ## Completed
 
@@ -98,13 +98,22 @@ Update this file after every meaningful implementation change.
   - [x] Build global Activities Page UI
   - [x] Build Create, Edit, and Delete Dialog/AlertDialog modals for Activities
 
+- Feature 09: Session Generation Engine
+  - [x] Implement isolated, deterministic session generation service helper
+  - [x] Implement `POST /api/projects/[projectId]/activities/[activityId]/generate-sessions` API trigger
+  - [x] Enforce generation state validations (no duplicate sessions, only active projects)
+  - [x] Integrate "Generate Sessions" button, confirmation Dialog, and status indicators in UI
+
 ## In Progress
 
-- None.
+- Feature 10: Session Scheduling Rules
+  - [ ] Implement isolated session scheduling services (distribution, date-allocation, validation, delays)
+  - [ ] Update generation engine API to delegate to new scheduling services with structured logging
+  - [ ] Build minimal UI for session distribution summary, center allocation counts, and imperfect distribution warnings
 
 ## Next Up
 
-- Feature 09
+- Feature 11
 
 ## Open Questions
 
@@ -120,6 +129,7 @@ Update this file after every meaningful implementation change.
 - Feature 06: Modified `Center` schema with `archivedAt` datetime column for soft-archival. Created RESTful endpoints for `/api/centers` (GET list, POST create) and `/api/centers/[centerId]` (PATCH update, DELETE archive) with RBAC authorization. Created `/api/users` endpoint for querying potential managers. Built global centers page with responsive table, search, and Base UI dialog/alert-dialog actions.
 - Feature 07: Implemented `ProjectCenter` relational mapping endpoints in `/api/projects/[projectId]/centers` and sub-resource `/api/projects/[projectId]/centers/[centerId]`. Reconfigured the dynamic Settings page into a clean tabbed UI containing Project Settings configuration and active Center Assignments datatable layout using searchable, multi-modal dialog operations.
 - Feature 08: Added `startDate`, `endDate`, and `archivedAt` fields to `Activity` model for scheduling constraints and soft-deletes. Defined `ActivityCenter` join model representing branch participation. Developed activities collection and instance APIs under `/api/projects/[projectId]/activities/`. Created a premium Activities Planning dashboard table displaying core/volunteer scopes, center participations with mouse-hover tooltips, date parameters, and comprehensive Base UI CRUD dialogs.
+- Feature 09: Developed an isolated, deterministic round-robin session generation engine under `services/session-generation/`. Designed transactional triggers mapping spaced timestamps across target center counts. Exposed secure `POST` endpoints with duplicate generation blockers and created interactive dashboard triggers with status markers for planned items.
 
 
 

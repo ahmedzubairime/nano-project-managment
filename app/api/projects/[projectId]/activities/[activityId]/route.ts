@@ -206,6 +206,11 @@ export async function PATCH(
               },
             },
           },
+          _count: {
+            select: {
+              sessions: true,
+            },
+          },
         },
       });
     });

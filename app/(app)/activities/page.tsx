@@ -99,6 +99,9 @@ interface ActivityItem {
   archivedAt: string | null;
   createdAt: string;
   activityCenters: ActivityCenterRelation[];
+  _count?: {
+    sessions: number;
+  };
 }
 
 export default function ActivitiesPage() {
@@ -124,6 +127,7 @@ export default function ActivitiesPage() {
   const [isCreateOpen, setIsCreateOpen] = React.useState(false);
   const [isEditOpen, setIsEditOpen] = React.useState(false);
   const [isDeleteOpen, setIsDeleteOpen] = React.useState(false);
+  const [isGenerateOpen, setIsGenerateOpen] = React.useState(false);
   const [selectedActivity, setSelectedActivity] = React.useState<ActivityItem | null>(null);
 
   // Form Fields
@@ -336,6 +340,36 @@ export default function ActivitiesPage() {
     }
   }
 
+  // Handle Generate Sessions
+  async function handleGenerateSubmit() {
+    if (!activeProject || !selectedActivity || !canModify) return;
+
+    setSubmitting(true);
+    try {
+      const response = await fetch(
+        `/api/projects/${activeProject.id}/activities/${selectedActivity.id}/generate-sessions`,
+        {
+          method: "POST",
+        }
+      );
+
+      if (!response.ok) {
+        const errData = await response.json();
+        throw new Error(errData.error || "Failed to generate sessions");
+      }
+
+      const resData = await response.json();
+      toast.success(resData.message || "Sessions generated successfully!");
+      setIsGenerateOpen(false);
+      setSelectedActivity(null);
+      fetchActivities();
+    } catch (err: any) {
+      toast.error(err.message || "Error generating sessions");
+    } finally {
+      setSubmitting(false);
+    }
+  }
+
   // Multi-select helpers
   function toggleCenterSelection(centerId: string) {
     setSelectedCenterIds((prev) =>
@@ -522,7 +556,19 @@ export default function ActivitiesPage() {
                             </div>
                           </TableCell>
                           <TableCell className="py-4 text-sm font-semibold text-text-secondary">
-                            {act.plannedSessionCount} {act.plannedSessionCount === 1 ? "session" : "sessions"}
+                            <div>
+                              <span>{act.plannedSessionCount} {act.plannedSessionCount === 1 ? "session" : "sessions"}</span>
+                              {act._count?.sessions ? (
+                                <span className="flex items-center gap-1 text-[11px] text-emerald-600 font-semibold mt-0.5" title={`${act._count.sessions} sessions generated`}>
+                                  <CheckCircle className="size-3 text-emerald-500 fill-emerald-50" />
+                                  Generated
+                                </span>
+                              ) : (
+                                <span className="block text-[11px] text-text-muted font-normal mt-0.5">
+                                  Not generated
+                                </span>
+                              )}
+                            </div>
                           </TableCell>
                           <TableCell className="py-4 text-sm">
                             <Tooltip>
@@ -586,6 +632,20 @@ export default function ActivitiesPage() {
                             <div className="flex items-center justify-end gap-1.5">
                               {canModify && !isArchived ? (
                                 <>
+                                  {!act._count?.sessions && (
+                                    <Button
+                                      variant="outline"
+                                      size="sm"
+                                      onClick={() => {
+                                        setSelectedActivity(act);
+                                        setIsGenerateOpen(true);
+                                      }}
+                                      className="h-8 text-xs font-semibold px-2.5 flex items-center gap-1 border-border/80 hover:bg-primary/5 hover:text-primary hover:border-primary/30"
+                                    >
+                                      <CheckCircle className="size-3.5 text-text-muted" />
+                                      Generate
+                                    </Button>
+                                  )}
                                   <Button
                                     variant="ghost"
                                     size="icon"
@@ -902,6 +962,37 @@ export default function ActivitiesPage() {
               className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
             >
               {submitting ? "Archiving..." : "Archive Activity"}
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
+
+      {/* GENERATE SESSIONS ALERT DIALOG */}
+      <AlertDialog open={isGenerateOpen} onOpenChange={setIsGenerateOpen}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Generate Execution Sessions</AlertDialogTitle>
+            <AlertDialogDescription>
+              This will automatically distribute <strong>{selectedActivity?.plannedSessionCount}</strong> planned sessions across the <strong>{selectedActivity?.activityCenters.length}</strong> participating centers.
+              <br />
+              <br />
+              The scheduling engine uses a fully deterministic round-robin distribution to map dates and centers. Generated sessions will be created as <strong>PENDING</strong> and <strong>NOT_SUBMITTED</strong>.
+              <br />
+              <br />
+              <span className="font-semibold text-text-primary">Note:</span> This action is permanent and cannot be undone or re-run once sessions are generated.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel disabled={submitting}>Cancel</AlertDialogCancel>
+            <AlertDialogAction
+              onClick={(e) => {
+                e.preventDefault();
+                handleGenerateSubmit();
+              }}
+              disabled={submitting}
+              className="bg-primary text-primary-foreground hover:bg-primary/95"
+            >
+              {submitting ? "Generating..." : "Generate Sessions"}
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>
