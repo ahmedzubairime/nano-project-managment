@@ -48,6 +48,16 @@ export type ProjectCenter = Prisma.ProjectCenterModel
  */
 export type Notification = Prisma.NotificationModel
 /**
+ * Model NotificationCenter
+ * 
+ */
+export type NotificationCenter = Prisma.NotificationCenterModel
+/**
+ * Model NotificationRead
+ * 
+ */
+export type NotificationRead = Prisma.NotificationReadModel
+/**
  * Model Project
  * 
  */

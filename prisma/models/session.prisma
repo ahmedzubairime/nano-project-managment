@@ -19,10 +19,11 @@ model Session {
   updatedAt              DateTime       @updatedAt
 
   // Relations
-  project   Project          @relation(fields: [projectId], references: [id], onDelete: Cascade)
-  activity  Activity         @relation(fields: [activityId], references: [id], onDelete: Cascade)
-  center    Center           @relation(fields: [centerId], references: [id])
-  approvals ApprovalRecord[]
+  project       Project          @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  activity      Activity         @relation(fields: [activityId], references: [id], onDelete: Cascade)
+  center        Center           @relation(fields: [centerId], references: [id])
+  approvals     ApprovalRecord[]
+  notifications Notification[]
 
   @@index([projectId])
   @@index([centerId])

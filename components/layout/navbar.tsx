@@ -1,13 +1,14 @@
 "use client";
 
 import * as React from "react";
-import { Menu, Bell, Languages } from "lucide-react";
+import { Menu, Languages } from "lucide-react";
 import { UserButton } from "@clerk/nextjs";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import { ThemeToggle } from "@/components/theme-toggle";
 import { ProjectSelector } from "@/components/layout/project-selector";
 import { MobileSidebar } from "@/components/layout/mobile-sidebar";
+import { NavbarNotifications } from "@/components/layout/navbar-notifications";
 
 export function Navbar() {
   const [mobileOpen, setMobileOpen] = React.useState(false);
@@ -53,9 +54,7 @@ export function Navbar() {
           <ThemeToggle />
 
           {/* Notifications */}
-          <Button variant="ghost" size="icon" aria-label="Notifications">
-            <Bell />
-          </Button>
+          <NavbarNotifications />
 
           <Separator orientation="vertical" className="h-6 mx-1" />
 

@@ -10,10 +10,11 @@ model Center {
   archivedAt DateTime?
 
   // Relations
-  manager        User?           @relation("CenterManager", fields: [managerId], references: [id])
-  projectCenters ProjectCenter[]
-  sessions       Session[]
-  activityCenters ActivityCenter[]
+  manager             User?                @relation("CenterManager", fields: [managerId], references: [id])
+  projectCenters      ProjectCenter[]
+  sessions            Session[]
+  activityCenters     ActivityCenter[]
+  notificationCenters NotificationCenter[]
 
 
   @@index([managerId])

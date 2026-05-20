@@ -9,9 +9,11 @@ model User {
   updatedAt   DateTime @updatedAt
 
   // Relations
-  ownedProjects   Project[]        @relation("ProjectOwner")
-  managedCenters  Center[]         @relation("CenterManager")
-  approvalReviews ApprovalRecord[] @relation("ApprovalReviewer")
+  ownedProjects     Project[]        @relation("ProjectOwner")
+  managedCenters    Center[]         @relation("CenterManager")
+  approvalReviews   ApprovalRecord[] @relation("ApprovalReviewer")
+  sentNotifications Notification[]   @relation("NotificationSender")
+  notificationReads NotificationRead[]
 
   @@index([clerkUserId])
   @@index([role])

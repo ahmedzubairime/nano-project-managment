@@ -202,6 +202,7 @@ export type CenterWhereInput = {
   projectCenters?: Prisma.ProjectCenterListRelationFilter
   sessions?: Prisma.SessionListRelationFilter
   activityCenters?: Prisma.ActivityCenterListRelationFilter
+  notificationCenters?: Prisma.NotificationCenterListRelationFilter
 }
 
 export type CenterOrderByWithRelationInput = {
@@ -216,6 +217,7 @@ export type CenterOrderByWithRelationInput = {
   projectCenters?: Prisma.ProjectCenterOrderByRelationAggregateInput
   sessions?: Prisma.SessionOrderByRelationAggregateInput
   activityCenters?: Prisma.ActivityCenterOrderByRelationAggregateInput
+  notificationCenters?: Prisma.NotificationCenterOrderByRelationAggregateInput
 }
 
 export type CenterWhereUniqueInput = Prisma.AtLeast<{
@@ -233,6 +235,7 @@ export type CenterWhereUniqueInput = Prisma.AtLeast<{
   projectCenters?: Prisma.ProjectCenterListRelationFilter
   sessions?: Prisma.SessionListRelationFilter
   activityCenters?: Prisma.ActivityCenterListRelationFilter
+  notificationCenters?: Prisma.NotificationCenterListRelationFilter
 }, "id">
 
 export type CenterOrderByWithAggregationInput = {
@@ -272,6 +275,7 @@ export type CenterCreateInput = {
   projectCenters?: Prisma.ProjectCenterCreateNestedManyWithoutCenterInput
   sessions?: Prisma.SessionCreateNestedManyWithoutCenterInput
   activityCenters?: Prisma.ActivityCenterCreateNestedManyWithoutCenterInput
+  notificationCenters?: Prisma.NotificationCenterCreateNestedManyWithoutCenterInput
 }
 
 export type CenterUncheckedCreateInput = {
@@ -285,6 +289,7 @@ export type CenterUncheckedCreateInput = {
   projectCenters?: Prisma.ProjectCenterUncheckedCreateNestedManyWithoutCenterInput
   sessions?: Prisma.SessionUncheckedCreateNestedManyWithoutCenterInput
   activityCenters?: Prisma.ActivityCenterUncheckedCreateNestedManyWithoutCenterInput
+  notificationCenters?: Prisma.NotificationCenterUncheckedCreateNestedManyWithoutCenterInput
 }
 
 export type CenterUpdateInput = {
@@ -298,6 +303,7 @@ export type CenterUpdateInput = {
   projectCenters?: Prisma.ProjectCenterUpdateManyWithoutCenterNestedInput
   sessions?: Prisma.SessionUpdateManyWithoutCenterNestedInput
   activityCenters?: Prisma.ActivityCenterUpdateManyWithoutCenterNestedInput
+  notificationCenters?: Prisma.NotificationCenterUpdateManyWithoutCenterNestedInput
 }
 
 export type CenterUncheckedUpdateInput = {
@@ -311,6 +317,7 @@ export type CenterUncheckedUpdateInput = {
   projectCenters?: Prisma.ProjectCenterUncheckedUpdateManyWithoutCenterNestedInput
   sessions?: Prisma.SessionUncheckedUpdateManyWithoutCenterNestedInput
   activityCenters?: Prisma.ActivityCenterUncheckedUpdateManyWithoutCenterNestedInput
+  notificationCenters?: Prisma.NotificationCenterUncheckedUpdateManyWithoutCenterNestedInput
 }
 
 export type CenterCreateManyInput = {
@@ -415,6 +422,20 @@ export type CenterUpdateOneRequiredWithoutProjectCentersNestedInput = {
   update?: Prisma.XOR<Prisma.XOR<Prisma.CenterUpdateToOneWithWhereWithoutProjectCentersInput, Prisma.CenterUpdateWithoutProjectCentersInput>, Prisma.CenterUncheckedUpdateWithoutProjectCentersInput>
 }
 
+export type CenterCreateNestedOneWithoutNotificationCentersInput = {
+  create?: Prisma.XOR<Prisma.CenterCreateWithoutNotificationCentersInput, Prisma.CenterUncheckedCreateWithoutNotificationCentersInput>
+  connectOrCreate?: Prisma.CenterCreateOrConnectWithoutNotificationCentersInput
+  connect?: Prisma.CenterWhereUniqueInput
+}
+
+export type CenterUpdateOneRequiredWithoutNotificationCentersNestedInput = {
+  create?: Prisma.XOR<Prisma.CenterCreateWithoutNotificationCentersInput, Prisma.CenterUncheckedCreateWithoutNotificationCentersInput>
+  connectOrCreate?: Prisma.CenterCreateOrConnectWithoutNotificationCentersInput
+  upsert?: Prisma.CenterUpsertWithoutNotificationCentersInput
+  connect?: Prisma.CenterWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.CenterUpdateToOneWithWhereWithoutNotificationCentersInput, Prisma.CenterUpdateWithoutNotificationCentersInput>, Prisma.CenterUncheckedUpdateWithoutNotificationCentersInput>
+}
+
 export type CenterCreateNestedOneWithoutSessionsInput = {
   create?: Prisma.XOR<Prisma.CenterCreateWithoutSessionsInput, Prisma.CenterUncheckedCreateWithoutSessionsInput>
   connectOrCreate?: Prisma.CenterCreateOrConnectWithoutSessionsInput
@@ -481,6 +502,7 @@ export type CenterCreateWithoutActivityCentersInput = {
   manager?: Prisma.UserCreateNestedOneWithoutManagedCentersInput
   projectCenters?: Prisma.ProjectCenterCreateNestedManyWithoutCenterInput
   sessions?: Prisma.SessionCreateNestedManyWithoutCenterInput
+  notificationCenters?: Prisma.NotificationCenterCreateNestedManyWithoutCenterInput
 }
 
 export type CenterUncheckedCreateWithoutActivityCentersInput = {
@@ -493,6 +515,7 @@ export type CenterUncheckedCreateWithoutActivityCentersInput = {
   archivedAt?: Date | string | null
   projectCenters?: Prisma.ProjectCenterUncheckedCreateNestedManyWithoutCenterInput
   sessions?: Prisma.SessionUncheckedCreateNestedManyWithoutCenterInput
+  notificationCenters?: Prisma.NotificationCenterUncheckedCreateNestedManyWithoutCenterInput
 }
 
 export type CenterCreateOrConnectWithoutActivityCentersInput = {
@@ -521,6 +544,7 @@ export type CenterUpdateWithoutActivityCentersInput = {
   manager?: Prisma.UserUpdateOneWithoutManagedCentersNestedInput
   projectCenters?: Prisma.ProjectCenterUpdateManyWithoutCenterNestedInput
   sessions?: Prisma.SessionUpdateManyWithoutCenterNestedInput
+  notificationCenters?: Prisma.NotificationCenterUpdateManyWithoutCenterNestedInput
 }
 
 export type CenterUncheckedUpdateWithoutActivityCentersInput = {
@@ -533,6 +557,7 @@ export type CenterUncheckedUpdateWithoutActivityCentersInput = {
   archivedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   projectCenters?: Prisma.ProjectCenterUncheckedUpdateManyWithoutCenterNestedInput
   sessions?: Prisma.SessionUncheckedUpdateManyWithoutCenterNestedInput
+  notificationCenters?: Prisma.NotificationCenterUncheckedUpdateManyWithoutCenterNestedInput
 }
 
 export type CenterCreateWithoutProjectCentersInput = {
@@ -545,6 +570,7 @@ export type CenterCreateWithoutProjectCentersInput = {
   manager?: Prisma.UserCreateNestedOneWithoutManagedCentersInput
   sessions?: Prisma.SessionCreateNestedManyWithoutCenterInput
   activityCenters?: Prisma.ActivityCenterCreateNestedManyWithoutCenterInput
+  notificationCenters?: Prisma.NotificationCenterCreateNestedManyWithoutCenterInput
 }
 
 export type CenterUncheckedCreateWithoutProjectCentersInput = {
@@ -557,6 +583,7 @@ export type CenterUncheckedCreateWithoutProjectCentersInput = {
   archivedAt?: Date | string | null
   sessions?: Prisma.SessionUncheckedCreateNestedManyWithoutCenterInput
   activityCenters?: Prisma.ActivityCenterUncheckedCreateNestedManyWithoutCenterInput
+  notificationCenters?: Prisma.NotificationCenterUncheckedCreateNestedManyWithoutCenterInput
 }
 
 export type CenterCreateOrConnectWithoutProjectCentersInput = {
@@ -585,6 +612,7 @@ export type CenterUpdateWithoutProjectCentersInput = {
   manager?: Prisma.UserUpdateOneWithoutManagedCentersNestedInput
   sessions?: Prisma.SessionUpdateManyWithoutCenterNestedInput
   activityCenters?: Prisma.ActivityCenterUpdateManyWithoutCenterNestedInput
+  notificationCenters?: Prisma.NotificationCenterUpdateManyWithoutCenterNestedInput
 }
 
 export type CenterUncheckedUpdateWithoutProjectCentersInput = {
@@ -595,6 +623,75 @@ export type CenterUncheckedUpdateWithoutProjectCentersInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   archivedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  sessions?: Prisma.SessionUncheckedUpdateManyWithoutCenterNestedInput
+  activityCenters?: Prisma.ActivityCenterUncheckedUpdateManyWithoutCenterNestedInput
+  notificationCenters?: Prisma.NotificationCenterUncheckedUpdateManyWithoutCenterNestedInput
+}
+
+export type CenterCreateWithoutNotificationCentersInput = {
+  id?: string
+  name: string
+  city: string
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  archivedAt?: Date | string | null
+  manager?: Prisma.UserCreateNestedOneWithoutManagedCentersInput
+  projectCenters?: Prisma.ProjectCenterCreateNestedManyWithoutCenterInput
+  sessions?: Prisma.SessionCreateNestedManyWithoutCenterInput
+  activityCenters?: Prisma.ActivityCenterCreateNestedManyWithoutCenterInput
+}
+
+export type CenterUncheckedCreateWithoutNotificationCentersInput = {
+  id?: string
+  name: string
+  city: string
+  managerId?: string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  archivedAt?: Date | string | null
+  projectCenters?: Prisma.ProjectCenterUncheckedCreateNestedManyWithoutCenterInput
+  sessions?: Prisma.SessionUncheckedCreateNestedManyWithoutCenterInput
+  activityCenters?: Prisma.ActivityCenterUncheckedCreateNestedManyWithoutCenterInput
+}
+
+export type CenterCreateOrConnectWithoutNotificationCentersInput = {
+  where: Prisma.CenterWhereUniqueInput
+  create: Prisma.XOR<Prisma.CenterCreateWithoutNotificationCentersInput, Prisma.CenterUncheckedCreateWithoutNotificationCentersInput>
+}
+
+export type CenterUpsertWithoutNotificationCentersInput = {
+  update: Prisma.XOR<Prisma.CenterUpdateWithoutNotificationCentersInput, Prisma.CenterUncheckedUpdateWithoutNotificationCentersInput>
+  create: Prisma.XOR<Prisma.CenterCreateWithoutNotificationCentersInput, Prisma.CenterUncheckedCreateWithoutNotificationCentersInput>
+  where?: Prisma.CenterWhereInput
+}
+
+export type CenterUpdateToOneWithWhereWithoutNotificationCentersInput = {
+  where?: Prisma.CenterWhereInput
+  data: Prisma.XOR<Prisma.CenterUpdateWithoutNotificationCentersInput, Prisma.CenterUncheckedUpdateWithoutNotificationCentersInput>
+}
+
+export type CenterUpdateWithoutNotificationCentersInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  city?: Prisma.StringFieldUpdateOperationsInput | string
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  archivedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  manager?: Prisma.UserUpdateOneWithoutManagedCentersNestedInput
+  projectCenters?: Prisma.ProjectCenterUpdateManyWithoutCenterNestedInput
+  sessions?: Prisma.SessionUpdateManyWithoutCenterNestedInput
+  activityCenters?: Prisma.ActivityCenterUpdateManyWithoutCenterNestedInput
+}
+
+export type CenterUncheckedUpdateWithoutNotificationCentersInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  city?: Prisma.StringFieldUpdateOperationsInput | string
+  managerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  archivedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  projectCenters?: Prisma.ProjectCenterUncheckedUpdateManyWithoutCenterNestedInput
   sessions?: Prisma.SessionUncheckedUpdateManyWithoutCenterNestedInput
   activityCenters?: Prisma.ActivityCenterUncheckedUpdateManyWithoutCenterNestedInput
 }
@@ -609,6 +706,7 @@ export type CenterCreateWithoutSessionsInput = {
   manager?: Prisma.UserCreateNestedOneWithoutManagedCentersInput
   projectCenters?: Prisma.ProjectCenterCreateNestedManyWithoutCenterInput
   activityCenters?: Prisma.ActivityCenterCreateNestedManyWithoutCenterInput
+  notificationCenters?: Prisma.NotificationCenterCreateNestedManyWithoutCenterInput
 }
 
 export type CenterUncheckedCreateWithoutSessionsInput = {
@@ -621,6 +719,7 @@ export type CenterUncheckedCreateWithoutSessionsInput = {
   archivedAt?: Date | string | null
   projectCenters?: Prisma.ProjectCenterUncheckedCreateNestedManyWithoutCenterInput
   activityCenters?: Prisma.ActivityCenterUncheckedCreateNestedManyWithoutCenterInput
+  notificationCenters?: Prisma.NotificationCenterUncheckedCreateNestedManyWithoutCenterInput
 }
 
 export type CenterCreateOrConnectWithoutSessionsInput = {
@@ -649,6 +748,7 @@ export type CenterUpdateWithoutSessionsInput = {
   manager?: Prisma.UserUpdateOneWithoutManagedCentersNestedInput
   projectCenters?: Prisma.ProjectCenterUpdateManyWithoutCenterNestedInput
   activityCenters?: Prisma.ActivityCenterUpdateManyWithoutCenterNestedInput
+  notificationCenters?: Prisma.NotificationCenterUpdateManyWithoutCenterNestedInput
 }
 
 export type CenterUncheckedUpdateWithoutSessionsInput = {
@@ -661,6 +761,7 @@ export type CenterUncheckedUpdateWithoutSessionsInput = {
   archivedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   projectCenters?: Prisma.ProjectCenterUncheckedUpdateManyWithoutCenterNestedInput
   activityCenters?: Prisma.ActivityCenterUncheckedUpdateManyWithoutCenterNestedInput
+  notificationCenters?: Prisma.NotificationCenterUncheckedUpdateManyWithoutCenterNestedInput
 }
 
 export type CenterCreateWithoutManagerInput = {
@@ -673,6 +774,7 @@ export type CenterCreateWithoutManagerInput = {
   projectCenters?: Prisma.ProjectCenterCreateNestedManyWithoutCenterInput
   sessions?: Prisma.SessionCreateNestedManyWithoutCenterInput
   activityCenters?: Prisma.ActivityCenterCreateNestedManyWithoutCenterInput
+  notificationCenters?: Prisma.NotificationCenterCreateNestedManyWithoutCenterInput
 }
 
 export type CenterUncheckedCreateWithoutManagerInput = {
@@ -685,6 +787,7 @@ export type CenterUncheckedCreateWithoutManagerInput = {
   projectCenters?: Prisma.ProjectCenterUncheckedCreateNestedManyWithoutCenterInput
   sessions?: Prisma.SessionUncheckedCreateNestedManyWithoutCenterInput
   activityCenters?: Prisma.ActivityCenterUncheckedCreateNestedManyWithoutCenterInput
+  notificationCenters?: Prisma.NotificationCenterUncheckedCreateNestedManyWithoutCenterInput
 }
 
 export type CenterCreateOrConnectWithoutManagerInput = {
@@ -745,6 +848,7 @@ export type CenterUpdateWithoutManagerInput = {
   projectCenters?: Prisma.ProjectCenterUpdateManyWithoutCenterNestedInput
   sessions?: Prisma.SessionUpdateManyWithoutCenterNestedInput
   activityCenters?: Prisma.ActivityCenterUpdateManyWithoutCenterNestedInput
+  notificationCenters?: Prisma.NotificationCenterUpdateManyWithoutCenterNestedInput
 }
 
 export type CenterUncheckedUpdateWithoutManagerInput = {
@@ -757,6 +861,7 @@ export type CenterUncheckedUpdateWithoutManagerInput = {
   projectCenters?: Prisma.ProjectCenterUncheckedUpdateManyWithoutCenterNestedInput
   sessions?: Prisma.SessionUncheckedUpdateManyWithoutCenterNestedInput
   activityCenters?: Prisma.ActivityCenterUncheckedUpdateManyWithoutCenterNestedInput
+  notificationCenters?: Prisma.NotificationCenterUncheckedUpdateManyWithoutCenterNestedInput
 }
 
 export type CenterUncheckedUpdateManyWithoutManagerInput = {
@@ -777,12 +882,14 @@ export type CenterCountOutputType = {
   projectCenters: number
   sessions: number
   activityCenters: number
+  notificationCenters: number
 }
 
 export type CenterCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   projectCenters?: boolean | CenterCountOutputTypeCountProjectCentersArgs
   sessions?: boolean | CenterCountOutputTypeCountSessionsArgs
   activityCenters?: boolean | CenterCountOutputTypeCountActivityCentersArgs
+  notificationCenters?: boolean | CenterCountOutputTypeCountNotificationCentersArgs
 }
 
 /**
@@ -816,6 +923,13 @@ export type CenterCountOutputTypeCountActivityCentersArgs<ExtArgs extends runtim
   where?: Prisma.ActivityCenterWhereInput
 }
 
+/**
+ * CenterCountOutputType without action
+ */
+export type CenterCountOutputTypeCountNotificationCentersArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.NotificationCenterWhereInput
+}
+
 
 export type CenterSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
@@ -829,6 +943,7 @@ export type CenterSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs =
   projectCenters?: boolean | Prisma.Center$projectCentersArgs<ExtArgs>
   sessions?: boolean | Prisma.Center$sessionsArgs<ExtArgs>
   activityCenters?: boolean | Prisma.Center$activityCentersArgs<ExtArgs>
+  notificationCenters?: boolean | Prisma.Center$notificationCentersArgs<ExtArgs>
   _count?: boolean | Prisma.CenterCountOutputTypeDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["center"]>
 
@@ -870,6 +985,7 @@ export type CenterInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs 
   projectCenters?: boolean | Prisma.Center$projectCentersArgs<ExtArgs>
   sessions?: boolean | Prisma.Center$sessionsArgs<ExtArgs>
   activityCenters?: boolean | Prisma.Center$activityCentersArgs<ExtArgs>
+  notificationCenters?: boolean | Prisma.Center$notificationCentersArgs<ExtArgs>
   _count?: boolean | Prisma.CenterCountOutputTypeDefaultArgs<ExtArgs>
 }
 export type CenterIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
@@ -886,6 +1002,7 @@ export type $CenterPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs
     projectCenters: Prisma.$ProjectCenterPayload<ExtArgs>[]
     sessions: Prisma.$SessionPayload<ExtArgs>[]
     activityCenters: Prisma.$ActivityCenterPayload<ExtArgs>[]
+    notificationCenters: Prisma.$NotificationCenterPayload<ExtArgs>[]
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: string
@@ -1293,6 +1410,7 @@ export interface Prisma__CenterClient<T, Null = never, ExtArgs extends runtime.T
   projectCenters<T extends Prisma.Center$projectCentersArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Center$projectCentersArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$ProjectCenterPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   sessions<T extends Prisma.Center$sessionsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Center$sessionsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$SessionPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   activityCenters<T extends Prisma.Center$activityCentersArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Center$activityCentersArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$ActivityCenterPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  notificationCenters<T extends Prisma.Center$notificationCentersArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Center$notificationCentersArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$NotificationCenterPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -1818,6 +1936,30 @@ export type Center$activityCentersArgs<ExtArgs extends runtime.Types.Extensions.
   take?: number
   skip?: number
   distinct?: Prisma.ActivityCenterScalarFieldEnum | Prisma.ActivityCenterScalarFieldEnum[]
+}
+
+/**
+ * Center.notificationCenters
+ */
+export type Center$notificationCentersArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the NotificationCenter
+   */
+  select?: Prisma.NotificationCenterSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the NotificationCenter
+   */
+  omit?: Prisma.NotificationCenterOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.NotificationCenterInclude<ExtArgs> | null
+  where?: Prisma.NotificationCenterWhereInput
+  orderBy?: Prisma.NotificationCenterOrderByWithRelationInput | Prisma.NotificationCenterOrderByWithRelationInput[]
+  cursor?: Prisma.NotificationCenterWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.NotificationCenterScalarFieldEnum | Prisma.NotificationCenterScalarFieldEnum[]
 }
 
 /**

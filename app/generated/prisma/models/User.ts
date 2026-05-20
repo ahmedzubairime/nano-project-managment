@@ -193,6 +193,8 @@ export type UserWhereInput = {
   ownedProjects?: Prisma.ProjectListRelationFilter
   managedCenters?: Prisma.CenterListRelationFilter
   approvalReviews?: Prisma.ApprovalRecordListRelationFilter
+  sentNotifications?: Prisma.NotificationListRelationFilter
+  notificationReads?: Prisma.NotificationReadListRelationFilter
 }
 
 export type UserOrderByWithRelationInput = {
@@ -205,6 +207,8 @@ export type UserOrderByWithRelationInput = {
   ownedProjects?: Prisma.ProjectOrderByRelationAggregateInput
   managedCenters?: Prisma.CenterOrderByRelationAggregateInput
   approvalReviews?: Prisma.ApprovalRecordOrderByRelationAggregateInput
+  sentNotifications?: Prisma.NotificationOrderByRelationAggregateInput
+  notificationReads?: Prisma.NotificationReadOrderByRelationAggregateInput
 }
 
 export type UserWhereUniqueInput = Prisma.AtLeast<{
@@ -220,6 +224,8 @@ export type UserWhereUniqueInput = Prisma.AtLeast<{
   ownedProjects?: Prisma.ProjectListRelationFilter
   managedCenters?: Prisma.CenterListRelationFilter
   approvalReviews?: Prisma.ApprovalRecordListRelationFilter
+  sentNotifications?: Prisma.NotificationListRelationFilter
+  notificationReads?: Prisma.NotificationReadListRelationFilter
 }, "id" | "clerkUserId" | "email">
 
 export type UserOrderByWithAggregationInput = {
@@ -256,6 +262,8 @@ export type UserCreateInput = {
   ownedProjects?: Prisma.ProjectCreateNestedManyWithoutOwnerInput
   managedCenters?: Prisma.CenterCreateNestedManyWithoutManagerInput
   approvalReviews?: Prisma.ApprovalRecordCreateNestedManyWithoutReviewerInput
+  sentNotifications?: Prisma.NotificationCreateNestedManyWithoutSenderInput
+  notificationReads?: Prisma.NotificationReadCreateNestedManyWithoutUserInput
 }
 
 export type UserUncheckedCreateInput = {
@@ -268,6 +276,8 @@ export type UserUncheckedCreateInput = {
   ownedProjects?: Prisma.ProjectUncheckedCreateNestedManyWithoutOwnerInput
   managedCenters?: Prisma.CenterUncheckedCreateNestedManyWithoutManagerInput
   approvalReviews?: Prisma.ApprovalRecordUncheckedCreateNestedManyWithoutReviewerInput
+  sentNotifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutSenderInput
+  notificationReads?: Prisma.NotificationReadUncheckedCreateNestedManyWithoutUserInput
 }
 
 export type UserUpdateInput = {
@@ -280,6 +290,8 @@ export type UserUpdateInput = {
   ownedProjects?: Prisma.ProjectUpdateManyWithoutOwnerNestedInput
   managedCenters?: Prisma.CenterUpdateManyWithoutManagerNestedInput
   approvalReviews?: Prisma.ApprovalRecordUpdateManyWithoutReviewerNestedInput
+  sentNotifications?: Prisma.NotificationUpdateManyWithoutSenderNestedInput
+  notificationReads?: Prisma.NotificationReadUpdateManyWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateInput = {
@@ -292,6 +304,8 @@ export type UserUncheckedUpdateInput = {
   ownedProjects?: Prisma.ProjectUncheckedUpdateManyWithoutOwnerNestedInput
   managedCenters?: Prisma.CenterUncheckedUpdateManyWithoutManagerNestedInput
   approvalReviews?: Prisma.ApprovalRecordUncheckedUpdateManyWithoutReviewerNestedInput
+  sentNotifications?: Prisma.NotificationUncheckedUpdateManyWithoutSenderNestedInput
+  notificationReads?: Prisma.NotificationReadUncheckedUpdateManyWithoutUserNestedInput
 }
 
 export type UserCreateManyInput = {
@@ -388,6 +402,36 @@ export type UserUpdateOneWithoutManagedCentersNestedInput = {
   update?: Prisma.XOR<Prisma.XOR<Prisma.UserUpdateToOneWithWhereWithoutManagedCentersInput, Prisma.UserUpdateWithoutManagedCentersInput>, Prisma.UserUncheckedUpdateWithoutManagedCentersInput>
 }
 
+export type UserCreateNestedOneWithoutSentNotificationsInput = {
+  create?: Prisma.XOR<Prisma.UserCreateWithoutSentNotificationsInput, Prisma.UserUncheckedCreateWithoutSentNotificationsInput>
+  connectOrCreate?: Prisma.UserCreateOrConnectWithoutSentNotificationsInput
+  connect?: Prisma.UserWhereUniqueInput
+}
+
+export type UserUpdateOneWithoutSentNotificationsNestedInput = {
+  create?: Prisma.XOR<Prisma.UserCreateWithoutSentNotificationsInput, Prisma.UserUncheckedCreateWithoutSentNotificationsInput>
+  connectOrCreate?: Prisma.UserCreateOrConnectWithoutSentNotificationsInput
+  upsert?: Prisma.UserUpsertWithoutSentNotificationsInput
+  disconnect?: Prisma.UserWhereInput | boolean
+  delete?: Prisma.UserWhereInput | boolean
+  connect?: Prisma.UserWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.UserUpdateToOneWithWhereWithoutSentNotificationsInput, Prisma.UserUpdateWithoutSentNotificationsInput>, Prisma.UserUncheckedUpdateWithoutSentNotificationsInput>
+}
+
+export type UserCreateNestedOneWithoutNotificationReadsInput = {
+  create?: Prisma.XOR<Prisma.UserCreateWithoutNotificationReadsInput, Prisma.UserUncheckedCreateWithoutNotificationReadsInput>
+  connectOrCreate?: Prisma.UserCreateOrConnectWithoutNotificationReadsInput
+  connect?: Prisma.UserWhereUniqueInput
+}
+
+export type UserUpdateOneRequiredWithoutNotificationReadsNestedInput = {
+  create?: Prisma.XOR<Prisma.UserCreateWithoutNotificationReadsInput, Prisma.UserUncheckedCreateWithoutNotificationReadsInput>
+  connectOrCreate?: Prisma.UserCreateOrConnectWithoutNotificationReadsInput
+  upsert?: Prisma.UserUpsertWithoutNotificationReadsInput
+  connect?: Prisma.UserWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.UserUpdateToOneWithWhereWithoutNotificationReadsInput, Prisma.UserUpdateWithoutNotificationReadsInput>, Prisma.UserUncheckedUpdateWithoutNotificationReadsInput>
+}
+
 export type UserCreateNestedOneWithoutOwnedProjectsInput = {
   create?: Prisma.XOR<Prisma.UserCreateWithoutOwnedProjectsInput, Prisma.UserUncheckedCreateWithoutOwnedProjectsInput>
   connectOrCreate?: Prisma.UserCreateOrConnectWithoutOwnedProjectsInput
@@ -415,6 +459,8 @@ export type UserCreateWithoutApprovalReviewsInput = {
   updatedAt?: Date | string
   ownedProjects?: Prisma.ProjectCreateNestedManyWithoutOwnerInput
   managedCenters?: Prisma.CenterCreateNestedManyWithoutManagerInput
+  sentNotifications?: Prisma.NotificationCreateNestedManyWithoutSenderInput
+  notificationReads?: Prisma.NotificationReadCreateNestedManyWithoutUserInput
 }
 
 export type UserUncheckedCreateWithoutApprovalReviewsInput = {
@@ -426,6 +472,8 @@ export type UserUncheckedCreateWithoutApprovalReviewsInput = {
   updatedAt?: Date | string
   ownedProjects?: Prisma.ProjectUncheckedCreateNestedManyWithoutOwnerInput
   managedCenters?: Prisma.CenterUncheckedCreateNestedManyWithoutManagerInput
+  sentNotifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutSenderInput
+  notificationReads?: Prisma.NotificationReadUncheckedCreateNestedManyWithoutUserInput
 }
 
 export type UserCreateOrConnectWithoutApprovalReviewsInput = {
@@ -453,6 +501,8 @@ export type UserUpdateWithoutApprovalReviewsInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   ownedProjects?: Prisma.ProjectUpdateManyWithoutOwnerNestedInput
   managedCenters?: Prisma.CenterUpdateManyWithoutManagerNestedInput
+  sentNotifications?: Prisma.NotificationUpdateManyWithoutSenderNestedInput
+  notificationReads?: Prisma.NotificationReadUpdateManyWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutApprovalReviewsInput = {
@@ -464,6 +514,8 @@ export type UserUncheckedUpdateWithoutApprovalReviewsInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   ownedProjects?: Prisma.ProjectUncheckedUpdateManyWithoutOwnerNestedInput
   managedCenters?: Prisma.CenterUncheckedUpdateManyWithoutManagerNestedInput
+  sentNotifications?: Prisma.NotificationUncheckedUpdateManyWithoutSenderNestedInput
+  notificationReads?: Prisma.NotificationReadUncheckedUpdateManyWithoutUserNestedInput
 }
 
 export type UserCreateWithoutManagedCentersInput = {
@@ -475,6 +527,8 @@ export type UserCreateWithoutManagedCentersInput = {
   updatedAt?: Date | string
   ownedProjects?: Prisma.ProjectCreateNestedManyWithoutOwnerInput
   approvalReviews?: Prisma.ApprovalRecordCreateNestedManyWithoutReviewerInput
+  sentNotifications?: Prisma.NotificationCreateNestedManyWithoutSenderInput
+  notificationReads?: Prisma.NotificationReadCreateNestedManyWithoutUserInput
 }
 
 export type UserUncheckedCreateWithoutManagedCentersInput = {
@@ -486,6 +540,8 @@ export type UserUncheckedCreateWithoutManagedCentersInput = {
   updatedAt?: Date | string
   ownedProjects?: Prisma.ProjectUncheckedCreateNestedManyWithoutOwnerInput
   approvalReviews?: Prisma.ApprovalRecordUncheckedCreateNestedManyWithoutReviewerInput
+  sentNotifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutSenderInput
+  notificationReads?: Prisma.NotificationReadUncheckedCreateNestedManyWithoutUserInput
 }
 
 export type UserCreateOrConnectWithoutManagedCentersInput = {
@@ -513,6 +569,8 @@ export type UserUpdateWithoutManagedCentersInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   ownedProjects?: Prisma.ProjectUpdateManyWithoutOwnerNestedInput
   approvalReviews?: Prisma.ApprovalRecordUpdateManyWithoutReviewerNestedInput
+  sentNotifications?: Prisma.NotificationUpdateManyWithoutSenderNestedInput
+  notificationReads?: Prisma.NotificationReadUpdateManyWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutManagedCentersInput = {
@@ -524,6 +582,144 @@ export type UserUncheckedUpdateWithoutManagedCentersInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   ownedProjects?: Prisma.ProjectUncheckedUpdateManyWithoutOwnerNestedInput
   approvalReviews?: Prisma.ApprovalRecordUncheckedUpdateManyWithoutReviewerNestedInput
+  sentNotifications?: Prisma.NotificationUncheckedUpdateManyWithoutSenderNestedInput
+  notificationReads?: Prisma.NotificationReadUncheckedUpdateManyWithoutUserNestedInput
+}
+
+export type UserCreateWithoutSentNotificationsInput = {
+  id?: string
+  clerkUserId: string
+  email: string
+  role?: $Enums.Role
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  ownedProjects?: Prisma.ProjectCreateNestedManyWithoutOwnerInput
+  managedCenters?: Prisma.CenterCreateNestedManyWithoutManagerInput
+  approvalReviews?: Prisma.ApprovalRecordCreateNestedManyWithoutReviewerInput
+  notificationReads?: Prisma.NotificationReadCreateNestedManyWithoutUserInput
+}
+
+export type UserUncheckedCreateWithoutSentNotificationsInput = {
+  id?: string
+  clerkUserId: string
+  email: string
+  role?: $Enums.Role
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  ownedProjects?: Prisma.ProjectUncheckedCreateNestedManyWithoutOwnerInput
+  managedCenters?: Prisma.CenterUncheckedCreateNestedManyWithoutManagerInput
+  approvalReviews?: Prisma.ApprovalRecordUncheckedCreateNestedManyWithoutReviewerInput
+  notificationReads?: Prisma.NotificationReadUncheckedCreateNestedManyWithoutUserInput
+}
+
+export type UserCreateOrConnectWithoutSentNotificationsInput = {
+  where: Prisma.UserWhereUniqueInput
+  create: Prisma.XOR<Prisma.UserCreateWithoutSentNotificationsInput, Prisma.UserUncheckedCreateWithoutSentNotificationsInput>
+}
+
+export type UserUpsertWithoutSentNotificationsInput = {
+  update: Prisma.XOR<Prisma.UserUpdateWithoutSentNotificationsInput, Prisma.UserUncheckedUpdateWithoutSentNotificationsInput>
+  create: Prisma.XOR<Prisma.UserCreateWithoutSentNotificationsInput, Prisma.UserUncheckedCreateWithoutSentNotificationsInput>
+  where?: Prisma.UserWhereInput
+}
+
+export type UserUpdateToOneWithWhereWithoutSentNotificationsInput = {
+  where?: Prisma.UserWhereInput
+  data: Prisma.XOR<Prisma.UserUpdateWithoutSentNotificationsInput, Prisma.UserUncheckedUpdateWithoutSentNotificationsInput>
+}
+
+export type UserUpdateWithoutSentNotificationsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  clerkUserId?: Prisma.StringFieldUpdateOperationsInput | string
+  email?: Prisma.StringFieldUpdateOperationsInput | string
+  role?: Prisma.EnumRoleFieldUpdateOperationsInput | $Enums.Role
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  ownedProjects?: Prisma.ProjectUpdateManyWithoutOwnerNestedInput
+  managedCenters?: Prisma.CenterUpdateManyWithoutManagerNestedInput
+  approvalReviews?: Prisma.ApprovalRecordUpdateManyWithoutReviewerNestedInput
+  notificationReads?: Prisma.NotificationReadUpdateManyWithoutUserNestedInput
+}
+
+export type UserUncheckedUpdateWithoutSentNotificationsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  clerkUserId?: Prisma.StringFieldUpdateOperationsInput | string
+  email?: Prisma.StringFieldUpdateOperationsInput | string
+  role?: Prisma.EnumRoleFieldUpdateOperationsInput | $Enums.Role
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  ownedProjects?: Prisma.ProjectUncheckedUpdateManyWithoutOwnerNestedInput
+  managedCenters?: Prisma.CenterUncheckedUpdateManyWithoutManagerNestedInput
+  approvalReviews?: Prisma.ApprovalRecordUncheckedUpdateManyWithoutReviewerNestedInput
+  notificationReads?: Prisma.NotificationReadUncheckedUpdateManyWithoutUserNestedInput
+}
+
+export type UserCreateWithoutNotificationReadsInput = {
+  id?: string
+  clerkUserId: string
+  email: string
+  role?: $Enums.Role
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  ownedProjects?: Prisma.ProjectCreateNestedManyWithoutOwnerInput
+  managedCenters?: Prisma.CenterCreateNestedManyWithoutManagerInput
+  approvalReviews?: Prisma.ApprovalRecordCreateNestedManyWithoutReviewerInput
+  sentNotifications?: Prisma.NotificationCreateNestedManyWithoutSenderInput
+}
+
+export type UserUncheckedCreateWithoutNotificationReadsInput = {
+  id?: string
+  clerkUserId: string
+  email: string
+  role?: $Enums.Role
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  ownedProjects?: Prisma.ProjectUncheckedCreateNestedManyWithoutOwnerInput
+  managedCenters?: Prisma.CenterUncheckedCreateNestedManyWithoutManagerInput
+  approvalReviews?: Prisma.ApprovalRecordUncheckedCreateNestedManyWithoutReviewerInput
+  sentNotifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutSenderInput
+}
+
+export type UserCreateOrConnectWithoutNotificationReadsInput = {
+  where: Prisma.UserWhereUniqueInput
+  create: Prisma.XOR<Prisma.UserCreateWithoutNotificationReadsInput, Prisma.UserUncheckedCreateWithoutNotificationReadsInput>
+}
+
+export type UserUpsertWithoutNotificationReadsInput = {
+  update: Prisma.XOR<Prisma.UserUpdateWithoutNotificationReadsInput, Prisma.UserUncheckedUpdateWithoutNotificationReadsInput>
+  create: Prisma.XOR<Prisma.UserCreateWithoutNotificationReadsInput, Prisma.UserUncheckedCreateWithoutNotificationReadsInput>
+  where?: Prisma.UserWhereInput
+}
+
+export type UserUpdateToOneWithWhereWithoutNotificationReadsInput = {
+  where?: Prisma.UserWhereInput
+  data: Prisma.XOR<Prisma.UserUpdateWithoutNotificationReadsInput, Prisma.UserUncheckedUpdateWithoutNotificationReadsInput>
+}
+
+export type UserUpdateWithoutNotificationReadsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  clerkUserId?: Prisma.StringFieldUpdateOperationsInput | string
+  email?: Prisma.StringFieldUpdateOperationsInput | string
+  role?: Prisma.EnumRoleFieldUpdateOperationsInput | $Enums.Role
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  ownedProjects?: Prisma.ProjectUpdateManyWithoutOwnerNestedInput
+  managedCenters?: Prisma.CenterUpdateManyWithoutManagerNestedInput
+  approvalReviews?: Prisma.ApprovalRecordUpdateManyWithoutReviewerNestedInput
+  sentNotifications?: Prisma.NotificationUpdateManyWithoutSenderNestedInput
+}
+
+export type UserUncheckedUpdateWithoutNotificationReadsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  clerkUserId?: Prisma.StringFieldUpdateOperationsInput | string
+  email?: Prisma.StringFieldUpdateOperationsInput | string
+  role?: Prisma.EnumRoleFieldUpdateOperationsInput | $Enums.Role
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  ownedProjects?: Prisma.ProjectUncheckedUpdateManyWithoutOwnerNestedInput
+  managedCenters?: Prisma.CenterUncheckedUpdateManyWithoutManagerNestedInput
+  approvalReviews?: Prisma.ApprovalRecordUncheckedUpdateManyWithoutReviewerNestedInput
+  sentNotifications?: Prisma.NotificationUncheckedUpdateManyWithoutSenderNestedInput
 }
 
 export type UserCreateWithoutOwnedProjectsInput = {
@@ -535,6 +731,8 @@ export type UserCreateWithoutOwnedProjectsInput = {
   updatedAt?: Date | string
   managedCenters?: Prisma.CenterCreateNestedManyWithoutManagerInput
   approvalReviews?: Prisma.ApprovalRecordCreateNestedManyWithoutReviewerInput
+  sentNotifications?: Prisma.NotificationCreateNestedManyWithoutSenderInput
+  notificationReads?: Prisma.NotificationReadCreateNestedManyWithoutUserInput
 }
 
 export type UserUncheckedCreateWithoutOwnedProjectsInput = {
@@ -546,6 +744,8 @@ export type UserUncheckedCreateWithoutOwnedProjectsInput = {
   updatedAt?: Date | string
   managedCenters?: Prisma.CenterUncheckedCreateNestedManyWithoutManagerInput
   approvalReviews?: Prisma.ApprovalRecordUncheckedCreateNestedManyWithoutReviewerInput
+  sentNotifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutSenderInput
+  notificationReads?: Prisma.NotificationReadUncheckedCreateNestedManyWithoutUserInput
 }
 
 export type UserCreateOrConnectWithoutOwnedProjectsInput = {
@@ -573,6 +773,8 @@ export type UserUpdateWithoutOwnedProjectsInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   managedCenters?: Prisma.CenterUpdateManyWithoutManagerNestedInput
   approvalReviews?: Prisma.ApprovalRecordUpdateManyWithoutReviewerNestedInput
+  sentNotifications?: Prisma.NotificationUpdateManyWithoutSenderNestedInput
+  notificationReads?: Prisma.NotificationReadUpdateManyWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutOwnedProjectsInput = {
@@ -584,6 +786,8 @@ export type UserUncheckedUpdateWithoutOwnedProjectsInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   managedCenters?: Prisma.CenterUncheckedUpdateManyWithoutManagerNestedInput
   approvalReviews?: Prisma.ApprovalRecordUncheckedUpdateManyWithoutReviewerNestedInput
+  sentNotifications?: Prisma.NotificationUncheckedUpdateManyWithoutSenderNestedInput
+  notificationReads?: Prisma.NotificationReadUncheckedUpdateManyWithoutUserNestedInput
 }
 
 
@@ -595,12 +799,16 @@ export type UserCountOutputType = {
   ownedProjects: number
   managedCenters: number
   approvalReviews: number
+  sentNotifications: number
+  notificationReads: number
 }
 
 export type UserCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   ownedProjects?: boolean | UserCountOutputTypeCountOwnedProjectsArgs
   managedCenters?: boolean | UserCountOutputTypeCountManagedCentersArgs
   approvalReviews?: boolean | UserCountOutputTypeCountApprovalReviewsArgs
+  sentNotifications?: boolean | UserCountOutputTypeCountSentNotificationsArgs
+  notificationReads?: boolean | UserCountOutputTypeCountNotificationReadsArgs
 }
 
 /**
@@ -634,6 +842,20 @@ export type UserCountOutputTypeCountApprovalReviewsArgs<ExtArgs extends runtime.
   where?: Prisma.ApprovalRecordWhereInput
 }
 
+/**
+ * UserCountOutputType without action
+ */
+export type UserCountOutputTypeCountSentNotificationsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.NotificationWhereInput
+}
+
+/**
+ * UserCountOutputType without action
+ */
+export type UserCountOutputTypeCountNotificationReadsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.NotificationReadWhereInput
+}
+
 
 export type UserSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
@@ -645,6 +867,8 @@ export type UserSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = r
   ownedProjects?: boolean | Prisma.User$ownedProjectsArgs<ExtArgs>
   managedCenters?: boolean | Prisma.User$managedCentersArgs<ExtArgs>
   approvalReviews?: boolean | Prisma.User$approvalReviewsArgs<ExtArgs>
+  sentNotifications?: boolean | Prisma.User$sentNotificationsArgs<ExtArgs>
+  notificationReads?: boolean | Prisma.User$notificationReadsArgs<ExtArgs>
   _count?: boolean | Prisma.UserCountOutputTypeDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["user"]>
 
@@ -680,6 +904,8 @@ export type UserInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = 
   ownedProjects?: boolean | Prisma.User$ownedProjectsArgs<ExtArgs>
   managedCenters?: boolean | Prisma.User$managedCentersArgs<ExtArgs>
   approvalReviews?: boolean | Prisma.User$approvalReviewsArgs<ExtArgs>
+  sentNotifications?: boolean | Prisma.User$sentNotificationsArgs<ExtArgs>
+  notificationReads?: boolean | Prisma.User$notificationReadsArgs<ExtArgs>
   _count?: boolean | Prisma.UserCountOutputTypeDefaultArgs<ExtArgs>
 }
 export type UserIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {}
@@ -691,6 +917,8 @@ export type $UserPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs =
     ownedProjects: Prisma.$ProjectPayload<ExtArgs>[]
     managedCenters: Prisma.$CenterPayload<ExtArgs>[]
     approvalReviews: Prisma.$ApprovalRecordPayload<ExtArgs>[]
+    sentNotifications: Prisma.$NotificationPayload<ExtArgs>[]
+    notificationReads: Prisma.$NotificationReadPayload<ExtArgs>[]
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: string
@@ -1096,6 +1324,8 @@ export interface Prisma__UserClient<T, Null = never, ExtArgs extends runtime.Typ
   ownedProjects<T extends Prisma.User$ownedProjectsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$ownedProjectsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$ProjectPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   managedCenters<T extends Prisma.User$managedCentersArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$managedCentersArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$CenterPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   approvalReviews<T extends Prisma.User$approvalReviewsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$approvalReviewsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$ApprovalRecordPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  sentNotifications<T extends Prisma.User$sentNotificationsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$sentNotificationsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$NotificationPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  notificationReads<T extends Prisma.User$notificationReadsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$notificationReadsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$NotificationReadPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -1593,6 +1823,54 @@ export type User$approvalReviewsArgs<ExtArgs extends runtime.Types.Extensions.In
   take?: number
   skip?: number
   distinct?: Prisma.ApprovalRecordScalarFieldEnum | Prisma.ApprovalRecordScalarFieldEnum[]
+}
+
+/**
+ * User.sentNotifications
+ */
+export type User$sentNotificationsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the Notification
+   */
+  select?: Prisma.NotificationSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the Notification
+   */
+  omit?: Prisma.NotificationOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.NotificationInclude<ExtArgs> | null
+  where?: Prisma.NotificationWhereInput
+  orderBy?: Prisma.NotificationOrderByWithRelationInput | Prisma.NotificationOrderByWithRelationInput[]
+  cursor?: Prisma.NotificationWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.NotificationScalarFieldEnum | Prisma.NotificationScalarFieldEnum[]
+}
+
+/**
+ * User.notificationReads
+ */
+export type User$notificationReadsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the NotificationRead
+   */
+  select?: Prisma.NotificationReadSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the NotificationRead
+   */
+  omit?: Prisma.NotificationReadOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.NotificationReadInclude<ExtArgs> | null
+  where?: Prisma.NotificationReadWhereInput
+  orderBy?: Prisma.NotificationReadOrderByWithRelationInput | Prisma.NotificationReadOrderByWithRelationInput[]
+  cursor?: Prisma.NotificationReadWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.NotificationReadScalarFieldEnum | Prisma.NotificationReadScalarFieldEnum[]
 }
 
 /**

@@ -12,13 +12,30 @@ export async function triggerApprovalSuccessNotification(
 ) {
   console.log(`[Notification Hook] Session Approved - Project: ${projectId}, Session: ${sessionId}`);
   try {
-    await prisma.notification.create({
-      data: {
-        projectId,
-        title: "Session Approved",
-        message: `The session for "${activityTitle}" at "${centerName}" has been officially approved.`,
-        type: "INFO" as NotificationType,
-      },
+    const session = await prisma.session.findUnique({
+      where: { id: sessionId },
+      select: { centerId: true },
+    });
+
+    await prisma.$transaction(async (tx) => {
+      const notif = await tx.notification.create({
+        data: {
+          projectId,
+          sessionId,
+          title: "Session Approved",
+          message: `The session for "${activityTitle}" at "${centerName}" has been officially approved.`,
+          type: "INFO" as NotificationType,
+        },
+      });
+
+      if (session?.centerId) {
+        await tx.notificationCenter.create({
+          data: {
+            notificationId: notif.id,
+            centerId: session.centerId,
+          },
+        });
+      }
     });
   } catch (error) {
     console.error("Failed to create approval success notification:", error);
@@ -37,13 +54,30 @@ export async function triggerRejectionNotification(
 ) {
   console.log(`[Notification Hook] Session Rejected - Project: ${projectId}, Session: ${sessionId}`);
   try {
-    await prisma.notification.create({
-      data: {
-        projectId,
-        title: "Session Rejected",
-        message: `The session for "${activityTitle}" at "${centerName}" was rejected. Reason: ${reviewNotes}`,
-        type: "WARNING" as NotificationType,
-      },
+    const session = await prisma.session.findUnique({
+      where: { id: sessionId },
+      select: { centerId: true },
+    });
+
+    await prisma.$transaction(async (tx) => {
+      const notif = await tx.notification.create({
+        data: {
+          projectId,
+          sessionId,
+          title: "Session Rejected",
+          message: `The session for "${activityTitle}" at "${centerName}" was rejected. Reason: ${reviewNotes}`,
+          type: "WARNING" as NotificationType,
+        },
+      });
+
+      if (session?.centerId) {
+        await tx.notificationCenter.create({
+          data: {
+            notificationId: notif.id,
+            centerId: session.centerId,
+          },
+        });
+      }
     });
   } catch (error) {
     console.error("Failed to create rejection notification:", error);
@@ -61,13 +95,30 @@ export async function triggerPendingReviewReminderNotification(
 ) {
   console.log(`[Notification Hook] Pending Approval Reminder - Project: ${projectId}, Session: ${sessionId}`);
   try {
-    await prisma.notification.create({
-      data: {
-        projectId,
-        title: "Pending Approval Reminder",
-        message: `The session for "${activityTitle}" at "${centerName}" is awaiting project manager review.`,
-        type: "INFO" as NotificationType,
-      },
+    const session = await prisma.session.findUnique({
+      where: { id: sessionId },
+      select: { centerId: true },
+    });
+
+    await prisma.$transaction(async (tx) => {
+      const notif = await tx.notification.create({
+        data: {
+          projectId,
+          sessionId,
+          title: "Pending Approval Reminder",
+          message: `The session for "${activityTitle}" at "${centerName}" is awaiting project manager review.`,
+          type: "INFO" as NotificationType,
+        },
+      });
+
+      if (session?.centerId) {
+        await tx.notificationCenter.create({
+          data: {
+            notificationId: notif.id,
+            centerId: session.centerId,
+          },
+        });
+      }
     });
   } catch (error) {
     console.error("Failed to create pending review reminder notification:", error);

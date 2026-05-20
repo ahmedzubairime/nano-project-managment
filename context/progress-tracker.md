@@ -167,7 +167,13 @@ Update this file after every meaningful implementation change.
   - [x] Add volunteer completion rate and contribution metrics to PM dashboard branches performance matrix table
   - [x] Add volunteer initiative filter selection to the Activities planning and Sessions registry views
   - [x] Implement dynamic `type` query parameters in timeline API to isolate core and volunteer schedules in the Gantt timeline
-  - [x] Verify production build passes with 0 TypeScript/Lint compilation errors
+- Feature 18: Notifications System
+  - [x] Enhance Prisma schema models and run synchronization
+  - [x] Create automatic notification services and update hooks
+  - [x] Build GET/POST/PATCH backend notification API routes
+  - [x] Build premium interactive navbar notifications dropdown panel
+  - [x] Build premium Notifications Center workspace page
+  - [x] Verify production build passes with zero errors
 
 ## In Progress
 
@@ -201,5 +207,4 @@ Update this file after every meaningful implementation change.
 - Feature 15: Implemented secure scheduled session execution handlers under `PATCH /api/sessions/[sessionId]/execute` checking assigned physical center manager scopes. Created shared `SessionExecutionDialog` component supporting full state adjustments, notes logs, Google Drive folder validation, and approval submissions. Integrated execution dialogues across dashboard queues, list metrics, and global registry grids with real-time UI synchronization.
 - Feature 16: Implemented dual-endpoint approvals workflow under `GET /api/projects/[projectId]/approvals` and `PATCH /api/sessions/[sessionId]/approval` with Project Manager validations, transactionally recording history in the `ApprovalRecord` model. Updated the project and center dashboard services to require explicit `APPROVED` state for completion metrics. Built premium approvals queue table workspace with overdue filters and sidebar audit history feeds.
 - Feature 17: Extended the design system with semantic oklch purple volunteer status tokens (`--status-volunteer`) across light and dark themes, plus dashed-stroke Gantt bar overlays in `gantt-styles.css`. Expanded `CenterPerformanceMetric` to aggregate `volunteerAssignedCount`/`volunteerCompletedCount` per center during single-pass traversal. Added a dedicated Volunteer Initiatives summary card and per-center contribution column to the PM dashboard. Integrated Core/Volunteer type filter dropdowns into the Sessions Registry and Gantt Timeline toolbar with server-side `type` query parameter support in the timeline API. All volunteer metrics are calculated separately from core completion percentages to preserve the progression invariant.
-
-
+- Feature 18: Developed a project-scoped, internal in-app notifications system. Enhanced the database schema with relation tables for targeted centers (`NotificationCenter`) and per-user read logs (`NotificationRead`). Created an idempotent on-demand auto-notifications service to dynamically detect upcoming and overdue sessions. Built secure GET/POST/PATCH endpoints verifying role-based visibility and project access. Constructed a premium NavbarNotifications bell dropdown panel utilizing Base UI triggers and a complete Notifications Center page featuring filters, status-badge cards, and project-wide manual announcements.

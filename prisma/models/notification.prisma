@@ -3,17 +3,50 @@
 model Notification {
   id        String           @id @default(cuid())
   projectId String?
+  sessionId String?
   title     String
   message   String
   type      NotificationType @default(INFO)
-  readAt    DateTime?
+  senderId  String?
   createdAt DateTime         @default(now())
   updatedAt DateTime         @updatedAt
 
   // Relations
   project Project? @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  sender  User?    @relation("NotificationSender", fields: [senderId], references: [id])
+  session Session? @relation(fields: [sessionId], references: [id], onDelete: Cascade)
+  centers NotificationCenter[]
+  reads   NotificationRead[]
 
   @@index([projectId])
+  @@index([sessionId])
+  @@index([senderId])
   @@index([type])
-  @@index([readAt])
+}
+
+// NotificationCenter — targeted center mapping for broadcasts and alerts
+model NotificationCenter {
+  id             String       @id @default(cuid())
+  notificationId String
+  centerId       String
+  notification   Notification @relation(fields: [notificationId], references: [id], onDelete: Cascade)
+  center         Center       @relation(fields: [centerId], references: [id], onDelete: Cascade)
+
+  @@unique([notificationId, centerId])
+  @@index([notificationId])
+  @@index([centerId])
+}
+
+// NotificationRead — tracking notification read status per user
+model NotificationRead {
+  id             String       @id @default(cuid())
+  notificationId String
+  userId         String
+  readAt         DateTime     @default(now())
+  notification   Notification @relation(fields: [notificationId], references: [id], onDelete: Cascade)
+  user           User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([notificationId, userId])
+  @@index([notificationId])
+  @@index([userId])
 }

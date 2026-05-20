@@ -274,6 +274,7 @@ export type SessionWhereInput = {
   activity?: Prisma.XOR<Prisma.ActivityScalarRelationFilter, Prisma.ActivityWhereInput>
   center?: Prisma.XOR<Prisma.CenterScalarRelationFilter, Prisma.CenterWhereInput>
   approvals?: Prisma.ApprovalRecordListRelationFilter
+  notifications?: Prisma.NotificationListRelationFilter
 }
 
 export type SessionOrderByWithRelationInput = {
@@ -297,6 +298,7 @@ export type SessionOrderByWithRelationInput = {
   activity?: Prisma.ActivityOrderByWithRelationInput
   center?: Prisma.CenterOrderByWithRelationInput
   approvals?: Prisma.ApprovalRecordOrderByRelationAggregateInput
+  notifications?: Prisma.NotificationOrderByRelationAggregateInput
 }
 
 export type SessionWhereUniqueInput = Prisma.AtLeast<{
@@ -323,6 +325,7 @@ export type SessionWhereUniqueInput = Prisma.AtLeast<{
   activity?: Prisma.XOR<Prisma.ActivityScalarRelationFilter, Prisma.ActivityWhereInput>
   center?: Prisma.XOR<Prisma.CenterScalarRelationFilter, Prisma.CenterWhereInput>
   approvals?: Prisma.ApprovalRecordListRelationFilter
+  notifications?: Prisma.NotificationListRelationFilter
 }, "id">
 
 export type SessionOrderByWithAggregationInput = {
@@ -387,6 +390,7 @@ export type SessionCreateInput = {
   activity: Prisma.ActivityCreateNestedOneWithoutSessionsInput
   center: Prisma.CenterCreateNestedOneWithoutSessionsInput
   approvals?: Prisma.ApprovalRecordCreateNestedManyWithoutSessionInput
+  notifications?: Prisma.NotificationCreateNestedManyWithoutSessionInput
 }
 
 export type SessionUncheckedCreateInput = {
@@ -407,6 +411,7 @@ export type SessionUncheckedCreateInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   approvals?: Prisma.ApprovalRecordUncheckedCreateNestedManyWithoutSessionInput
+  notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutSessionInput
 }
 
 export type SessionUpdateInput = {
@@ -427,6 +432,7 @@ export type SessionUpdateInput = {
   activity?: Prisma.ActivityUpdateOneRequiredWithoutSessionsNestedInput
   center?: Prisma.CenterUpdateOneRequiredWithoutSessionsNestedInput
   approvals?: Prisma.ApprovalRecordUpdateManyWithoutSessionNestedInput
+  notifications?: Prisma.NotificationUpdateManyWithoutSessionNestedInput
 }
 
 export type SessionUncheckedUpdateInput = {
@@ -447,6 +453,7 @@ export type SessionUncheckedUpdateInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   approvals?: Prisma.ApprovalRecordUncheckedUpdateManyWithoutSessionNestedInput
+  notifications?: Prisma.NotificationUncheckedUpdateManyWithoutSessionNestedInput
 }
 
 export type SessionCreateManyInput = {
@@ -516,6 +523,11 @@ export type SessionOrderByRelationAggregateInput = {
 export type SessionScalarRelationFilter = {
   is?: Prisma.SessionWhereInput
   isNot?: Prisma.SessionWhereInput
+}
+
+export type SessionNullableScalarRelationFilter = {
+  is?: Prisma.SessionWhereInput | null
+  isNot?: Prisma.SessionWhereInput | null
 }
 
 export type SessionCountOrderByAggregateInput = {
@@ -673,6 +685,22 @@ export type SessionUncheckedUpdateManyWithoutCenterNestedInput = {
   deleteMany?: Prisma.SessionScalarWhereInput | Prisma.SessionScalarWhereInput[]
 }
 
+export type SessionCreateNestedOneWithoutNotificationsInput = {
+  create?: Prisma.XOR<Prisma.SessionCreateWithoutNotificationsInput, Prisma.SessionUncheckedCreateWithoutNotificationsInput>
+  connectOrCreate?: Prisma.SessionCreateOrConnectWithoutNotificationsInput
+  connect?: Prisma.SessionWhereUniqueInput
+}
+
+export type SessionUpdateOneWithoutNotificationsNestedInput = {
+  create?: Prisma.XOR<Prisma.SessionCreateWithoutNotificationsInput, Prisma.SessionUncheckedCreateWithoutNotificationsInput>
+  connectOrCreate?: Prisma.SessionCreateOrConnectWithoutNotificationsInput
+  upsert?: Prisma.SessionUpsertWithoutNotificationsInput
+  disconnect?: Prisma.SessionWhereInput | boolean
+  delete?: Prisma.SessionWhereInput | boolean
+  connect?: Prisma.SessionWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.SessionUpdateToOneWithWhereWithoutNotificationsInput, Prisma.SessionUpdateWithoutNotificationsInput>, Prisma.SessionUncheckedUpdateWithoutNotificationsInput>
+}
+
 export type SessionCreateNestedManyWithoutProjectInput = {
   create?: Prisma.XOR<Prisma.SessionCreateWithoutProjectInput, Prisma.SessionUncheckedCreateWithoutProjectInput> | Prisma.SessionCreateWithoutProjectInput[] | Prisma.SessionUncheckedCreateWithoutProjectInput[]
   connectOrCreate?: Prisma.SessionCreateOrConnectWithoutProjectInput | Prisma.SessionCreateOrConnectWithoutProjectInput[]
@@ -736,6 +764,7 @@ export type SessionCreateWithoutActivityInput = {
   project: Prisma.ProjectCreateNestedOneWithoutSessionsInput
   center: Prisma.CenterCreateNestedOneWithoutSessionsInput
   approvals?: Prisma.ApprovalRecordCreateNestedManyWithoutSessionInput
+  notifications?: Prisma.NotificationCreateNestedManyWithoutSessionInput
 }
 
 export type SessionUncheckedCreateWithoutActivityInput = {
@@ -755,6 +784,7 @@ export type SessionUncheckedCreateWithoutActivityInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   approvals?: Prisma.ApprovalRecordUncheckedCreateNestedManyWithoutSessionInput
+  notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutSessionInput
 }
 
 export type SessionCreateOrConnectWithoutActivityInput = {
@@ -822,6 +852,7 @@ export type SessionCreateWithoutApprovalsInput = {
   project: Prisma.ProjectCreateNestedOneWithoutSessionsInput
   activity: Prisma.ActivityCreateNestedOneWithoutSessionsInput
   center: Prisma.CenterCreateNestedOneWithoutSessionsInput
+  notifications?: Prisma.NotificationCreateNestedManyWithoutSessionInput
 }
 
 export type SessionUncheckedCreateWithoutApprovalsInput = {
@@ -841,6 +872,7 @@ export type SessionUncheckedCreateWithoutApprovalsInput = {
   manualAdjustmentReason?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
+  notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutSessionInput
 }
 
 export type SessionCreateOrConnectWithoutApprovalsInput = {
@@ -876,6 +908,7 @@ export type SessionUpdateWithoutApprovalsInput = {
   project?: Prisma.ProjectUpdateOneRequiredWithoutSessionsNestedInput
   activity?: Prisma.ActivityUpdateOneRequiredWithoutSessionsNestedInput
   center?: Prisma.CenterUpdateOneRequiredWithoutSessionsNestedInput
+  notifications?: Prisma.NotificationUpdateManyWithoutSessionNestedInput
 }
 
 export type SessionUncheckedUpdateWithoutApprovalsInput = {
@@ -895,6 +928,7 @@ export type SessionUncheckedUpdateWithoutApprovalsInput = {
   manualAdjustmentReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  notifications?: Prisma.NotificationUncheckedUpdateManyWithoutSessionNestedInput
 }
 
 export type SessionCreateWithoutCenterInput = {
@@ -914,6 +948,7 @@ export type SessionCreateWithoutCenterInput = {
   project: Prisma.ProjectCreateNestedOneWithoutSessionsInput
   activity: Prisma.ActivityCreateNestedOneWithoutSessionsInput
   approvals?: Prisma.ApprovalRecordCreateNestedManyWithoutSessionInput
+  notifications?: Prisma.NotificationCreateNestedManyWithoutSessionInput
 }
 
 export type SessionUncheckedCreateWithoutCenterInput = {
@@ -933,6 +968,7 @@ export type SessionUncheckedCreateWithoutCenterInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   approvals?: Prisma.ApprovalRecordUncheckedCreateNestedManyWithoutSessionInput
+  notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutSessionInput
 }
 
 export type SessionCreateOrConnectWithoutCenterInput = {
@@ -961,6 +997,102 @@ export type SessionUpdateManyWithWhereWithoutCenterInput = {
   data: Prisma.XOR<Prisma.SessionUpdateManyMutationInput, Prisma.SessionUncheckedUpdateManyWithoutCenterInput>
 }
 
+export type SessionCreateWithoutNotificationsInput = {
+  id?: string
+  scheduledDate: Date | string
+  status?: $Enums.SessionStatus
+  approvalStatus?: $Enums.ApprovalStatus
+  documentationUrl?: string | null
+  notes?: string | null
+  submittedAt?: Date | string | null
+  approvedAt?: Date | string | null
+  isManuallyAdjusted?: boolean
+  isLocked?: boolean
+  manualAdjustmentReason?: string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  project: Prisma.ProjectCreateNestedOneWithoutSessionsInput
+  activity: Prisma.ActivityCreateNestedOneWithoutSessionsInput
+  center: Prisma.CenterCreateNestedOneWithoutSessionsInput
+  approvals?: Prisma.ApprovalRecordCreateNestedManyWithoutSessionInput
+}
+
+export type SessionUncheckedCreateWithoutNotificationsInput = {
+  id?: string
+  projectId: string
+  activityId: string
+  centerId: string
+  scheduledDate: Date | string
+  status?: $Enums.SessionStatus
+  approvalStatus?: $Enums.ApprovalStatus
+  documentationUrl?: string | null
+  notes?: string | null
+  submittedAt?: Date | string | null
+  approvedAt?: Date | string | null
+  isManuallyAdjusted?: boolean
+  isLocked?: boolean
+  manualAdjustmentReason?: string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  approvals?: Prisma.ApprovalRecordUncheckedCreateNestedManyWithoutSessionInput
+}
+
+export type SessionCreateOrConnectWithoutNotificationsInput = {
+  where: Prisma.SessionWhereUniqueInput
+  create: Prisma.XOR<Prisma.SessionCreateWithoutNotificationsInput, Prisma.SessionUncheckedCreateWithoutNotificationsInput>
+}
+
+export type SessionUpsertWithoutNotificationsInput = {
+  update: Prisma.XOR<Prisma.SessionUpdateWithoutNotificationsInput, Prisma.SessionUncheckedUpdateWithoutNotificationsInput>
+  create: Prisma.XOR<Prisma.SessionCreateWithoutNotificationsInput, Prisma.SessionUncheckedCreateWithoutNotificationsInput>
+  where?: Prisma.SessionWhereInput
+}
+
+export type SessionUpdateToOneWithWhereWithoutNotificationsInput = {
+  where?: Prisma.SessionWhereInput
+  data: Prisma.XOR<Prisma.SessionUpdateWithoutNotificationsInput, Prisma.SessionUncheckedUpdateWithoutNotificationsInput>
+}
+
+export type SessionUpdateWithoutNotificationsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  scheduledDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  status?: Prisma.EnumSessionStatusFieldUpdateOperationsInput | $Enums.SessionStatus
+  approvalStatus?: Prisma.EnumApprovalStatusFieldUpdateOperationsInput | $Enums.ApprovalStatus
+  documentationUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  submittedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  approvedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  isManuallyAdjusted?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  isLocked?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  manualAdjustmentReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  project?: Prisma.ProjectUpdateOneRequiredWithoutSessionsNestedInput
+  activity?: Prisma.ActivityUpdateOneRequiredWithoutSessionsNestedInput
+  center?: Prisma.CenterUpdateOneRequiredWithoutSessionsNestedInput
+  approvals?: Prisma.ApprovalRecordUpdateManyWithoutSessionNestedInput
+}
+
+export type SessionUncheckedUpdateWithoutNotificationsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  projectId?: Prisma.StringFieldUpdateOperationsInput | string
+  activityId?: Prisma.StringFieldUpdateOperationsInput | string
+  centerId?: Prisma.StringFieldUpdateOperationsInput | string
+  scheduledDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  status?: Prisma.EnumSessionStatusFieldUpdateOperationsInput | $Enums.SessionStatus
+  approvalStatus?: Prisma.EnumApprovalStatusFieldUpdateOperationsInput | $Enums.ApprovalStatus
+  documentationUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  submittedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  approvedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  isManuallyAdjusted?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  isLocked?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  manualAdjustmentReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  approvals?: Prisma.ApprovalRecordUncheckedUpdateManyWithoutSessionNestedInput
+}
+
 export type SessionCreateWithoutProjectInput = {
   id?: string
   scheduledDate: Date | string
@@ -978,6 +1110,7 @@ export type SessionCreateWithoutProjectInput = {
   activity: Prisma.ActivityCreateNestedOneWithoutSessionsInput
   center: Prisma.CenterCreateNestedOneWithoutSessionsInput
   approvals?: Prisma.ApprovalRecordCreateNestedManyWithoutSessionInput
+  notifications?: Prisma.NotificationCreateNestedManyWithoutSessionInput
 }
 
 export type SessionUncheckedCreateWithoutProjectInput = {
@@ -997,6 +1130,7 @@ export type SessionUncheckedCreateWithoutProjectInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   approvals?: Prisma.ApprovalRecordUncheckedCreateNestedManyWithoutSessionInput
+  notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutSessionInput
 }
 
 export type SessionCreateOrConnectWithoutProjectInput = {
@@ -1060,6 +1194,7 @@ export type SessionUpdateWithoutActivityInput = {
   project?: Prisma.ProjectUpdateOneRequiredWithoutSessionsNestedInput
   center?: Prisma.CenterUpdateOneRequiredWithoutSessionsNestedInput
   approvals?: Prisma.ApprovalRecordUpdateManyWithoutSessionNestedInput
+  notifications?: Prisma.NotificationUpdateManyWithoutSessionNestedInput
 }
 
 export type SessionUncheckedUpdateWithoutActivityInput = {
@@ -1079,6 +1214,7 @@ export type SessionUncheckedUpdateWithoutActivityInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   approvals?: Prisma.ApprovalRecordUncheckedUpdateManyWithoutSessionNestedInput
+  notifications?: Prisma.NotificationUncheckedUpdateManyWithoutSessionNestedInput
 }
 
 export type SessionUncheckedUpdateManyWithoutActivityInput = {
@@ -1134,6 +1270,7 @@ export type SessionUpdateWithoutCenterInput = {
   project?: Prisma.ProjectUpdateOneRequiredWithoutSessionsNestedInput
   activity?: Prisma.ActivityUpdateOneRequiredWithoutSessionsNestedInput
   approvals?: Prisma.ApprovalRecordUpdateManyWithoutSessionNestedInput
+  notifications?: Prisma.NotificationUpdateManyWithoutSessionNestedInput
 }
 
 export type SessionUncheckedUpdateWithoutCenterInput = {
@@ -1153,6 +1290,7 @@ export type SessionUncheckedUpdateWithoutCenterInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   approvals?: Prisma.ApprovalRecordUncheckedUpdateManyWithoutSessionNestedInput
+  notifications?: Prisma.NotificationUncheckedUpdateManyWithoutSessionNestedInput
 }
 
 export type SessionUncheckedUpdateManyWithoutCenterInput = {
@@ -1208,6 +1346,7 @@ export type SessionUpdateWithoutProjectInput = {
   activity?: Prisma.ActivityUpdateOneRequiredWithoutSessionsNestedInput
   center?: Prisma.CenterUpdateOneRequiredWithoutSessionsNestedInput
   approvals?: Prisma.ApprovalRecordUpdateManyWithoutSessionNestedInput
+  notifications?: Prisma.NotificationUpdateManyWithoutSessionNestedInput
 }
 
 export type SessionUncheckedUpdateWithoutProjectInput = {
@@ -1227,6 +1366,7 @@ export type SessionUncheckedUpdateWithoutProjectInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   approvals?: Prisma.ApprovalRecordUncheckedUpdateManyWithoutSessionNestedInput
+  notifications?: Prisma.NotificationUncheckedUpdateManyWithoutSessionNestedInput
 }
 
 export type SessionUncheckedUpdateManyWithoutProjectInput = {
@@ -1254,10 +1394,12 @@ export type SessionUncheckedUpdateManyWithoutProjectInput = {
 
 export type SessionCountOutputType = {
   approvals: number
+  notifications: number
 }
 
 export type SessionCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   approvals?: boolean | SessionCountOutputTypeCountApprovalsArgs
+  notifications?: boolean | SessionCountOutputTypeCountNotificationsArgs
 }
 
 /**
@@ -1275,6 +1417,13 @@ export type SessionCountOutputTypeDefaultArgs<ExtArgs extends runtime.Types.Exte
  */
 export type SessionCountOutputTypeCountApprovalsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   where?: Prisma.ApprovalRecordWhereInput
+}
+
+/**
+ * SessionCountOutputType without action
+ */
+export type SessionCountOutputTypeCountNotificationsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.NotificationWhereInput
 }
 
 
@@ -1299,6 +1448,7 @@ export type SessionSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs 
   activity?: boolean | Prisma.ActivityDefaultArgs<ExtArgs>
   center?: boolean | Prisma.CenterDefaultArgs<ExtArgs>
   approvals?: boolean | Prisma.Session$approvalsArgs<ExtArgs>
+  notifications?: boolean | Prisma.Session$notificationsArgs<ExtArgs>
   _count?: boolean | Prisma.SessionCountOutputTypeDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["session"]>
 
@@ -1371,6 +1521,7 @@ export type SessionInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs
   activity?: boolean | Prisma.ActivityDefaultArgs<ExtArgs>
   center?: boolean | Prisma.CenterDefaultArgs<ExtArgs>
   approvals?: boolean | Prisma.Session$approvalsArgs<ExtArgs>
+  notifications?: boolean | Prisma.Session$notificationsArgs<ExtArgs>
   _count?: boolean | Prisma.SessionCountOutputTypeDefaultArgs<ExtArgs>
 }
 export type SessionIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
@@ -1391,6 +1542,7 @@ export type $SessionPayload<ExtArgs extends runtime.Types.Extensions.InternalArg
     activity: Prisma.$ActivityPayload<ExtArgs>
     center: Prisma.$CenterPayload<ExtArgs>
     approvals: Prisma.$ApprovalRecordPayload<ExtArgs>[]
+    notifications: Prisma.$NotificationPayload<ExtArgs>[]
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: string
@@ -1807,6 +1959,7 @@ export interface Prisma__SessionClient<T, Null = never, ExtArgs extends runtime.
   activity<T extends Prisma.ActivityDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.ActivityDefaultArgs<ExtArgs>>): Prisma.Prisma__ActivityClient<runtime.Types.Result.GetResult<Prisma.$ActivityPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
   center<T extends Prisma.CenterDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.CenterDefaultArgs<ExtArgs>>): Prisma.Prisma__CenterClient<runtime.Types.Result.GetResult<Prisma.$CenterPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
   approvals<T extends Prisma.Session$approvalsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Session$approvalsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$ApprovalRecordPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  notifications<T extends Prisma.Session$notificationsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Session$notificationsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$NotificationPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -2274,6 +2427,30 @@ export type Session$approvalsArgs<ExtArgs extends runtime.Types.Extensions.Inter
   take?: number
   skip?: number
   distinct?: Prisma.ApprovalRecordScalarFieldEnum | Prisma.ApprovalRecordScalarFieldEnum[]
+}
+
+/**
+ * Session.notifications
+ */
+export type Session$notificationsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the Notification
+   */
+  select?: Prisma.NotificationSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the Notification
+   */
+  omit?: Prisma.NotificationOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.NotificationInclude<ExtArgs> | null
+  where?: Prisma.NotificationWhereInput
+  orderBy?: Prisma.NotificationOrderByWithRelationInput | Prisma.NotificationOrderByWithRelationInput[]
+  cursor?: Prisma.NotificationWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.NotificationScalarFieldEnum | Prisma.NotificationScalarFieldEnum[]
 }
 
 /**

@@ -57,6 +57,8 @@ export const ModelName = {
   Center: 'Center',
   ProjectCenter: 'ProjectCenter',
   Notification: 'Notification',
+  NotificationCenter: 'NotificationCenter',
+  NotificationRead: 'NotificationRead',
   Project: 'Project',
   Session: 'Session',
   User: 'User'
@@ -147,15 +149,35 @@ export type ProjectCenterScalarFieldEnum = (typeof ProjectCenterScalarFieldEnum)
 export const NotificationScalarFieldEnum = {
   id: 'id',
   projectId: 'projectId',
+  sessionId: 'sessionId',
   title: 'title',
   message: 'message',
   type: 'type',
-  readAt: 'readAt',
+  senderId: 'senderId',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
 } as const
 
 export type NotificationScalarFieldEnum = (typeof NotificationScalarFieldEnum)[keyof typeof NotificationScalarFieldEnum]
+
+
+export const NotificationCenterScalarFieldEnum = {
+  id: 'id',
+  notificationId: 'notificationId',
+  centerId: 'centerId'
+} as const
+
+export type NotificationCenterScalarFieldEnum = (typeof NotificationCenterScalarFieldEnum)[keyof typeof NotificationCenterScalarFieldEnum]
+
+
+export const NotificationReadScalarFieldEnum = {
+  id: 'id',
+  notificationId: 'notificationId',
+  userId: 'userId',
+  readAt: 'readAt'
+} as const
+
+export type NotificationReadScalarFieldEnum = (typeof NotificationReadScalarFieldEnum)[keyof typeof NotificationReadScalarFieldEnum]
 
 
 export const ProjectScalarFieldEnum = {

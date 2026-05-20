@@ -3,6 +3,7 @@ import { getOrCreateDbUser } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { Role } from "@/types/roles";
 import { SessionStatus, ApprovalStatus } from "@/app/generated/prisma/enums";
+import { triggerPendingReviewReminderNotification } from "@/lib/notification-hooks";
 
 /**
  * PATCH /api/sessions/[sessionId]/execute
@@ -180,6 +181,17 @@ export async function PATCH(
     });
 
     console.log(`[SessionExecuteAPI] Successfully executed/updated session ${sessionId}`);
+
+    if (dataToUpdate.approvalStatus === "PENDING_APPROVAL") {
+      // Trigger pending review reminder notification for PM
+      await triggerPendingReviewReminderNotification(
+        updatedSession.projectId,
+        updatedSession.id,
+        updatedSession.activity.title,
+        updatedSession.center.name
+      ).catch((err) => console.error("Failed to trigger pending review reminder notification:", err));
+    }
+
     return NextResponse.json(updatedSession);
   } catch (error: any) {
     console.error("PATCH /api/sessions/[sessionId]/execute error:", error);
