@@ -1,0 +1,36 @@
+// Center — reusable operational center across projects
+
+model Center {
+  id        String   @id @default(cuid())
+  name      String
+  city      String
+  managerId String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // Relations
+  manager        User?           @relation("CenterManager", fields: [managerId], references: [id])
+  projectCenters ProjectCenter[]
+  sessions       Session[]
+
+  @@index([managerId])
+  @@index([city])
+}
+
+// ProjectCenter — join table for project-center participation
+
+model ProjectCenter {
+  id        String   @id @default(cuid())
+  projectId String
+  centerId  String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // Relations
+  project Project @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  center  Center  @relation(fields: [centerId], references: [id], onDelete: Cascade)
+
+  @@unique([projectId, centerId])
+  @@index([projectId])
+  @@index([centerId])
+}

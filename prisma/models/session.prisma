@@ -1,0 +1,29 @@
+// Session — the primary executable operational unit
+
+model Session {
+  id               String         @id @default(cuid())
+  projectId        String
+  activityId       String
+  centerId         String
+  scheduledDate    DateTime
+  status           SessionStatus  @default(PENDING)
+  approvalStatus   ApprovalStatus @default(NOT_SUBMITTED)
+  documentationUrl String?
+  notes            String?
+  submittedAt      DateTime?
+  approvedAt       DateTime?
+  createdAt        DateTime       @default(now())
+  updatedAt        DateTime       @updatedAt
+
+  // Relations
+  project   Project          @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  activity  Activity         @relation(fields: [activityId], references: [id], onDelete: Cascade)
+  center    Center           @relation(fields: [centerId], references: [id])
+  approvals ApprovalRecord[]
+
+  @@index([projectId])
+  @@index([centerId])
+  @@index([scheduledDate])
+  @@index([status])
+  @@index([approvalStatus])
+}

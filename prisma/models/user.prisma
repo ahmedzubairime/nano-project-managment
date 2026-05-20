@@ -1,0 +1,18 @@
+// User — represents authenticated Clerk users
+
+model User {
+  id          String   @id @default(cuid())
+  clerkUserId String   @unique
+  email       String   @unique
+  role        Role     @default(VIEWER)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  // Relations
+  ownedProjects   Project[]        @relation("ProjectOwner")
+  managedCenters  Center[]         @relation("CenterManager")
+  approvalReviews ApprovalRecord[] @relation("ApprovalReviewer")
+
+  @@index([clerkUserId])
+  @@index([role])
+}

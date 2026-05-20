@@ -1,0 +1,20 @@
+// ApprovalRecord — tracks approval workflow history
+
+model ApprovalRecord {
+  id          String         @id @default(cuid())
+  sessionId   String
+  reviewerId  String
+  status      ApprovalStatus
+  reviewNotes String?
+  reviewedAt  DateTime       @default(now())
+  createdAt   DateTime       @default(now())
+  updatedAt   DateTime       @updatedAt
+
+  // Relations
+  session  Session @relation(fields: [sessionId], references: [id], onDelete: Cascade)
+  reviewer User    @relation("ApprovalReviewer", fields: [reviewerId], references: [id])
+
+  @@index([sessionId])
+  @@index([reviewerId])
+  @@index([status])
+}

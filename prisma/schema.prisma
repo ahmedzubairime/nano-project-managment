@@ -1,0 +1,48 @@
+// Prisma schema — main entry point
+// Models are split into prisma/models/*.prisma
+
+generator client {
+  provider = "prisma-client"
+  output   = "../app/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+// ─── Enums ───────────────────────────────────────────────
+
+enum Role {
+  PROJECT_MANAGER
+  CENTER_MANAGER
+  VIEWER
+}
+
+enum ProjectStatus {
+  DRAFT
+  ACTIVE
+  ARCHIVED
+}
+
+enum SessionStatus {
+  PENDING
+  IN_PROGRESS
+  COMPLETED
+  DELAYED
+  CANCELLED
+}
+
+enum ApprovalStatus {
+  NOT_SUBMITTED
+  PENDING_APPROVAL
+  APPROVED
+  REJECTED
+}
+
+enum NotificationType {
+  INFO
+  WARNING
+  DEADLINE
+  DELAY
+  ANNOUNCEMENT
+}

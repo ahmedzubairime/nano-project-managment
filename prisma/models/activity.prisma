@@ -1,0 +1,19 @@
+// Activity — project-level planning entity
+
+model Activity {
+  id                  String   @id @default(cuid())
+  projectId           String
+  title               String
+  description         String?
+  plannedSessionCount Int      @default(0)
+  isVolunteer         Boolean  @default(false)
+  createdAt           DateTime @default(now())
+  updatedAt           DateTime @updatedAt
+
+  // Relations
+  project  Project   @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  sessions Session[]
+
+  @@index([projectId])
+  @@index([isVolunteer])
+}

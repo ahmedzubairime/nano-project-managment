@@ -1,0 +1,19 @@
+// Notification — automatic and manual broadcasts
+
+model Notification {
+  id        String           @id @default(cuid())
+  projectId String?
+  title     String
+  message   String
+  type      NotificationType @default(INFO)
+  readAt    DateTime?
+  createdAt DateTime         @default(now())
+  updatedAt DateTime         @updatedAt
+
+  // Relations
+  project Project? @relation(fields: [projectId], references: [id], onDelete: Cascade)
+
+  @@index([projectId])
+  @@index([type])
+  @@index([readAt])
+}
