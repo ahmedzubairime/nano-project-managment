@@ -1,7 +1,6 @@
-/**
- * Session Generation Service
- * Isolated, deterministic session generation logic.
- */
+import { distributeSessionsAcrossCenters } from "@/services/session-scheduling/distribute-sessions";
+import { allocateSessionDates } from "@/services/session-scheduling/date-allocation";
+import { validateScheduledSessions } from "@/services/session-scheduling/validation";
 
 export interface GenerationInput {
   projectId: string;
@@ -13,11 +12,8 @@ export interface GenerationInput {
 }
 
 /**
- * Generates session payloads deterministically and bulk creates them inside a transaction.
- * 
- * - Distributes sessions evenly across participating centers (round-robin).
- * - Spreads sessions across the start/end date range in equal steps.
- * - Same inputs always yield identical schedules (reproducible/deterministic).
+ * Generates session payloads by delegating decisions to the scheduling layer,
+ * and bulk creates them inside a transaction.
  */
 export async function generateSessionsForActivity(
   tx: any,
@@ -33,42 +29,39 @@ export async function generateSessionsForActivity(
   } = input;
 
   console.log(
-    `[SessionGenerator] Start generation for activity ${activityId}: count=${plannedSessionCount}, centers=${centerIds.length}, range=${startDate.toLocaleDateString()} to ${endDate.toLocaleDateString()}`
+    `[SessionGenerator] Delegating scheduling decisions for activity ${activityId}: count=${plannedSessionCount}, centers=${centerIds.length}`
   );
 
-  if (plannedSessionCount <= 0) {
-    throw new Error("Planned session count must be greater than 0");
-  }
+  // 1. Distribute centers deterministically using round-robin balancing
+  const assignedCenterIds = distributeSessionsAcrossCenters(
+    plannedSessionCount,
+    centerIds
+  );
 
-  if (centerIds.length === 0) {
-    throw new Error("At least one participating center is required for session generation");
-  }
+  // 2. Allocate chronological, spaced dates
+  const allocatedDates = allocateSessionDates({
+    plannedSessionCount,
+    startDate,
+    endDate,
+  });
 
+  // 3. Construct session payloads
   const sessionsToCreate = [];
-
-  // Spread sessions evenly across the available date range
-  const rangeMs = endDate.getTime() - startDate.getTime();
-  const interval = plannedSessionCount > 1 ? rangeMs / (plannedSessionCount - 1) : 0;
-
   for (let i = 0; i < plannedSessionCount; i++) {
-    // Round-robin center assignment
-    const centerId = centerIds[i % centerIds.length];
-
-    // Spaced timestamp
-    const scheduledTimestamp = startDate.getTime() + i * interval;
-    const scheduledDate = new Date(scheduledTimestamp);
-
     sessionsToCreate.push({
       projectId,
       activityId,
-      centerId,
-      scheduledDate,
+      centerId: assignedCenterIds[i],
+      scheduledDate: allocatedDates[i],
       status: "PENDING" as const,
       approvalStatus: "NOT_SUBMITTED" as const,
     });
   }
 
-  // Persist all session records under transaction block
+  // 4. Enforce date constraints and duplicate prevention rules
+  validateScheduledSessions(sessionsToCreate, { startDate, endDate });
+
+  // 5. Bulk create sessions
   const result = await tx.session.createMany({
     data: sessionsToCreate,
   });
@@ -82,3 +75,4 @@ export async function generateSessionsForActivity(
     sessions: sessionsToCreate,
   };
 }
+

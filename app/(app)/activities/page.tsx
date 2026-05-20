@@ -377,6 +377,50 @@ export default function ActivitiesPage() {
     );
   }
 
+  // Pre-calculate distribution info for preview inside generator confirmation dialog
+  const distributionInfo = React.useMemo(() => {
+    if (!selectedActivity) return null;
+
+    const plannedCount = selectedActivity.plannedSessionCount;
+    const centers = selectedActivity.activityCenters || [];
+    
+    if (plannedCount <= 0 || centers.length === 0) return null;
+
+    // Sort centers deterministically
+    const sortedCenters = [...centers].sort((a, b) => 
+      a.center.id.localeCompare(b.center.id)
+    );
+
+    const counts: Record<string, number> = {};
+    sortedCenters.forEach((c) => {
+      counts[c.center.name] = 0;
+    });
+
+    for (let i = 0; i < plannedCount; i++) {
+      const center = sortedCenters[i % sortedCenters.length];
+      counts[center.center.name] = (counts[center.center.name] || 0) + 1;
+    }
+
+    const uniqueCounts = new Set(Object.values(counts));
+    const isImperfect = uniqueCounts.size > 1;
+
+    // Dates boundary preview
+    const startStr = selectedActivity.startDate || activeProject?.startDate;
+    const endStr = selectedActivity.endDate || activeProject?.endDate;
+    
+    const formattedRange = startStr && endStr 
+      ? `${new Date(startStr).toLocaleDateString()} to ${new Date(endStr).toLocaleDateString()}`
+      : "Not specified";
+
+    return {
+      counts,
+      isImperfect,
+      formattedRange,
+      plannedCount,
+      centersCount: centers.length,
+    };
+  }, [selectedActivity, activeProject]);
+
   // Filters computed
   const filteredActivities = React.useMemo(() => {
     return activities.filter((act) => {
@@ -977,7 +1021,43 @@ export default function ActivitiesPage() {
               <br />
               <br />
               The scheduling engine uses a fully deterministic round-robin distribution to map dates and centers. Generated sessions will be created as <strong>PENDING</strong> and <strong>NOT_SUBMITTED</strong>.
-              <br />
+
+              {distributionInfo && (
+                <div className="mt-4 space-y-3.5 border-t border-border/40 pt-4">
+                  <div className="flex flex-col gap-1">
+                    <span className="text-[10px] uppercase font-bold tracking-wider text-text-muted">Scheduling Boundaries</span>
+                    <div className="flex items-center gap-1.5 text-xs text-text-primary mt-0.5">
+                      <Calendar className="size-3.5 text-primary" />
+                      <span>{distributionInfo.formattedRange}</span>
+                    </div>
+                  </div>
+
+                  <div className="flex flex-col gap-1.5">
+                    <span className="text-[10px] uppercase font-bold tracking-wider text-text-muted">Center Allocation Preview</span>
+                    <div className="grid gap-2 border border-border/50 rounded-lg p-2.5 bg-muted/10 max-h-[160px] overflow-y-auto mt-0.5">
+                      {Object.entries(distributionInfo.counts).map(([name, count]) => (
+                        <div key={name} className="flex justify-between items-center text-xs">
+                          <span className="font-medium text-text-primary text-[11px]">{name}</span>
+                          <Badge variant="secondary" className="px-1.5 py-0 text-[10px]">{count} {count === 1 ? 'session' : 'sessions'}</Badge>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+
+                  {distributionInfo.isImperfect && (
+                    <div className="flex items-start gap-2 p-3 rounded-lg border border-amber-500/20 bg-amber-500/5 text-xs text-amber-600 dark:text-amber-400 mt-1">
+                      <Info className="size-4 shrink-0 mt-0.5" />
+                      <div>
+                        <p className="font-semibold text-[10px] uppercase tracking-wider mb-0.5">⚠️ Imbalanced Distribution Notice</p>
+                        <p className="leading-relaxed text-[10px]">
+                          {distributionInfo.plannedCount} sessions cannot be divided perfectly equally across {distributionInfo.centersCount} participating centers. Some centers will be assigned 1 extra session to cover the total planned scope.
+                        </p>
+                      </div>
+                    </div>
+                  )}
+                </div>
+              )}
+              
               <br />
               <span className="font-semibold text-text-primary">Note:</span> This action is permanent and cannot be undone or re-run once sessions are generated.
             </AlertDialogDescription>

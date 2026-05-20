@@ -89,6 +89,10 @@ export async function POST(
     const startDate = activity.startDate || project.startDate;
     const endDate = activity.endDate || project.endDate;
 
+    console.log(
+      `[SessionGenerationAPI] Initiating session generation for activity ${activityId}. Spanning range: ${new Date(startDate).toISOString()} to ${new Date(endDate).toISOString()}`
+    );
+
     // Trigger generation inside database transaction context
     const generated = await prisma.$transaction(async (tx) => {
       return generateSessionsForActivity(tx, {
@@ -107,7 +111,26 @@ export async function POST(
       sessions: generated.sessions,
     }, { status: 201 });
   } catch (error: any) {
-    console.error("POST /api/projects/[projectId]/activities/[activityId]/generate-sessions error:", error);
+    console.error("[SessionGenerationAPI] Error executing generation request:", error);
+    
+    // Catch safe domain errors and return them as Bad Requests (400)
+    const isDomainError = error instanceof Error && (
+      error.message.includes("Planned session") ||
+      error.message.includes("center") ||
+      error.message.includes("date") ||
+      error.message.includes("bounds") ||
+      error.message.includes("overflow") ||
+      error.message.includes("duplicate")
+    );
+
+    if (isDomainError) {
+      console.warn(`[SessionGenerationAPI] Validation failure logged: ${error.message}`);
+      return NextResponse.json(
+        { error: error.message },
+        { status: 400 }
+      );
+    }
+
     return NextResponse.json(
       { error: "Internal Server Error" },
       { status: 500 }
