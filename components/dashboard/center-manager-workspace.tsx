@@ -69,6 +69,7 @@ export function CenterManagerWorkspace({ userId }: CenterManagerWorkspaceProps) 
       documentationUrl: s.documentationUrl,
       notes: s.notes,
       isLocked: s.isLocked,
+      isProjectArchived: s.projectStatus === "ARCHIVED",
       scheduledDate: s.scheduledDate,
       center: {
         id: s.centerId,
@@ -466,6 +467,7 @@ export function CenterManagerWorkspace({ userId }: CenterManagerWorkspaceProps) 
         onSuccess={fetchDashboardData}
         currentUserId={userId}
         currentUserRole="CENTER_MANAGER"
+        isProjectArchived={selectedSession?.isProjectArchived}
       />
     </div>
   );

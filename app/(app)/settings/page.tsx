@@ -183,7 +183,7 @@ export default function SettingsPage() {
   // Handle Project Details submit
   async function handleDetailsSubmit(e: React.FormEvent) {
     e.preventDefault();
-    if (!activeProject || !canModify) return;
+    if (!activeProject || !isProjectManager) return;
 
     if (!projectName.trim()) {
       toast.error("Project name is required");
@@ -376,7 +376,7 @@ export default function SettingsPage() {
                       id="proj-status"
                       value={projectStatus}
                       onChange={(e) => setProjectStatus(e.target.value as any)}
-                      disabled={!canModify}
+                      disabled={!isProjectManager}
                       className="flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-sm transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50 dark:bg-zinc-950 dark:text-zinc-50"
                     >
                       <option value="DRAFT">DRAFT</option>
@@ -401,7 +401,7 @@ export default function SettingsPage() {
                     </div>
                   )}
 
-                  {canModify && (
+                  {isProjectManager && (
                     <Button type="submit" disabled={submittingDetails} className="w-full">
                       {submittingDetails ? "Saving Changes..." : "Save Project Settings"}
                     </Button>

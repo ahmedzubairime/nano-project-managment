@@ -1,6 +1,7 @@
 import { ProjectProvider } from "@/lib/project-context";
 import { Navbar } from "@/components/layout/navbar";
 import { Sidebar } from "@/components/layout/sidebar";
+import { ArchiveBanner } from "@/components/layout/archive-banner";
 
 export default function AppLayout({ children }: { children: React.ReactNode }) {
   return (
@@ -14,6 +15,9 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
           {/* Navbar */}
           <Navbar />
 
+          {/* Archive Warning Banner */}
+          <ArchiveBanner />
+
           {/* Workspace */}
           <main className="flex-1 overflow-y-auto p-4 md:p-6">
             {children}
@@ -23,3 +27,4 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
     </ProjectProvider>
   );
 }
+

@@ -49,6 +49,7 @@ interface ReviewDialogProps {
   isOpen: boolean;
   onOpenChange: (open: boolean) => void;
   onSuccess?: () => void;
+  isProjectArchived?: boolean;
 }
 
 export function ReviewDialog({
@@ -56,6 +57,7 @@ export function ReviewDialog({
   isOpen,
   onOpenChange,
   onSuccess,
+  isProjectArchived = false,
 }: ReviewDialogProps) {
   const [reviewNotes, setReviewNotes] = React.useState<string>("");
   const [submitting, setSubmitting] = React.useState<boolean>(false);
@@ -127,6 +129,15 @@ export function ReviewDialog({
             Audit documentation, verify execution quality, and submit your final approval decision.
           </DialogDescription>
         </DialogHeader>
+
+        {isProjectArchived && (
+          <div className="flex gap-2 p-3 bg-amber-50 border border-amber-100 dark:bg-amber-950/20 dark:border-amber-900/30 rounded-lg text-xs leading-normal text-amber-600 dark:text-amber-400">
+            <AlertTriangle className="size-4 shrink-0 mt-0.5" />
+            <span>
+              <strong>Read-Only:</strong> The parent project container is archived and locked. Review decisions are frozen.
+            </span>
+          </div>
+        )}
 
         {/* ═══ Details Information Grid ═══ */}
         <div className="bg-muted/30 border border-border/60 rounded-xl p-4 space-y-3 text-xs">
@@ -241,7 +252,7 @@ export function ReviewDialog({
             placeholder="Type your feedback here..."
             value={reviewNotes}
             onChange={(e) => setReviewNotes(e.target.value)}
-            disabled={submitting}
+            disabled={submitting || isProjectArchived}
             className="text-xs resize-none min-h-[90px]"
           />
         </div>
@@ -263,10 +274,10 @@ export function ReviewDialog({
             <Button
               type="button"
               variant="destructive"
-              className="text-xs font-semibold bg-rose-600 hover:bg-rose-700 flex items-center gap-1"
+              className="text-xs font-semibold bg-rose-600 hover:bg-rose-700 flex items-center gap-1 disabled:opacity-50"
               onClick={() => handleReview("REJECT")}
-              disabled={submitting || !reviewNotes.trim()}
-              title={!reviewNotes.trim() ? "Rejection notes are required to reject" : "Reject execution and request revisions"}
+              disabled={submitting || isProjectArchived || !reviewNotes.trim()}
+              title={isProjectArchived ? "Project is archived (Read-Only)" : (!reviewNotes.trim() ? "Rejection notes are required to reject" : "Reject execution and request revisions")}
             >
               {submitting ? (
                 <Loader2 className="size-3 animate-spin mr-1" />
@@ -279,10 +290,10 @@ export function ReviewDialog({
             {/* Approve Button */}
             <Button
               type="button"
-              className="text-xs font-semibold bg-emerald-600 hover:bg-emerald-700 text-white flex items-center gap-1"
+              className="text-xs font-semibold bg-emerald-600 hover:bg-emerald-700 text-white flex items-center gap-1 disabled:opacity-50"
               onClick={() => handleReview("APPROVE")}
-              disabled={submitting}
-              title="Officially approve execution and count session metrics"
+              disabled={submitting || isProjectArchived}
+              title={isProjectArchived ? "Project is archived (Read-Only)" : "Officially approve execution and count session metrics"}
             >
               {submitting ? (
                 <Loader2 className="size-3 animate-spin mr-1" />

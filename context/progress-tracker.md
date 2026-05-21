@@ -186,6 +186,16 @@ Update this file after every meaningful implementation change.
   - [x] Build reports dashboard page with tabbed views, filter toolbar (date range, center, volunteer-only), and Recharts bar chart
   - [x] Verify production build passes with zero errors
 
+- Feature 20: Project Archive Mode
+  - [x] Create a premium global warning banner component (`components/layout/archive-banner.tsx`) checking status
+  - [x] Integrate global banner immediately below the main navbar (`app/(app)/layout.tsx`)
+  - [x] Enhance auto-notifications service to early-exit and prevent new notifications on archived projects
+  - [x] Update Project Details API route (`PATCH /api/projects/[projectId]`) to support unarchiving back to draft/active for Project Managers
+  - [x] Update settings panel (`app/(app)/settings/page.tsx`) to allow Project Managers to toggle and save project status for unarchiving while locking other fields
+  - [x] Display disabled "Adjust Schedule" edit trigger buttons on Sessions Page with custom hover tooltip titles instead of silently hiding
+  - [x] Pass `isProjectArchived` to `ReviewDialog` from approvals page, display a read-only lock banner inside modal, disable text feedback area and hide/disable final "Approve" / "Reject" submit buttons
+  - [x] Run production build verification (`npm run build`) to ensure 100% clean TypeScript and bundling compilation
+
 ## In Progress
 
 - None.
@@ -220,3 +230,4 @@ Update this file after every meaningful implementation change.
 - Feature 17: Extended the design system with semantic oklch purple volunteer status tokens (`--status-volunteer`) across light and dark themes, plus dashed-stroke Gantt bar overlays in `gantt-styles.css`. Expanded `CenterPerformanceMetric` to aggregate `volunteerAssignedCount`/`volunteerCompletedCount` per center during single-pass traversal. Added a dedicated Volunteer Initiatives summary card and per-center contribution column to the PM dashboard. Integrated Core/Volunteer type filter dropdowns into the Sessions Registry and Gantt Timeline toolbar with server-side `type` query parameter support in the timeline API. All volunteer metrics are calculated separately from core completion percentages to preserve the progression invariant.
 - Feature 18: Developed a project-scoped, internal in-app notifications system. Enhanced the database schema with relation tables for targeted centers (`NotificationCenter`) and per-user read logs (`NotificationRead`). Created an idempotent on-demand auto-notifications service to dynamically detect upcoming and overdue sessions. Built secure GET/POST/PATCH endpoints verifying role-based visibility and project access. Constructed a premium NavbarNotifications bell dropdown panel utilizing Base UI triggers and a complete Notifications Center page featuring filters, status-badge cards, and project-wide manual announcements.
 - Feature 19: Created modular report aggregation services under `services/reports/` with a shared `ReportFilters` interface supporting date range, center, activity, approval state, and volunteer-only filtering. Implemented four specialized report generators (overview, centers, timeline, volunteer) using parallel Prisma queries and single-pass session traversals. Exposed four secure GET endpoints under `/api/projects/[projectId]/reports/` with query-string filter parsing. Built a tabbed reports dashboard page with Recharts BarChart for weekly execution density visualization. All report components are separated into `components/reports/` for maintainability. Center reports include approval turnaround calculations. Timeline reports identify bottleneck periods automatically. Data is structured for future export compatibility without implementing actual exports.
+- Feature 20: Developed the global `ArchiveBanner` to provide visual warning cues across the interface. Integrated strict operational read-only overrides across the Center Manager workspace execution dialogs, approvals page review dialogs, and manual scheduling adjustments in the Sessions registry page. Configured the project status API to allow unarchiving of projects back to DRAFT or ACTIVE by Project Managers, keeping all other fields read-only when in the archived state. Enforced backend status checks within notification schedulers, program mutation APIs, and approvals/scheduling engines.

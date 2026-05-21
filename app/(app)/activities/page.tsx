@@ -466,8 +466,13 @@ export default function ActivitiesPage() {
             Define workshop tracks, event series, and campaign planning parameters for <strong>{activeProject.name}</strong>.
           </p>
         </div>
-        {canModify && !hasNoCentersAssigned && (
-          <Button onClick={handleOpenCreate} className="flex items-center gap-1.5 shrink-0 shadow-sm">
+        {isProjectManager && !hasNoCentersAssigned && (
+          <Button
+            onClick={handleOpenCreate}
+            disabled={isProjectArchived}
+            title={isProjectArchived ? "Project is archived (Read-Only)" : "Plan Activity"}
+            className="flex items-center gap-1.5 shrink-0 shadow-sm"
+          >
             <Plus className="size-4" />
             Plan Activity
           </Button>
@@ -561,8 +566,14 @@ export default function ActivitiesPage() {
                     : "Establish work parameters and scheduled counts to get started."
                 }
               >
-                {canModify && !showArchived && !searchQuery && (
-                  <Button onClick={handleOpenCreate} size="sm" className="mt-3 flex items-center gap-1.5">
+                {isProjectManager && !showArchived && !searchQuery && (
+                  <Button
+                    onClick={handleOpenCreate}
+                    disabled={isProjectArchived}
+                    title={isProjectArchived ? "Project is archived (Read-Only)" : "Plan First Activity"}
+                    size="sm"
+                    className="mt-3 flex items-center gap-1.5"
+                  >
                     <Plus className="size-4" />
                     Plan First Activity
                   </Button>
@@ -674,7 +685,7 @@ export default function ActivitiesPage() {
                           </TableCell>
                           <TableCell className="py-4 text-right pr-6">
                             <div className="flex items-center justify-end gap-1.5">
-                              {canModify && !isArchived ? (
+                              {isProjectManager && !isArchived ? (
                                 <>
                                   {!act._count?.sessions && (
                                     <Button
@@ -684,6 +695,8 @@ export default function ActivitiesPage() {
                                         setSelectedActivity(act);
                                         setIsGenerateOpen(true);
                                       }}
+                                      disabled={isProjectArchived}
+                                      title={isProjectArchived ? "Project is archived (Read-Only)" : "Generate Sessions"}
                                       className="h-8 text-xs font-semibold px-2.5 flex items-center gap-1 border-border/80 hover:bg-primary/5 hover:text-primary hover:border-primary/30"
                                     >
                                       <CheckCircle className="size-3.5 text-text-muted" />
@@ -694,8 +707,9 @@ export default function ActivitiesPage() {
                                     variant="ghost"
                                     size="icon"
                                     onClick={() => handleOpenEdit(act)}
-                                    className="size-8 text-text-muted hover:text-text-primary hover:bg-muted"
-                                    title="Edit Activity"
+                                    disabled={isProjectArchived}
+                                    title={isProjectArchived ? "Project is archived (Read-Only)" : "Edit Activity"}
+                                    className="size-8 text-text-muted hover:text-text-primary hover:bg-muted disabled:opacity-50"
                                   >
                                     <Edit2 className="size-3.5" />
                                   </Button>
@@ -706,8 +720,9 @@ export default function ActivitiesPage() {
                                       setSelectedActivity(act);
                                       setIsDeleteOpen(true);
                                     }}
-                                    className="size-8 text-destructive hover:text-destructive hover:bg-destructive/10"
-                                    title="Archive Activity"
+                                    disabled={isProjectArchived}
+                                    title={isProjectArchived ? "Project is archived (Read-Only)" : "Archive Activity"}
+                                    className="size-8 text-destructive hover:text-destructive hover:bg-destructive/10 disabled:opacity-50"
                                   >
                                     <Trash2 className="size-3.5" />
                                   </Button>

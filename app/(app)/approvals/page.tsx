@@ -513,6 +513,7 @@ export default function ApprovalsPage() {
         isOpen={isReviewOpen}
         onOpenChange={setIsReviewOpen}
         onSuccess={fetchApprovals}
+        isProjectArchived={isProjectArchived}
       />
     </div>
   );

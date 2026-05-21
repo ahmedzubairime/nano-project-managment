@@ -595,13 +595,14 @@ export default function SessionsPage() {
                       ) : null}
 
                       {/* Adjust Schedule (Project Manager only) */}
-                      {canModify && (
+                      {isProjectManager && (
                         <Button
                           variant="ghost"
                           size="icon"
                           onClick={() => handleOpenEdit(session)}
-                          className="size-8 text-text-muted hover:text-text-primary hover:bg-muted"
-                          title="Adjust Schedule"
+                          disabled={isProjectArchived}
+                          className="size-8 text-text-muted hover:text-text-primary hover:bg-muted disabled:opacity-50"
+                          title={isProjectArchived ? "Project is archived (Read-Only)" : "Adjust Schedule"}
                         >
                           <Edit2 className="size-3.5" />
                         </Button>

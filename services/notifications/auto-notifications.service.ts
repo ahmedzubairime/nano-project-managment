@@ -14,6 +14,15 @@ export async function generateAutoNotifications(projectId: string): Promise<void
   upcomingThreshold.setDate(now.getDate() + 3); // 3 days in the future
 
   try {
+    // Check if the project is archived
+    const project = await prisma.project.findUnique({
+      where: { id: projectId },
+      select: { status: true },
+    });
+
+    if (!project || project.status === "ARCHIVED") {
+      return;
+    }
     // 1. Fetch active sessions (excluding completed/cancelled) for the project
     const sessions = await prisma.session.findMany({
       where: {

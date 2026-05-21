@@ -24,6 +24,7 @@ export interface CenterSessionData {
   activityTitle: string;
   projectId: string;
   projectName: string;
+  projectStatus: string;
   centerId: string;
   centerName: string;
   city: string;
@@ -156,6 +157,7 @@ export async function getCenterDashboardData(userId: string): Promise<CenterDash
       activityTitle: s.activity?.title || "Unknown Session",
       projectId: s.projectId,
       projectName: s.project?.name || "Unknown Project",
+      projectStatus: s.project?.status || "DRAFT",
       centerId: s.centerId,
       centerName: s.center?.name || "Unknown Center",
       city: s.center?.city || "",

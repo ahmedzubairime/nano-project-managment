@@ -28,14 +28,6 @@ export async function PATCH(
       return NextResponse.json({ error: "Project not found" }, { status: 404 });
     }
 
-    // Archived projects cannot be edited
-    if (project.status === "ARCHIVED") {
-      return NextResponse.json(
-        { error: "Archived projects are read-only and cannot be modified" },
-        { status: 400 }
-      );
-    }
-
     // Edit permission check:
     // Only the project owner or a PROJECT_MANAGER can edit the project.
     const isOwner = project.ownerId === dbUser.id;
@@ -54,6 +46,22 @@ export async function PATCH(
     } catch {
       body = {};
     }
+
+    // Archived projects cannot be edited (except to change status back to DRAFT or ACTIVE)
+    if (project.status === "ARCHIVED") {
+      const allowedStatusChange = body.status === "ACTIVE" || body.status === "DRAFT";
+      const editingOtherFields = Object.keys(body).some(
+        (key) => key !== "status" && body[key] !== undefined
+      );
+
+      if (!allowedStatusChange || editingOtherFields) {
+        return NextResponse.json(
+          { error: "Archived projects are read-only and cannot be modified except to change status" },
+          { status: 400 }
+        );
+      }
+    }
+
 
     const dataToUpdate: any = {};
 
