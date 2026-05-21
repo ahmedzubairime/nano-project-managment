@@ -15,6 +15,8 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Badge } from "@/components/ui/badge";
 import { toast } from "sonner";
+import { validateDriveUrl, parseDriveUrl, normalizeDriveUrl } from "@/lib/drive-links";
+
 import {
   Play,
   Check,
@@ -69,6 +71,11 @@ export function SessionExecutionDialog({
   const [docUrl, setDocUrl] = React.useState<string>("");
   const [submitting, setSubmitting] = React.useState<boolean>(false);
   const [actionType, setActionType] = React.useState<"SAVE" | "APPROVE">("SAVE");
+
+  const parsedLink = React.useMemo(() => {
+    return parseDriveUrl(docUrl);
+  }, [docUrl]);
+
 
   // Sync inputs on open
   React.useEffect(() => {
@@ -138,12 +145,25 @@ export function SessionExecutionDialog({
       return;
     }
 
-    if (triggerApproval && (!docUrl || docUrl.trim() === "")) {
-      toast.error("Validation failed: A Google Drive documentation URL is required before submitting for approval.");
-      return;
+    const trimmedDocUrl = docUrl.trim();
+    if (triggerApproval) {
+      if (!trimmedDocUrl) {
+        toast.error("Validation failed: A Google Drive documentation URL is required before submitting for approval.");
+        return;
+      }
+      if (!validateDriveUrl(trimmedDocUrl)) {
+        toast.error("Validation failed: Invalid Google Drive documentation URL. Only drive.google.com and docs.google.com are supported.");
+        return;
+      }
+    } else if (trimmedDocUrl !== "") {
+      if (!validateDriveUrl(trimmedDocUrl)) {
+        toast.error("Validation failed: Invalid Google Drive documentation URL. Only drive.google.com and docs.google.com are supported.");
+        return;
+      }
     }
 
     setSubmitting(true);
+
     try {
       const response = await fetch(`/api/sessions/${session.id}/execute`, {
         method: "PATCH",
@@ -181,12 +201,25 @@ export function SessionExecutionDialog({
     if (!session) return;
     if (isReadOnly || !isAssigned) return;
 
-    if (actionType === "APPROVE" && (!docUrl || docUrl.trim() === "")) {
-      toast.error("Validation failed: A Google Drive documentation URL is required before submitting for approval.");
-      return;
+    const trimmedDocUrl = docUrl.trim();
+    if (actionType === "APPROVE") {
+      if (!trimmedDocUrl) {
+        toast.error("Validation failed: A Google Drive documentation URL is required before submitting for approval.");
+        return;
+      }
+      if (!validateDriveUrl(trimmedDocUrl)) {
+        toast.error("Validation failed: Invalid Google Drive documentation URL. Only drive.google.com and docs.google.com are supported.");
+        return;
+      }
+    } else if (trimmedDocUrl !== "") {
+      if (!validateDriveUrl(trimmedDocUrl)) {
+        toast.error("Validation failed: Invalid Google Drive documentation URL. Only drive.google.com and docs.google.com are supported.");
+        return;
+      }
     }
 
     setSubmitting(true);
+
     try {
       const response = await fetch(`/api/sessions/${session.id}/execute`, {
         method: "PATCH",
@@ -301,13 +334,14 @@ export function SessionExecutionDialog({
               <Button
                 type="button"
                 className="w-full bg-amber-600 hover:bg-amber-700 text-white font-semibold text-xs py-5 flex items-center gap-1.5"
-                disabled={submitting || !docUrl || docUrl.trim() === ""}
+                disabled={submitting || !docUrl || docUrl.trim() === "" || !validateDriveUrl(docUrl)}
                 onClick={() => triggerQuickAction("COMPLETED", true)}
               >
                 <FileCheck className="size-4" />
                 Submit for Approval
               </Button>
             )}
+
           </div>
         )}
 
@@ -343,9 +377,9 @@ export function SessionExecutionDialog({
                 <span>Google Drive Documentation URL</span>
                 {actionType === "APPROVE" && <span className="text-rose-500">*</span>}
               </Label>
-              {docUrl && (
+              {docUrl && validateDriveUrl(docUrl) && (
                 <a
-                  href={docUrl}
+                  href={normalizeDriveUrl(docUrl)}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="text-[11px] text-primary hover:underline flex items-center gap-0.5"
@@ -362,10 +396,41 @@ export function SessionExecutionDialog({
               disabled={isReadOnly || !isAssigned || submitting || session.approvalStatus === "APPROVED"}
               className="text-xs"
             />
+            {docUrl && docUrl.trim() !== "" && (
+              <div className="flex items-center gap-1.5 mt-0.5">
+                {parsedLink.isValid ? (
+                  <Badge
+                    variant="secondary"
+                    className={`text-[9px] px-1.5 py-0.5 border ${
+                      parsedLink.type === "spreadsheet"
+                        ? "bg-emerald-500/10 text-emerald-600 border-emerald-500/20"
+                        : parsedLink.type === "document"
+                        ? "bg-blue-500/10 text-blue-600 border-blue-500/20"
+                        : parsedLink.type === "presentation"
+                        ? "bg-amber-500/10 text-amber-600 border-amber-500/20"
+                        : parsedLink.type === "form"
+                        ? "bg-purple-500/10 text-purple-600 border-purple-500/20"
+                        : parsedLink.type === "folder"
+                        ? "bg-yellow-500/10 text-yellow-600 border-yellow-500/20 dark:text-yellow-500"
+                        : parsedLink.type === "file"
+                        ? "bg-teal-500/10 text-teal-600 border-teal-500/20"
+                        : "bg-zinc-500/10 text-zinc-600 border-zinc-500/20"
+                    }`}
+                  >
+                    {parsedLink.label}
+                  </Badge>
+                ) : (
+                  <Badge variant="destructive" className="bg-rose-500/10 text-rose-600 border-rose-500/20 text-[9px] px-1.5 py-0.5">
+                    Invalid Google Drive URL
+                  </Badge>
+                )}
+              </div>
+            )}
             <span className="text-[10px] text-text-muted leading-snug">
               Provide physical folder or file links to evidence execution for metrics. Required for approval.
             </span>
           </div>
+
 
           {/* Execution notes */}
           <div className="grid gap-1.5">
@@ -415,14 +480,15 @@ export function SessionExecutionDialog({
                       type="submit"
                       className="text-xs bg-primary text-primary-foreground font-semibold px-4"
                       onClick={() => setActionType("APPROVE")}
-                      disabled={submitting || !docUrl || docUrl.trim() === ""}
-                      title={!docUrl ? "Google Drive URL required to submit" : ""}
+                      disabled={submitting || !docUrl || docUrl.trim() === "" || !validateDriveUrl(docUrl)}
+                      title={(!docUrl || !validateDriveUrl(docUrl)) ? "Valid Google Drive URL required to submit" : ""}
                     >
                       {submitting && actionType === "APPROVE" && (
                         <Loader2 className="size-3 animate-spin mr-1.5" />
                       )}
                       Submit for Approval
                     </Button>
+
                   )}
               </div>
             )}

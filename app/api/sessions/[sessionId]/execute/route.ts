@@ -4,6 +4,7 @@ import { prisma } from "@/lib/prisma";
 import { Role } from "@/types/roles";
 import { SessionStatus, ApprovalStatus } from "@/app/generated/prisma/enums";
 import { triggerPendingReviewReminderNotification } from "@/lib/notification-hooks";
+import { validateDriveUrl, normalizeDriveUrl } from "@/lib/drive-links";
 
 /**
  * PATCH /api/sessions/[sessionId]/execute
@@ -105,17 +106,17 @@ export async function PATCH(
     if (documentationUrl !== undefined) {
       const trimmedUrl = documentationUrl?.trim() || null;
       if (trimmedUrl) {
-        // Basic URL validation
-        try {
-          new URL(trimmedUrl);
-        } catch {
+        // Enforce strict Google Drive domain compatibility and format checks
+        if (!validateDriveUrl(trimmedUrl)) {
           return NextResponse.json(
-            { error: "Validation failed: Invalid documentation URL format" },
+            { error: "Validation failed: Invalid Google Drive documentation URL. Only drive.google.com and docs.google.com are supported." },
             { status: 400 }
           );
         }
+        dataToUpdate.documentationUrl = normalizeDriveUrl(trimmedUrl);
+      } else {
+        dataToUpdate.documentationUrl = null;
       }
-      dataToUpdate.documentationUrl = trimmedUrl;
     }
 
     // 6. Process approval status (e.g. submitting for review)

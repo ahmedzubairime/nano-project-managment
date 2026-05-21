@@ -195,11 +195,19 @@ Update this file after every meaningful implementation change.
   - [x] Display disabled "Adjust Schedule" edit trigger buttons on Sessions Page with custom hover tooltip titles instead of silently hiding
   - [x] Pass `isProjectArchived` to `ReviewDialog` from approvals page, display a read-only lock banner inside modal, disable text feedback area and hide/disable final "Approve" / "Reject" submit buttons
   - [x] Run production build verification (`npm run build`) to ensure 100% clean TypeScript and bundling compilation
+- Feature 21: Drive Documentation Links
+  - [x] Create `lib/drive-links.ts` shared parsing and validation utility
+  - [x] Integrate with backend execution API endpoint with strict Google Drive checks
+  - [x] Update `SessionExecutionDialog` with live parsing, validation, and recognizable document badges
+  - [x] Update approvals `ReviewDialog` with display badges and quick open launch
+  - [x] Update timeline page preview dialog to display documentation state and warnings
+  - [x] Extend reports service to calculate documentation metrics and compliance rate
+  - [x] Update `ReportOverviewTab` with "Documentation Compliance" metrics and warning banner
+  - [x] Verify production build compiles perfectly with 0 errors
 
 ## In Progress
 
 - None.
-
 
 ## Next Up
 
@@ -231,3 +239,4 @@ Update this file after every meaningful implementation change.
 - Feature 18: Developed a project-scoped, internal in-app notifications system. Enhanced the database schema with relation tables for targeted centers (`NotificationCenter`) and per-user read logs (`NotificationRead`). Created an idempotent on-demand auto-notifications service to dynamically detect upcoming and overdue sessions. Built secure GET/POST/PATCH endpoints verifying role-based visibility and project access. Constructed a premium NavbarNotifications bell dropdown panel utilizing Base UI triggers and a complete Notifications Center page featuring filters, status-badge cards, and project-wide manual announcements.
 - Feature 19: Created modular report aggregation services under `services/reports/` with a shared `ReportFilters` interface supporting date range, center, activity, approval state, and volunteer-only filtering. Implemented four specialized report generators (overview, centers, timeline, volunteer) using parallel Prisma queries and single-pass session traversals. Exposed four secure GET endpoints under `/api/projects/[projectId]/reports/` with query-string filter parsing. Built a tabbed reports dashboard page with Recharts BarChart for weekly execution density visualization. All report components are separated into `components/reports/` for maintainability. Center reports include approval turnaround calculations. Timeline reports identify bottleneck periods automatically. Data is structured for future export compatibility without implementing actual exports.
 - Feature 20: Developed the global `ArchiveBanner` to provide visual warning cues across the interface. Integrated strict operational read-only overrides across the Center Manager workspace execution dialogs, approvals page review dialogs, and manual scheduling adjustments in the Sessions registry page. Configured the project status API to allow unarchiving of projects back to DRAFT or ACTIVE by Project Managers, keeping all other fields read-only when in the archived state. Enforced backend status checks within notification schedulers, program mutation APIs, and approvals/scheduling engines.
+- Feature 21: Developed a robust Google Drive link utility (`lib/drive-links.ts`) to validate, normalize, and parse Drive resource URLs (Docs, Sheets, Slides, Forms, Files, Folders) without external API dependencies. Enforced strict backend API check inside `PATCH /api/sessions/[sessionId]/execute`. Added live client-side validation, customized oklch-based document badges, and secure target-blank links to the `SessionExecutionDialog`, approvals `ReviewDialog`, and timeline sidebar `DetailPreview` pane with warning alerts for completed, undocumented sessions. Extended operational report aggregation to track completed documentation compliance rates and missing documentation totals, accompanied by a premium compliance visualization segment and advisory warnings on the Overview tab of the Reports dashboard.

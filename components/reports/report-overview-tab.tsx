@@ -34,7 +34,11 @@ interface OverviewData {
   pendingApprovalCount: number;
   approvalRate: number;
   activityBreakdown: ActivityBreakdown[];
+  documentedSessionsCount: number;
+  missingDocumentationCount: number;
+  documentationRate: number;
 }
+
 
 export function ReportOverviewTab({ data }: { data: OverviewData }) {
   return (
@@ -112,6 +116,74 @@ export function ReportOverviewTab({ data }: { data: OverviewData }) {
           </div>
         </div>
       </div>
+
+      {/* Documentation Compliance Panel */}
+      <div className="bg-card border border-border/80 rounded-xl p-5 shadow-sm space-y-4">
+        <div className="flex items-center justify-between border-b border-border/40 pb-2">
+          <h3 className="text-sm font-bold text-text-primary uppercase tracking-wider">
+            Documentation Evidence & Compliance
+          </h3>
+          <Badge
+            variant="outline"
+            className={`text-[10px] font-bold uppercase py-0.5 px-2 border ${
+              data.documentationRate >= 90
+                ? "bg-emerald-500/10 text-emerald-600 border-emerald-500/20"
+                : data.documentationRate >= 70
+                ? "bg-amber-500/10 text-amber-600 border-amber-500/20"
+                : "bg-rose-500/10 text-rose-600 border-rose-500/20"
+            }`}
+          >
+            {data.documentationRate}% Compliant
+          </Badge>
+        </div>
+
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+          <div className="flex items-center gap-3 bg-muted/40 border border-border/60 rounded-lg p-3">
+            <div className="size-8 rounded-md bg-primary/10 flex items-center justify-center shrink-0">
+              <BarChart3 className="size-4 text-primary" />
+            </div>
+            <div>
+              <span className="text-[10px] uppercase font-bold text-text-muted block">Documented Sessions</span>
+              <span className="text-base font-bold text-text-primary">{data.documentedSessionsCount}</span>
+            </div>
+          </div>
+
+          <div className="flex items-center gap-3 bg-emerald-500/5 border border-emerald-500/15 rounded-lg p-3">
+            <div className="size-8 rounded-md bg-emerald-500/10 flex items-center justify-center shrink-0">
+              <CheckCircle2 className="size-4 text-emerald-600" />
+            </div>
+            <div>
+              <span className="text-[10px] uppercase font-bold text-text-muted block">Compliance Rate</span>
+              <span className="text-base font-bold text-text-primary">{data.documentationRate}%</span>
+            </div>
+          </div>
+
+          <div className="flex items-center gap-3 bg-rose-500/5 border border-rose-500/15 rounded-lg p-3">
+            <div className="size-8 rounded-md bg-rose-500/10 flex items-center justify-center shrink-0">
+              <AlertTriangle className="size-4 text-rose-600" />
+            </div>
+            <div>
+              <span className="text-[10px] uppercase font-bold text-text-muted block">Missing Evidence</span>
+              <span className="text-base font-bold text-text-primary">{data.missingDocumentationCount}</span>
+            </div>
+          </div>
+        </div>
+
+        {/* Warning Banner */}
+        {data.missingDocumentationCount > 0 && (
+          <div className="border border-rose-500/20 bg-rose-500/5 rounded-lg p-3 text-xs text-rose-600 flex items-start gap-2.5 shadow-sm">
+            <AlertTriangle className="size-4 shrink-0 mt-0.5" />
+            <div>
+              <strong className="font-semibold block mb-0.5">Missing Documentation Warning</strong>
+              <span>
+                There are {data.missingDocumentationCount} completed sessions that lack Google Drive documentation. 
+                Branches must attach evidence folders/files to maintain auditing compliance.
+              </span>
+            </div>
+          </div>
+        )}
+      </div>
+
 
       {/* Activity Breakdown Table */}
       <div className="bg-card border border-border/80 rounded-xl p-5 shadow-sm space-y-3">

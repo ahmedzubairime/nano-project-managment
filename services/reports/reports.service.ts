@@ -68,7 +68,11 @@ export interface OverviewReport {
   pendingApprovalCount: number;
   approvalRate: number;
   activityBreakdown: ActivityBreakdown[];
+  documentedSessionsCount: number;
+  missingDocumentationCount: number;
+  documentationRate: number;
 }
+
 
 export async function getOverviewReport(
   projectId: string,
@@ -97,6 +101,9 @@ export async function getOverviewReport(
   let coreCompleted = 0;
   let volTotal = 0;
   let volCompleted = 0;
+  let documentedSessionsCount = 0;
+  let completedDocumentedSessions = 0;
+
 
   // Activity-level aggregation map
   const activityMap = new Map<
@@ -113,7 +120,17 @@ export async function getOverviewReport(
   sessions.forEach((s) => {
     const isCompleted =
       s.status === "COMPLETED" && s.approvalStatus === "APPROVED";
+    
+    const hasDoc = !!s.documentationUrl && s.documentationUrl.trim() !== "";
+    if (hasDoc) {
+      documentedSessionsCount++;
+      if (isCompleted) {
+        completedDocumentedSessions++;
+      }
+    }
+
     const isCancelled = s.status === "CANCELLED";
+
     const isDelayed =
       s.status === "DELAYED" ||
       (!isCompleted &&
@@ -189,8 +206,12 @@ export async function getOverviewReport(
     pendingApprovalCount,
     approvalRate,
     activityBreakdown,
+    documentedSessionsCount,
+    missingDocumentationCount: completedSessions - completedDocumentedSessions,
+    documentationRate: completedSessions > 0 ? Math.round((completedDocumentedSessions / completedSessions) * 100) : 0,
   };
 }
+
 
 // ─── Centers Report ────────────────────────────────────────────────────────────
 

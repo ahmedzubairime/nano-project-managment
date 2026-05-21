@@ -14,6 +14,8 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Badge } from "@/components/ui/badge";
 import { toast } from "sonner";
+import { parseDriveUrl, normalizeDriveUrl, validateDriveUrl } from "@/lib/drive-links";
+
 import {
   Check,
   X,
@@ -61,6 +63,11 @@ export function ReviewDialog({
 }: ReviewDialogProps) {
   const [reviewNotes, setReviewNotes] = React.useState<string>("");
   const [submitting, setSubmitting] = React.useState<boolean>(false);
+
+  const parsedLink = React.useMemo(() => {
+    return session?.documentationUrl ? parseDriveUrl(session.documentationUrl) : null;
+  }, [session?.documentationUrl]);
+
 
   // Clear notes on open/change
   React.useEffect(() => {
@@ -191,43 +198,79 @@ export function ReviewDialog({
         <div className="space-y-2">
           <Label className="text-xs font-semibold text-text-primary flex items-center justify-between">
             <span>Execution Evidence & Docs</span>
-            {session.documentationUrl ? (
+            {session.documentationUrl && parsedLink?.isValid ? (
               <a
-                href={session.documentationUrl}
+                href={parsedLink.normalizedUrl}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="text-xs text-primary hover:underline flex items-center gap-0.5"
+                className="text-xs text-primary hover:underline flex items-center gap-0.5 font-medium"
               >
-                Open Google Drive folder <ExternalLink className="size-3 shrink-0" />
+                Open evidence link <ExternalLink className="size-3 shrink-0" />
               </a>
             ) : (
-              <span className="text-rose-500 flex items-center gap-1">
-                <AlertTriangle className="size-3" /> Missing Drive link
+              <span className="text-rose-500 flex items-center gap-1 font-semibold text-[11px]">
+                <AlertTriangle className="size-3 shrink-0" /> Missing Drive link
               </span>
             )}
           </Label>
 
           {session.documentationUrl ? (
-            <div className="border border-emerald-500/20 bg-emerald-500/5 rounded-lg p-3 text-xs flex justify-between items-center">
-              <span className="truncate text-emerald-600 font-mono select-all pr-4 max-w-[340px]">
-                {session.documentationUrl}
-              </span>
+            <div className="border border-border/80 bg-card rounded-lg p-3 text-xs flex items-center justify-between shadow-sm">
+              <div className="flex items-center gap-2.5 min-w-0 flex-1">
+                {parsedLink?.isValid ? (
+                  <>
+                    <Badge
+                      className={`text-[9px] px-1.5 py-0.5 border shrink-0 font-semibold uppercase ${
+                        parsedLink.type === "spreadsheet"
+                          ? "bg-emerald-500/10 text-emerald-600 border-emerald-500/20"
+                          : parsedLink.type === "document"
+                          ? "bg-blue-500/10 text-blue-600 border-blue-500/20"
+                          : parsedLink.type === "presentation"
+                          ? "bg-amber-500/10 text-amber-600 border-amber-500/20"
+                          : parsedLink.type === "form"
+                          ? "bg-purple-500/10 text-purple-600 border-purple-500/20"
+                          : parsedLink.type === "folder"
+                          ? "bg-yellow-500/10 text-yellow-600 border-yellow-500/20 dark:text-yellow-500"
+                          : parsedLink.type === "file"
+                          ? "bg-teal-500/10 text-teal-600 border-teal-500/20"
+                          : "bg-zinc-500/10 text-zinc-600 border-zinc-500/20"
+                      }`}
+                    >
+                      {parsedLink.type}
+                    </Badge>
+                    <span className="truncate text-text-primary font-medium select-all pr-3">
+                      {parsedLink.label}
+                    </span>
+                  </>
+                ) : (
+                  <>
+                    <Badge variant="destructive" className="bg-rose-500/10 text-rose-600 border-rose-500/20 text-[9px] py-0.5 uppercase">
+                      Invalid
+                    </Badge>
+                    <span className="truncate text-rose-600 font-mono select-all pr-3 max-w-[280px]">
+                      {session.documentationUrl}
+                    </span>
+                  </>
+                )}
+              </div>
               <a
-                href={session.documentationUrl}
+                href={normalizeDriveUrl(session.documentationUrl)}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="shrink-0 bg-emerald-600 hover:bg-emerald-700 text-white rounded p-1.5 flex items-center justify-center transition-colors"
+                className="shrink-0 bg-primary hover:bg-primary/95 text-primary-foreground rounded p-1.5 flex items-center justify-center transition-colors shadow-sm"
                 title="Launch Google Drive Folder"
               >
                 <ExternalLink className="size-3.5" />
               </a>
             </div>
           ) : (
-            <div className="border border-rose-500/20 bg-rose-500/5 rounded-lg p-3 text-xs text-rose-600">
-              No active documentation URL was supplied. Sessions require folder proof to officially count.
+            <div className="border border-rose-500/20 bg-rose-500/5 rounded-lg p-3 text-xs text-rose-600 flex items-start gap-2">
+              <AlertTriangle className="size-4 shrink-0 mt-0.5" />
+              <span>No active documentation URL was supplied. Sessions require folder proof to officially count.</span>
             </div>
           )}
         </div>
+
 
         {/* ═══ Execution Notes ═══ */}
         <div className="space-y-1.5">

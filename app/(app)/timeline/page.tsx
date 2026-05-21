@@ -23,6 +23,8 @@ import {
   Sparkles,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { parseDriveUrl, normalizeDriveUrl } from "@/lib/drive-links";
+
 import { Badge } from "@/components/ui/badge";
 import { EmptyState } from "@/components/empty-state";
 import {
@@ -553,7 +555,12 @@ function DetailPreview({
 }) {
   const meta = task.meta;
 
+  const parsedLink = React.useMemo(() => {
+    return meta.documentationUrl ? parseDriveUrl(meta.documentationUrl) : null;
+  }, [meta.documentationUrl]);
+
   return (
+
     <div className="space-y-4 py-2">
       {/* Title */}
       <div className="space-y-1">
@@ -645,18 +652,72 @@ function DetailPreview({
         </div>
       )}
 
-      {/* Documentation Link */}
-      {meta.documentationUrl && (
-        <a
-          href={meta.documentationUrl}
-          target="_blank"
-          rel="noopener noreferrer"
-          className="inline-flex items-center gap-1.5 text-xs text-brand-primary hover:underline"
-        >
-          <ExternalLink className="size-3" />
-          Open Documentation
-        </a>
-      )}
+      {/* Documentation Link & Status */}
+      <div className="space-y-2 pt-2 border-t border-border/40">
+        <p className="text-xs font-semibold text-text-secondary">Documentation Evidence</p>
+        {meta.documentationUrl ? (
+          <div className="border border-border/80 bg-card rounded-lg p-2.5 text-xs flex items-center justify-between shadow-sm">
+            <div className="flex items-center gap-2 min-w-0 flex-1">
+              {parsedLink?.isValid ? (
+                <>
+                  <Badge
+                    className={`text-[9px] px-1.5 py-0.5 border shrink-0 font-semibold uppercase ${
+                      parsedLink.type === "spreadsheet"
+                        ? "bg-emerald-500/10 text-emerald-600 border-emerald-500/20"
+                        : parsedLink.type === "document"
+                        ? "bg-blue-500/10 text-blue-600 border-blue-500/20"
+                        : parsedLink.type === "presentation"
+                        ? "bg-amber-500/10 text-amber-600 border-amber-500/20"
+                        : parsedLink.type === "form"
+                        ? "bg-purple-500/10 text-purple-600 border-purple-500/20"
+                        : parsedLink.type === "folder"
+                        ? "bg-yellow-500/10 text-yellow-600 border-yellow-500/20 dark:text-yellow-500"
+                        : parsedLink.type === "file"
+                        ? "bg-teal-500/10 text-teal-600 border-teal-500/20"
+                        : "bg-zinc-500/10 text-zinc-600 border-zinc-500/20"
+                    }`}
+                  >
+                    {parsedLink.type}
+                  </Badge>
+                  <span className="truncate text-text-primary font-medium select-all pr-2">
+                    {parsedLink.label}
+                  </span>
+                </>
+              ) : (
+                <>
+                  <Badge variant="destructive" className="bg-rose-500/10 text-rose-600 border-rose-500/20 text-[9px] py-0.5 uppercase shrink-0">
+                    Invalid Link
+                  </Badge>
+                  <span className="truncate text-rose-600 font-mono select-all pr-2 max-w-[200px]">
+                    {meta.documentationUrl}
+                  </span>
+                </>
+              )}
+            </div>
+            <a
+              href={normalizeDriveUrl(meta.documentationUrl)}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="shrink-0 bg-primary hover:bg-primary/95 text-primary-foreground rounded p-1.5 flex items-center justify-center transition-colors shadow-sm w-7 h-7"
+              title="Launch Google Drive Resource"
+            >
+              <ExternalLink className="size-3" />
+            </a>
+          </div>
+        ) : (
+          <div>
+            {meta.sessionStatus === "COMPLETED" ? (
+              <div className="border border-rose-500/20 bg-rose-500/5 rounded-lg p-2.5 text-xs text-rose-600 flex items-start gap-2 shadow-sm font-medium">
+                <AlertTriangle className="size-3.5 shrink-0 mt-0.5" />
+                <span>Documentation is missing for this completed session! Evidence must be uploaded to drive.</span>
+              </div>
+            ) : (
+              <span className="text-xs text-text-muted italic">No documentation provided yet.</span>
+            )}
+          </div>
+        )}
+      </div>
+
     </div>
   );
 }
