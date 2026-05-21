@@ -175,6 +175,17 @@ Update this file after every meaningful implementation change.
   - [x] Build premium Notifications Center workspace page
   - [x] Verify production build passes with zero errors
 
+- Feature 19: Reporting & Analytics
+  - [x] Install Recharts dependency for chart visualizations
+  - [x] Create reusable report aggregation services (`services/reports/reports.service.ts`) with shared filter interface
+  - [x] Implement GET `/api/projects/[projectId]/reports/overview` — project progress and activity-level breakdown
+  - [x] Implement GET `/api/projects/[projectId]/reports/centers` — per-center performance, delay rates, approval turnaround
+  - [x] Implement GET `/api/projects/[projectId]/reports/timeline` — weekly execution density, overdue trends, bottleneck analysis
+  - [x] Implement GET `/api/projects/[projectId]/reports/volunteer` — volunteer activity totals and center engagement
+  - [x] Build modular report tab components (`components/reports/`) — overview, centers, timeline, volunteer
+  - [x] Build reports dashboard page with tabbed views, filter toolbar (date range, center, volunteer-only), and Recharts bar chart
+  - [x] Verify production build passes with zero errors
+
 ## In Progress
 
 - None.
@@ -208,3 +219,4 @@ Update this file after every meaningful implementation change.
 - Feature 16: Implemented dual-endpoint approvals workflow under `GET /api/projects/[projectId]/approvals` and `PATCH /api/sessions/[sessionId]/approval` with Project Manager validations, transactionally recording history in the `ApprovalRecord` model. Updated the project and center dashboard services to require explicit `APPROVED` state for completion metrics. Built premium approvals queue table workspace with overdue filters and sidebar audit history feeds.
 - Feature 17: Extended the design system with semantic oklch purple volunteer status tokens (`--status-volunteer`) across light and dark themes, plus dashed-stroke Gantt bar overlays in `gantt-styles.css`. Expanded `CenterPerformanceMetric` to aggregate `volunteerAssignedCount`/`volunteerCompletedCount` per center during single-pass traversal. Added a dedicated Volunteer Initiatives summary card and per-center contribution column to the PM dashboard. Integrated Core/Volunteer type filter dropdowns into the Sessions Registry and Gantt Timeline toolbar with server-side `type` query parameter support in the timeline API. All volunteer metrics are calculated separately from core completion percentages to preserve the progression invariant.
 - Feature 18: Developed a project-scoped, internal in-app notifications system. Enhanced the database schema with relation tables for targeted centers (`NotificationCenter`) and per-user read logs (`NotificationRead`). Created an idempotent on-demand auto-notifications service to dynamically detect upcoming and overdue sessions. Built secure GET/POST/PATCH endpoints verifying role-based visibility and project access. Constructed a premium NavbarNotifications bell dropdown panel utilizing Base UI triggers and a complete Notifications Center page featuring filters, status-badge cards, and project-wide manual announcements.
+- Feature 19: Created modular report aggregation services under `services/reports/` with a shared `ReportFilters` interface supporting date range, center, activity, approval state, and volunteer-only filtering. Implemented four specialized report generators (overview, centers, timeline, volunteer) using parallel Prisma queries and single-pass session traversals. Exposed four secure GET endpoints under `/api/projects/[projectId]/reports/` with query-string filter parsing. Built a tabbed reports dashboard page with Recharts BarChart for weekly execution density visualization. All report components are separated into `components/reports/` for maintainability. Center reports include approval turnaround calculations. Timeline reports identify bottleneck periods automatically. Data is structured for future export compatibility without implementing actual exports.
