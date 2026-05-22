@@ -1,14 +1,15 @@
 "use client";
 
-import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { Link, usePathname } from "@/i18n/routing";
 import { sidebarNavItems } from "@/lib/navigation";
 import { cn } from "@/lib/utils";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Separator } from "@/components/ui/separator";
+import { useTranslations } from "next-intl";
 
 export function Sidebar() {
   const pathname = usePathname();
+  const t = useTranslations("navigation");
 
   return (
     <aside className="hidden md:flex md:w-56 lg:w-60 flex-col border-e border-border bg-sidebar">
@@ -19,7 +20,7 @@ export function Sidebar() {
           </span>
         </div>
         <span className="font-semibold text-sm text-sidebar-foreground truncate">
-          Field PM
+          {t("fieldPm")}
         </span>
       </div>
       <ScrollArea className="flex-1">
@@ -41,7 +42,7 @@ export function Sidebar() {
                 )}
               >
                 <item.icon className="size-4 shrink-0" />
-                <span>{item.title}</span>
+                <span>{t(item.title as any)}</span>
               </Link>
             );
           })}

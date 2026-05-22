@@ -1,7 +1,6 @@
 "use client";
 
-import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { Link, usePathname } from "@/i18n/routing";
 import { sidebarNavItems } from "@/lib/navigation";
 import { cn } from "@/lib/utils";
 import {
@@ -11,6 +10,7 @@ import {
   SheetTitle,
 } from "@/components/ui/sheet";
 import { ScrollArea } from "@/components/ui/scroll-area";
+import { useTranslations } from "next-intl";
 
 interface MobileSidebarProps {
   open: boolean;
@@ -19,6 +19,7 @@ interface MobileSidebarProps {
 
 export function MobileSidebar({ open, onOpenChange }: MobileSidebarProps) {
   const pathname = usePathname();
+  const t = useTranslations("navigation");
 
   return (
     <Sheet open={open} onOpenChange={onOpenChange}>
@@ -29,7 +30,7 @@ export function MobileSidebar({ open, onOpenChange }: MobileSidebarProps) {
               FP
             </span>
           </div>
-          <SheetTitle className="text-sm font-semibold">Field PM</SheetTitle>
+          <SheetTitle className="text-sm font-semibold">{t("fieldPm")}</SheetTitle>
         </SheetHeader>
         <ScrollArea className="flex-1 h-[calc(100vh-3.5rem)]">
           <nav className="layout-sidebar py-2">
@@ -51,7 +52,7 @@ export function MobileSidebar({ open, onOpenChange }: MobileSidebarProps) {
                   )}
                 >
                   <item.icon className="size-4 shrink-0" />
-                  <span>{item.title}</span>
+                  <span>{t(item.title as any)}</span>
                 </Link>
               );
             })}

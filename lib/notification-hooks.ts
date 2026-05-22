@@ -22,8 +22,14 @@ export async function triggerApprovalSuccessNotification(
         data: {
           projectId,
           sessionId,
-          title: "Session Approved",
-          message: `The session for "${activityTitle}" at "${centerName}" has been officially approved.`,
+          title: JSON.stringify({
+            en: "Session Approved",
+            ar: "تمت الموافقة على الجلسة",
+          }),
+          message: JSON.stringify({
+            en: `The session for "${activityTitle}" at "${centerName}" has been officially approved.`,
+            ar: `تمت الموافقة رسمياً على الجلسة الخاصة بـ "${activityTitle}" في "${centerName}".`,
+          }),
           type: "INFO" as NotificationType,
         },
       });
@@ -64,8 +70,14 @@ export async function triggerRejectionNotification(
         data: {
           projectId,
           sessionId,
-          title: "Session Rejected",
-          message: `The session for "${activityTitle}" at "${centerName}" was rejected. Reason: ${reviewNotes}`,
+          title: JSON.stringify({
+            en: "Session Rejected",
+            ar: "تم رفض الجلسة",
+          }),
+          message: JSON.stringify({
+            en: `The session for "${activityTitle}" at "${centerName}" was rejected. Reason: ${reviewNotes}`,
+            ar: `تم رفض الجلسة الخاصة بـ "${activityTitle}" في "${centerName}". السبب: ${reviewNotes}`,
+          }),
           type: "WARNING" as NotificationType,
         },
       });
@@ -105,8 +117,14 @@ export async function triggerPendingReviewReminderNotification(
         data: {
           projectId,
           sessionId,
-          title: "Pending Approval Reminder",
-          message: `The session for "${activityTitle}" at "${centerName}" is awaiting project manager review.`,
+          title: JSON.stringify({
+            en: "Pending Approval Reminder",
+            ar: "تذكير بالموافقة المعلقة",
+          }),
+          message: JSON.stringify({
+            en: `The session for "${activityTitle}" at "${centerName}" is awaiting project manager review.`,
+            ar: `الجلسة الخاصة بـ "${activityTitle}" في "${centerName}" بانتظار مراجعة مدير المشروع.`,
+          }),
           type: "INFO" as NotificationType,
         },
       });
@@ -124,3 +142,4 @@ export async function triggerPendingReviewReminderNotification(
     console.error("Failed to create pending review reminder notification:", error);
   }
 }
+

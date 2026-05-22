@@ -2,6 +2,7 @@
 
 import * as React from "react";
 import { useProject } from "@/lib/project-context";
+import { useTranslations, useLocale } from "next-intl";
 import {
   GanttChart as GanttChartIcon,
   Loader2,
@@ -85,6 +86,9 @@ interface TimelineResponse {
 
 export default function TimelinePage() {
   const { activeProject } = useProject();
+  const t = useTranslations("timeline");
+  const tCommon = useTranslations("common");
+  const locale = useLocale();
 
   // View controls
   const [viewType, setViewType] = React.useState<ViewType>("activity");
@@ -110,7 +114,7 @@ export default function TimelinePage() {
       const res = await fetch(
         `/api/projects/${activeProject.id}/timeline?groupBy=${groupBy}${typeParam}`
       );
-      if (!res.ok) throw new Error("Failed to load timeline data");
+      if (!res.ok) throw new Error(t("loadingTimeline"));
       const data: TimelineResponse = await res.json();
       setTimelineData(data);
 
@@ -139,7 +143,7 @@ export default function TimelinePage() {
               const isVol = s.activity?.isVolunteer || false;
               return {
                 id: `session-${s.id}`,
-                name: `${s.activity?.title || "Session"} — ${s.center?.name || "Unassigned"}`,
+                name: `${s.activity?.title || t("sessionDetails")} — ${s.center?.name || tCommon("none")}`,
                 start: formatDate(scheduledDate),
                 end: formatDate(endDate),
                 progress: isCompleted ? 100 : 0,
@@ -150,7 +154,7 @@ export default function TimelinePage() {
                   activityId: s.activityId,
                   activityTitle: s.activity?.title || "Unknown",
                   centerId: s.centerId,
-                  centerName: s.center?.name || "Unassigned",
+                  centerName: s.center?.name || tCommon("none"),
                   centerCity: s.center?.city || "",
                   sessionStatus: s.status,
                   approvalStatus: s.approvalStatus,
@@ -168,11 +172,11 @@ export default function TimelinePage() {
         }
       }
     } catch (err: any) {
-      toast.error(err.message || "Error loading timeline");
+      toast.error(err.message || t("loadingTimeline"));
     } finally {
       setLoading(false);
     }
-  }, [activeProject, groupBy, viewType, activityType]);
+  }, [activeProject, groupBy, viewType, activityType, t, tCommon]);
 
   React.useEffect(() => {
     if (activeProject) {
@@ -200,8 +204,8 @@ export default function TimelinePage() {
     return (
       <EmptyState
         icon={GanttChartIcon}
-        title="No project selected"
-        description="Select a project to view its timeline."
+        title={t("noProject")}
+        description={t("noProjectDesc")}
       />
     );
   }
@@ -214,10 +218,10 @@ export default function TimelinePage() {
       <div className="layout-page-header flex-col sm:flex-row items-start sm:items-center gap-3">
         <div>
           <h1 className="text-2xl font-bold tracking-tight text-text-primary">
-            Timeline
+            {t("title")}
           </h1>
           <p className="text-sm text-text-muted mt-0.5">
-            Operational Gantt view for{" "}
+            {t("subtitle")}{" "}
             <strong>{activeProject.name}</strong>
           </p>
         </div>
@@ -229,7 +233,7 @@ export default function TimelinePage() {
           className="flex items-center gap-1.5 shrink-0"
         >
           <RefreshCw className={`size-3.5 ${loading ? "animate-spin" : ""}`} />
-          Reload
+          {t("reload")}
         </Button>
       </div>
 
@@ -238,25 +242,25 @@ export default function TimelinePage() {
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
           <SummaryCard
             icon={<Layers className="size-4" />}
-            label="Activities"
+            label={t("totalActivities")}
             value={summary.totalActivities}
             colorClass="text-brand-primary"
           />
           <SummaryCard
             icon={<CalendarDays className="size-4" />}
-            label="Sessions"
+            label={t("totalSessions")}
             value={summary.totalSessions}
             colorClass="text-status-in-progress"
           />
           <SummaryCard
             icon={<CheckCircle className="size-4" />}
-            label="Completed"
+            label={t("completedLabel")}
             value={summary.completedSessions}
             colorClass="text-status-completed"
           />
           <SummaryCard
             icon={<AlertTriangle className="size-4" />}
-            label="Delayed"
+            label={t("delayedLabel")}
             value={summary.delayedSessions}
             colorClass="text-status-delayed"
           />
@@ -273,13 +277,13 @@ export default function TimelinePage() {
               active={viewType === "activity"}
               onClick={() => setViewType("activity")}
               icon={<BarChart3 className="size-3.5" />}
-              label="Activity View"
+              label={t("activityView")}
             />
             <ToolbarButton
               active={viewType === "session"}
               onClick={() => setViewType("session")}
               icon={<CalendarDays className="size-3.5" />}
-              label="Session View"
+              label={t("sessionView")}
             />
           </div>
 
@@ -293,13 +297,13 @@ export default function TimelinePage() {
                 active={groupBy === "activity"}
                 onClick={() => setGroupBy("activity")}
                 icon={<Layers className="size-3.5" />}
-                label="By Activity"
+                label={t("groupByActivity")}
               />
               <ToolbarButton
                 active={groupBy === "center"}
                 onClick={() => setGroupBy("center")}
                 icon={<Building2 className="size-3.5" />}
-                label="By Center"
+                label={t("groupByCenter")}
               />
             </div>
           )}
@@ -313,19 +317,19 @@ export default function TimelinePage() {
               active={activityType === "all"}
               onClick={() => setActivityType("all")}
               icon={<Layers className="size-3.5" />}
-              label="All Types"
+              label={t("allTypes")}
             />
             <ToolbarButton
               active={activityType === "core"}
               onClick={() => setActivityType("core")}
               icon={<CheckCircle className="size-3.5" />}
-              label="Core"
+              label={t("core")}
             />
             <ToolbarButton
               active={activityType === "volunteer"}
               onClick={() => setActivityType("volunteer")}
               icon={<Sparkles className="size-3.5" />}
-              label="Volunteer"
+              label={t("volunteer")}
             />
           </div>
         </div>
@@ -333,26 +337,26 @@ export default function TimelinePage() {
         {/* Right side: Zoom controls */}
         <div className="flex items-center gap-2">
           <span className="text-xs text-text-muted font-medium hidden sm:inline">
-            Zoom:
+            {t("zoom")}:
           </span>
           <div className="flex items-center gap-1 bg-muted/50 rounded-lg p-0.5">
             <ToolbarButton
               active={zoom === "Week"}
               onClick={() => setZoom("Week")}
               icon={<ZoomIn className="size-3.5" />}
-              label="Week"
+              label={t("week")}
             />
             <ToolbarButton
               active={zoom === "Month"}
               onClick={() => setZoom("Month")}
               icon={<Clock className="size-3.5" />}
-              label="Month"
+              label={t("month")}
             />
             <ToolbarButton
               active={zoom === "Quarter Year"}
               onClick={() => setZoom("Quarter Year")}
               icon={<ZoomOut className="size-3.5" />}
-              label="Quarter"
+              label={t("quarter")}
             />
           </div>
         </div>
@@ -363,15 +367,15 @@ export default function TimelinePage() {
         <div className="flex flex-col items-center justify-center py-24 gap-3">
           <Loader2 className="size-8 text-primary animate-spin" />
           <p className="text-sm text-text-muted">
-            Loading timeline data...
+            {t("loadingTimeline")}
           </p>
         </div>
       ) : displayTasks.length === 0 ? (
         <div className="py-16 bg-muted/5 border border-dashed border-border rounded-xl">
           <EmptyState
             icon={GanttChartIcon}
-            title="No timeline data"
-            description="Generate sessions for your project activities to visualize them on the timeline."
+            title={t("noData")}
+            description={t("noDataDesc")}
           />
         </div>
       ) : (
@@ -398,7 +402,7 @@ export default function TimelinePage() {
             <div className="flex items-center gap-2 px-1 py-2">
               <Info className="size-3.5 text-text-muted" />
               <span className="text-xs text-text-muted">
-                Simplified list view on mobile. Use a larger screen for the full Gantt chart.
+                {t("mobileNote")}
               </span>
             </div>
             {displayTasks.map((task) => (
@@ -412,12 +416,12 @@ export default function TimelinePage() {
 
           {/* ═══ Legend ═══ */}
           <div className="flex flex-wrap items-center gap-3 px-1 pt-2">
-            <span className="text-xs text-text-muted font-medium">Legend:</span>
-            <LegendItem color="bg-status-pending" label="Pending" />
-            <LegendItem color="bg-status-completed" label="Completed" />
-            <LegendItem color="bg-status-delayed" label="Delayed" />
-            <LegendItem color="bg-status-in-progress" label="In Progress" />
-            <LegendItem color="bg-status-volunteer" label="Volunteer" />
+            <span className="text-xs text-text-muted font-medium">{t("legend")}:</span>
+            <LegendItem color="bg-status-pending" label={t("pending")} />
+            <LegendItem color="bg-status-completed" label={t("complete")} />
+            <LegendItem color="bg-status-delayed" label={t("overdue")} />
+            <LegendItem color="bg-status-in-progress" label={t("inProgress")} />
+            <LegendItem color="bg-status-volunteer" label={t("volunteer")} />
           </div>
         </>
       )}
@@ -430,8 +434,8 @@ export default function TimelinePage() {
               <DialogHeader>
                 <DialogTitle className="text-lg leading-snug">
                   {selectedTask.meta?.type === "session"
-                    ? "Session Details"
-                    : "Activity Overview"}
+                    ? t("sessionDetails")
+                    : t("activityOverview")}
                 </DialogTitle>
               </DialogHeader>
               <DetailPreview task={selectedTask} />
@@ -515,6 +519,7 @@ function MobileTaskCard({
   task: GanttTask & { meta: TimelineMeta };
   onClick: () => void;
 }) {
+  const t = useTranslations("timeline");
   const meta = task.meta;
   const isDelayed = meta?.isDelayed;
 
@@ -538,7 +543,7 @@ function MobileTaskCard({
           {task.name}
         </p>
         <p className="text-[11px] text-text-muted">
-          {task.start} → {task.end} · {task.progress}% complete
+          {task.start} → {task.end} · {task.progress}% {t("complete")}
         </p>
       </div>
       {isDelayed && (
@@ -553,6 +558,8 @@ function DetailPreview({
 }: {
   task: GanttTask & { meta: TimelineMeta };
 }) {
+  const t = useTranslations("timeline");
+  const locale = useLocale();
   const meta = task.meta;
 
   const parsedLink = React.useMemo(() => {
@@ -592,7 +599,7 @@ function DetailPreview({
             className="bg-status-delayed/15 text-status-delayed-foreground border-status-delayed/30 text-[10px] font-semibold"
           >
             <AlertTriangle className="size-2.5 mr-1" />
-            Overdue
+            {t("overdue")}
           </Badge>
         )}
       </div>
@@ -601,25 +608,25 @@ function DetailPreview({
       <div className="bg-muted/30 border border-border/40 rounded-lg p-3 space-y-2 text-xs">
         {meta.scheduledDate && (
           <DetailRow
-            label="Scheduled Date"
-            value={new Date(meta.scheduledDate).toLocaleDateString()}
+            label={t("scheduledDate")}
+            value={new Date(meta.scheduledDate).toLocaleDateString(locale)}
           />
         )}
-        <DetailRow label="Date Range" value={`${task.start} → ${task.end}`} />
-        <DetailRow label="Progress" value={`${task.progress}%`} />
+        <DetailRow label={t("dateRange")} value={`${task.start} → ${task.end}`} />
+        <DetailRow label={t("progress")} value={`${task.progress}%`} />
         {meta.type === "session" && (
           <>
             <DetailRow
-              label="Lock State"
+              label={t("lockState")}
               value={
                 <span className="flex items-center gap-1">
                   {meta.isLocked ? (
                     <>
-                      <Lock className="size-3 text-text-muted" /> Locked
+                      <Lock className="size-3 text-text-muted" /> {t("locked")}
                     </>
                   ) : (
                     <>
-                      <Unlock className="size-3 text-text-muted" /> Unlocked
+                      <Unlock className="size-3 text-text-muted" /> {t("unlocked")}
                     </>
                   )}
                 </span>
@@ -627,13 +634,13 @@ function DetailPreview({
             />
             {meta.isManuallyAdjusted && (
               <DetailRow
-                label="Schedule"
+                label={t("schedule")}
                 value={
                   <Badge
                     variant="outline"
                     className="border-amber-300 text-amber-600 bg-amber-50/50 text-[10px]"
                   >
-                    ✍️ Manually Adjusted
+                    ✍️ {t("manuallyAdjusted")}
                   </Badge>
                 }
               />
@@ -645,7 +652,7 @@ function DetailPreview({
       {/* Notes */}
       {meta.notes && (
         <div className="space-y-1">
-          <p className="text-xs font-medium text-text-secondary">Notes</p>
+          <p className="text-xs font-medium text-text-secondary">{t("notes")}</p>
           <p className="text-xs text-text-muted bg-muted/20 rounded-md p-2 leading-relaxed">
             {meta.notes}
           </p>
@@ -654,7 +661,7 @@ function DetailPreview({
 
       {/* Documentation Link & Status */}
       <div className="space-y-2 pt-2 border-t border-border/40">
-        <p className="text-xs font-semibold text-text-secondary">Documentation Evidence</p>
+        <p className="text-xs font-semibold text-text-secondary">{t("documentationEvidence")}</p>
         {meta.documentationUrl ? (
           <div className="border border-border/80 bg-card rounded-lg p-2.5 text-xs flex items-center justify-between shadow-sm">
             <div className="flex items-center gap-2 min-w-0 flex-1">
@@ -686,7 +693,7 @@ function DetailPreview({
               ) : (
                 <>
                   <Badge variant="destructive" className="bg-rose-500/10 text-rose-600 border-rose-500/20 text-[9px] py-0.5 uppercase shrink-0">
-                    Invalid Link
+                    {t("invalidLink")}
                   </Badge>
                   <span className="truncate text-rose-600 font-mono select-all pr-2 max-w-[200px]">
                     {meta.documentationUrl}
@@ -699,7 +706,7 @@ function DetailPreview({
               target="_blank"
               rel="noopener noreferrer"
               className="shrink-0 bg-primary hover:bg-primary/95 text-primary-foreground rounded p-1.5 flex items-center justify-center transition-colors shadow-sm w-7 h-7"
-              title="Launch Google Drive Resource"
+              title={t("launchDrive")}
             >
               <ExternalLink className="size-3" />
             </a>
@@ -709,10 +716,10 @@ function DetailPreview({
             {meta.sessionStatus === "COMPLETED" ? (
               <div className="border border-rose-500/20 bg-rose-500/5 rounded-lg p-2.5 text-xs text-rose-600 flex items-start gap-2 shadow-sm font-medium">
                 <AlertTriangle className="size-3.5 shrink-0 mt-0.5" />
-                <span>Documentation is missing for this completed session! Evidence must be uploaded to drive.</span>
+                <span>{t("missingDocWarning")}</span>
               </div>
             ) : (
-              <span className="text-xs text-text-muted italic">No documentation provided yet.</span>
+              <span className="text-xs text-text-muted italic">{t("noDocYet")}</span>
             )}
           </div>
         )}
@@ -738,26 +745,27 @@ function DetailRow({
 }
 
 function StatusBadge({ status }: { status: string }) {
+  const t = useTranslations("timeline");
   const config: Record<string, { className: string; label: string }> = {
     PENDING: {
       className: "bg-status-pending/15 text-status-pending-foreground border-status-pending/30",
-      label: "Pending",
+      label: t("pending"),
     },
     IN_PROGRESS: {
       className: "bg-status-in-progress/15 text-status-in-progress-foreground border-status-in-progress/30",
-      label: "In Progress",
+      label: t("inProgress"),
     },
     COMPLETED: {
       className: "bg-status-completed/15 text-status-completed-foreground border-status-completed/30",
-      label: "Completed",
+      label: t("complete"),
     },
     DELAYED: {
       className: "bg-status-delayed/15 text-status-delayed-foreground border-status-delayed/30",
-      label: "Delayed",
+      label: t("overdue"),
     },
     CANCELLED: {
       className: "bg-muted/30 text-text-muted border-border",
-      label: "Cancelled",
+      label: t("cancelled"),
     },
   };
 
@@ -771,18 +779,19 @@ function StatusBadge({ status }: { status: string }) {
 }
 
 function ApprovalBadge({ status }: { status: string }) {
+  const t = useTranslations("timeline");
   const config: Record<string, { className: string; label: string }> = {
     PENDING_APPROVAL: {
       className: "bg-status-warning/15 text-status-warning-foreground border-status-warning/30",
-      label: "Awaiting Approval",
+      label: t("awaitingApproval"),
     },
     APPROVED: {
       className: "bg-status-approved/15 text-status-approved-foreground border-status-approved/30",
-      label: "Approved",
+      label: t("approved"),
     },
     REJECTED: {
       className: "bg-status-rejected/15 text-status-rejected-foreground border-status-rejected/30",
-      label: "Rejected",
+      label: t("rejected"),
     },
   };
 

@@ -9,11 +9,12 @@ import { cn } from "@/lib/utils";
 import {
   DropdownMenu,
   DropdownMenuContent,
-  DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Badge } from "@/components/ui/badge";
 import { toast } from "sonner";
+import { useTranslations, useLocale } from "next-intl";
+import { getLocalizedValue } from "@/lib/utils";
 
 interface NotificationItem {
   id: string;
@@ -28,6 +29,10 @@ interface NotificationItem {
 
 export function NavbarNotifications() {
   const { activeProject } = useProject();
+  const t = useTranslations("notifications");
+  const tNav = useTranslations("navigation");
+  const locale = useLocale();
+
   const [notifications, setNotifications] = React.useState<NotificationItem[]>([]);
   const [unreadCount, setUnreadCount] = React.useState(0);
   const [isOpen, setIsOpen] = React.useState(false);
@@ -79,10 +84,10 @@ export function NavbarNotifications() {
           prev.map((n) => (n.id === id ? { ...n, read: true } : n))
         );
         setUnreadCount((prev) => Math.max(0, prev - 1));
-        toast.success("Notification marked as read");
+        toast.success(t("markedAsRead"));
       }
     } catch (error) {
-      toast.error("Failed to mark as read");
+      toast.error(t("errorUpdatingStatus"));
     }
   };
 
@@ -99,9 +104,9 @@ export function NavbarNotifications() {
       
       setNotifications((prev) => prev.map((n) => ({ ...n, read: true })));
       setUnreadCount(0);
-      toast.success("All notifications marked as read");
+      toast.success(t("allMarkedRead"));
     } catch (error) {
-      toast.error("Failed to mark all as read");
+      toast.error(t("errorMarkingAll"));
     }
   };
 
@@ -145,17 +150,17 @@ export function NavbarNotifications() {
   const timeAgo = (dateStr: string) => {
     const date = new Date(dateStr);
     const seconds = Math.floor((new Date().getTime() - date.getTime()) / 1000);
-    if (seconds < 60) return "Just now";
+    if (seconds < 60) return t("justNow");
     const minutes = Math.floor(seconds / 60);
-    if (minutes < 60) return `${minutes}m ago`;
+    if (minutes < 60) return `${minutes} ${t("minutesAgo")}`;
     const hours = Math.floor(minutes / 60);
-    if (hours < 24) return `${hours}h ago`;
-    return date.toLocaleDateString("en-US", { month: "short", day: "numeric" });
+    if (hours < 24) return `${hours} ${t("hoursAgo")}`;
+    return date.toLocaleDateString(locale, { month: "short", day: "numeric" });
   };
 
   return (
     <DropdownMenu open={isOpen} onOpenChange={handleOpenChange}>
-      <DropdownMenuTrigger render={<button className={cn(buttonVariants({ variant: "ghost", size: "icon" }), "relative")} aria-label="Notifications" />}>
+      <DropdownMenuTrigger render={<button className={cn(buttonVariants({ variant: "ghost", size: "icon" }), "relative")} aria-label={tNav("notifications")} />}>
         <Bell className="h-[1.2rem] w-[1.2rem]" />
         {unreadCount > 0 && (
           <span className="absolute top-1.5 right-1.5 flex h-2.5 w-2.5">
@@ -169,10 +174,10 @@ export function NavbarNotifications() {
         {/* Header */}
         <div className="flex items-center justify-between p-4 border-b border-border bg-muted/40">
           <div className="flex items-center gap-2">
-            <h3 className="font-semibold text-text-primary text-sm">Notifications</h3>
+            <h3 className="font-semibold text-text-primary text-sm">{tNav("notifications")}</h3>
             {unreadCount > 0 && (
               <Badge variant="destructive" className="px-1.5 py-0.5 text-[10px] font-medium leading-none">
-                {unreadCount} new
+                {unreadCount} {t("new")}
               </Badge>
             )}
           </div>
@@ -183,7 +188,7 @@ export function NavbarNotifications() {
               onClick={handleMarkAllAsRead}
               className="text-[11px] h-7 px-2 hover:bg-muted font-medium text-text-muted hover:text-text-primary"
             >
-              Mark all as read
+              {t("markAllRead")}
             </Button>
           )}
         </div>
@@ -192,16 +197,16 @@ export function NavbarNotifications() {
         <div className="max-h-[360px] overflow-y-auto divide-y divide-border">
           {isLoading && notifications.length === 0 ? (
             <div className="p-8 text-center text-sm text-text-muted">
-              Loading alerts...
+              {t("loadingAlerts")}
             </div>
           ) : notifications.length === 0 ? (
             <div className="flex flex-col items-center justify-center p-8 text-center">
               <div className="rounded-full bg-muted p-3 mb-2">
                 <Bell className="h-5 w-5 text-text-muted" />
               </div>
-              <p className="text-xs font-medium text-text-primary">No new notifications</p>
+              <p className="text-xs font-medium text-text-primary">{t("noNotifications")}</p>
               <p className="text-[11px] text-text-muted max-w-[200px] mt-1">
-                You will be notified when session approvals or delays occur.
+                {t("noNotificationsDesc")}
               </p>
             </div>
           ) : (
@@ -225,10 +230,10 @@ export function NavbarNotifications() {
                     <p className={`text-xs font-semibold leading-relaxed truncate text-text-primary ${
                       !notification.read ? "font-bold" : ""
                     }`}>
-                      {notification.title}
+                      {getLocalizedValue(notification.title, locale)}
                     </p>
                     <p className="text-[11px] text-text-muted mt-1 leading-relaxed break-words font-medium">
-                      {notification.message}
+                      {getLocalizedValue(notification.message, locale)}
                     </p>
                     <div className="flex items-center gap-2 mt-1.5">
                       <span className="text-[10px] text-text-muted font-medium">
@@ -238,7 +243,7 @@ export function NavbarNotifications() {
                         <>
                           <span className="text-[10px] text-text-muted">•</span>
                           <span className="text-[10px] font-medium text-text-muted italic truncate max-w-[120px]">
-                            by {notification.sender.email.split("@")[0]}
+                            {t("by")} {notification.sender.email.split("@")[0]}
                           </span>
                         </>
                       )}
@@ -249,7 +254,7 @@ export function NavbarNotifications() {
                   {!notification.read && (
                     <button
                       onClick={(e) => handleMarkAsRead(notification.id, e)}
-                      title="Mark as read"
+                      title={t("markAsRead")}
                       className="absolute right-3.5 top-3.5 h-6 w-6 flex items-center justify-center rounded-full border border-border bg-background hover:bg-muted text-text-muted hover:text-text-primary transition-all shadow-sm"
                     >
                       <Check className="h-3 w-3" />
@@ -268,10 +273,11 @@ export function NavbarNotifications() {
             onClick={() => setIsOpen(false)}
             className={cn(buttonVariants({ variant: "ghost", size: "sm" }), "w-full text-xs text-primary font-medium")}
           >
-            View all notifications
+            {t("viewAll")}
           </Link>
         </div>
       </DropdownMenuContent>
     </DropdownMenu>
   );
 }
+

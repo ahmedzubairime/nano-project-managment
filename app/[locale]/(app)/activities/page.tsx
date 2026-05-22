@@ -28,7 +28,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Badge } from "@/components/ui/badge";
 import { toast } from "sonner";
 import { EmptyState } from "@/components/empty-state";
-import Link from "next/link";
+import { Link } from "@/i18n/routing";
 import {
   Table,
   TableBody,
@@ -61,6 +61,8 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
+
+import { useTranslations, useLocale } from "next-intl";
 
 interface DBUser {
   id: string;
@@ -108,6 +110,10 @@ export default function ActivitiesPage() {
   const { user } = useUser();
   const { activeProject } = useProject();
 
+  const t = useTranslations("activities");
+  const tCommon = useTranslations("common");
+  const locale = useLocale();
+
   // Access check
   const role = (user?.publicMetadata?.role as string) || "VIEWER";
   const isProjectManager = role === "PROJECT_MANAGER";
@@ -146,15 +152,15 @@ export default function ActivitiesPage() {
     setLoading(true);
     try {
       const res = await fetch(`/api/projects/${activeProject.id}/activities`);
-      if (!res.ok) throw new Error("Failed to load project activities");
+      if (!res.ok) throw new Error(t("loadError"));
       const data = await res.json();
       setActivities(data);
     } catch (err: any) {
-      toast.error(err.message || "Error loading activities");
+      toast.error(err.message || t("loadError"));
     } finally {
       setLoading(false);
     }
-  }, [activeProject]);
+  }, [activeProject, t]);
 
   // Fetch project centers
   const fetchProjectCenters = React.useCallback(async () => {
@@ -162,7 +168,7 @@ export default function ActivitiesPage() {
     setLoadingCenters(true);
     try {
       const res = await fetch(`/api/projects/${activeProject.id}/centers`);
-      if (!res.ok) throw new Error("Failed to load project centers");
+      if (!res.ok) throw new Error(t("loadCentersError"));
       const data = await res.json();
       setProjectCenters(data);
     } catch (err: any) {
@@ -170,7 +176,7 @@ export default function ActivitiesPage() {
     } finally {
       setLoadingCenters(false);
     }
-  }, [activeProject]);
+  }, [activeProject, t]);
 
   // Initial load
   React.useEffect(() => {
@@ -212,17 +218,17 @@ export default function ActivitiesPage() {
     if (!activeProject || !canModify) return;
 
     if (!formTitle.trim()) {
-      toast.error("Activity title is required");
+      toast.error(t("titleRequired"));
       return;
     }
 
     if (formSessionCount <= 0) {
-      toast.error("Planned session count must be greater than 0");
+      toast.error(t("sessionCountError"));
       return;
     }
 
     if (selectedCenterIds.length === 0) {
-      toast.error("At least one participating center must be selected");
+      toast.error(t("centersRequired"));
       return;
     }
 
@@ -244,14 +250,14 @@ export default function ActivitiesPage() {
 
       if (!response.ok) {
         const errData = await response.json();
-        throw new Error(errData.error || "Failed to create activity");
+        throw new Error(errData.error || t("createError"));
       }
 
-      toast.success("Activity planned successfully");
+      toast.success(t("planSuccess"));
       setIsCreateOpen(false);
       fetchActivities();
     } catch (err: any) {
-      toast.error(err.message || "Error planning activity");
+      toast.error(err.message || t("createError"));
     } finally {
       setSubmitting(false);
     }
@@ -263,17 +269,17 @@ export default function ActivitiesPage() {
     if (!activeProject || !selectedActivity || !canModify) return;
 
     if (!formTitle.trim()) {
-      toast.error("Activity title is required");
+      toast.error(t("titleRequired"));
       return;
     }
 
     if (formSessionCount <= 0) {
-      toast.error("Planned session count must be greater than 0");
+      toast.error(t("sessionCountError"));
       return;
     }
 
     if (selectedCenterIds.length === 0) {
-      toast.error("At least one participating center must be selected");
+      toast.error(t("centersRequired"));
       return;
     }
 
@@ -298,14 +304,14 @@ export default function ActivitiesPage() {
 
       if (!response.ok) {
         const errData = await response.json();
-        throw new Error(errData.error || "Failed to update activity");
+        throw new Error(errData.error || t("updateError"));
       }
 
-      toast.success("Activity details updated");
+      toast.success(t("updateSuccess"));
       setIsEditOpen(false);
       fetchActivities();
     } catch (err: any) {
-      toast.error(err.message || "Error updating activity");
+      toast.error(err.message || t("updateError"));
     } finally {
       setSubmitting(false);
     }
@@ -326,15 +332,15 @@ export default function ActivitiesPage() {
 
       if (!response.ok) {
         const errData = await response.json();
-        throw new Error(errData.error || "Failed to archive activity");
+        throw new Error(errData.error || t("archiveError"));
       }
 
-      toast.success("Activity successfully archived");
+      toast.success(t("archiveSuccess"));
       setIsDeleteOpen(false);
       setSelectedActivity(null);
       fetchActivities();
     } catch (err: any) {
-      toast.error(err.message || "Error archiving activity");
+      toast.error(err.message || t("archiveError"));
     } finally {
       setSubmitting(false);
     }
@@ -355,16 +361,16 @@ export default function ActivitiesPage() {
 
       if (!response.ok) {
         const errData = await response.json();
-        throw new Error(errData.error || "Failed to generate sessions");
+        throw new Error(errData.error || t("generateError"));
       }
 
       const resData = await response.json();
-      toast.success(resData.message || "Sessions generated successfully!");
+      toast.success(resData.message || t("generateSuccess"));
       setIsGenerateOpen(false);
       setSelectedActivity(null);
       fetchActivities();
     } catch (err: any) {
-      toast.error(err.message || "Error generating sessions");
+      toast.error(err.message || t("generateError"));
     } finally {
       setSubmitting(false);
     }
@@ -409,8 +415,8 @@ export default function ActivitiesPage() {
     const endStr = selectedActivity.endDate || activeProject?.endDate;
     
     const formattedRange = startStr && endStr 
-      ? `${new Date(startStr).toLocaleDateString()} to ${new Date(endStr).toLocaleDateString()}`
-      : "Not specified";
+      ? `${new Date(startStr).toLocaleDateString(locale)} ${tCommon("to")} ${new Date(endStr).toLocaleDateString(locale)}`
+      : t("noConstraint");
 
     return {
       counts,
@@ -419,7 +425,7 @@ export default function ActivitiesPage() {
       plannedCount,
       centersCount: centers.length,
     };
-  }, [selectedActivity, activeProject]);
+  }, [selectedActivity, activeProject, locale, t, tCommon]);
 
   // Filters computed
   const filteredActivities = React.useMemo(() => {
@@ -449,8 +455,8 @@ export default function ActivitiesPage() {
     return (
       <EmptyState
         icon={Activity}
-        title="No project selected"
-        description="Select an active planning container from the switcher in the navbar to manage its activities."
+        title={t("selectProject")}
+        description={t("selectProjectDesc")}
       />
     );
   }
@@ -461,20 +467,20 @@ export default function ActivitiesPage() {
     <div className="layout-section">
       <div className="layout-page-header flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-bold tracking-tight text-text-primary">Activities Planning</h1>
+          <h1 className="text-2xl font-bold tracking-tight text-text-primary">{t("title")}</h1>
           <p className="text-sm text-text-muted mt-1">
-            Define workshop tracks, event series, and campaign planning parameters for <strong>{activeProject.name}</strong>.
+            {t("subtitle")} <strong>{activeProject.name}</strong>.
           </p>
         </div>
         {isProjectManager && !hasNoCentersAssigned && (
           <Button
             onClick={handleOpenCreate}
             disabled={isProjectArchived}
-            title={isProjectArchived ? "Project is archived (Read-Only)" : "Plan Activity"}
+            title={isProjectArchived ? t("archivedReadOnly") : t("planActivity")}
             className="flex items-center gap-1.5 shrink-0 shadow-sm"
           >
             <Plus className="size-4" />
-            Plan Activity
+            {t("planActivity")}
           </Button>
         )}
       </div>
@@ -483,15 +489,15 @@ export default function ActivitiesPage() {
         <div className="mt-8 p-6 border border-dashed border-amber-300 rounded-xl bg-amber-50/10 flex flex-col items-center justify-center text-center gap-3">
           <Building2 className="size-8 text-amber-500" />
           <div className="space-y-1 max-w-md">
-            <h3 className="font-semibold text-text-primary text-base">No Participating Centers</h3>
+            <h3 className="font-semibold text-text-primary text-base">{t("noCentersTitle")}</h3>
             <p className="text-xs text-text-muted">
-              Activities are operational sessions distributed across centers. You must assign at least one center to this project in settings before you can plan activities.
+              {t("noCentersDesc")}
             </p>
           </div>
           <Link href="/settings" passHref>
             <Button size="sm" className="flex items-center gap-1.5 mt-2">
               <Settings className="size-4" />
-              Configure Settings
+              {t("configureSettings")}
             </Button>
           </Link>
         </div>
@@ -503,7 +509,7 @@ export default function ActivitiesPage() {
               <div className="relative flex-1">
                 <Search className="absolute left-3 top-2.5 size-4 text-text-muted" />
                 <Input
-                  placeholder="Search activities..."
+                  placeholder={t("searchPlaceholder")}
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
                   className="pl-9 h-9"
@@ -515,9 +521,9 @@ export default function ActivitiesPage() {
                 onChange={(e) => setTypeFilter(e.target.value as any)}
                 className="flex h-9 w-full sm:w-[160px] rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-sm transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring dark:bg-zinc-950 dark:text-zinc-50"
               >
-                <option value="all">All Activities</option>
-                <option value="core">Core Required</option>
-                <option value="volunteer">Volunteer Initiatives</option>
+                <option value="all">{t("allScopes")}</option>
+                <option value="core">{t("coreRequired")}</option>
+                <option value="volunteer">{t("volunteerActivities")}</option>
               </select>
             </div>
 
@@ -530,12 +536,12 @@ export default function ActivitiesPage() {
               {showArchived ? (
                 <>
                   <Eye className="size-4" />
-                  View Active
+                  {t("viewActive")}
                 </>
               ) : (
                 <>
                   <EyeOff className="size-4" />
-                  View Archived
+                  {t("viewArchived")}
                 </>
               )}
             </Button>
@@ -545,7 +551,7 @@ export default function ActivitiesPage() {
           {loading ? (
             <div className="flex flex-col items-center justify-center py-20 gap-2">
               <Loader2 className="size-8 text-primary animate-spin" />
-              <p className="text-sm text-text-muted">Loading planned activities...</p>
+              <p className="text-sm text-text-muted">{t("loadingActivities")}</p>
             </div>
           ) : filteredActivities.length === 0 ? (
             <div className="py-16 bg-muted/5 border border-dashed border-border rounded-xl mt-6">
@@ -553,29 +559,29 @@ export default function ActivitiesPage() {
                 icon={Activity}
                 title={
                   searchQuery
-                    ? "No search results"
+                    ? t("noSearchResults")
                     : showArchived
-                    ? "No archived activities"
-                    : "No activities planned"
+                    ? t("noArchivedActivities")
+                    : t("noActivitiesPlanned")
                 }
                 description={
                   searchQuery
-                    ? `No activities matched the criteria "${searchQuery}".`
+                    ? t("noSearchResultsDesc", { query: searchQuery })
                     : showArchived
-                    ? "Archived activities will appear here when soft-deleted."
-                    : "Establish work parameters and scheduled counts to get started."
+                    ? t("archivedDesc")
+                    : t("noActivitiesDesc")
                 }
               >
                 {isProjectManager && !showArchived && !searchQuery && (
                   <Button
                     onClick={handleOpenCreate}
                     disabled={isProjectArchived}
-                    title={isProjectArchived ? "Project is archived (Read-Only)" : "Plan First Activity"}
+                    title={isProjectArchived ? t("archivedReadOnly") : t("planFirstActivity")}
                     size="sm"
                     className="mt-3 flex items-center gap-1.5"
                   >
                     <Plus className="size-4" />
-                    Plan First Activity
+                    {t("planFirstActivity")}
                   </Button>
                 )}
               </EmptyState>
@@ -585,13 +591,13 @@ export default function ActivitiesPage() {
               <Table>
                 <TableHeader>
                   <TableRow>
-                    <TableHead className="font-semibold text-xs py-3.5">Activity Parameters</TableHead>
-                    <TableHead className="font-semibold text-xs py-3.5">Planned Sessions</TableHead>
-                    <TableHead className="font-semibold text-xs py-3.5">Participating Centers</TableHead>
-                    <TableHead className="font-semibold text-xs py-3.5">Scheduling Constraint</TableHead>
-                    <TableHead className="font-semibold text-xs py-3.5">Operational Scope</TableHead>
-                    <TableHead className="font-semibold text-xs py-3.5">Date Created</TableHead>
-                    <TableHead className="text-right font-semibold text-xs py-3.5 pr-6">Actions</TableHead>
+                    <TableHead className="font-semibold text-xs py-3.5">{t("activityParams")}</TableHead>
+                    <TableHead className="font-semibold text-xs py-3.5">{t("plannedSessions")}</TableHead>
+                    <TableHead className="font-semibold text-xs py-3.5">{t("participatingCenters")}</TableHead>
+                    <TableHead className="font-semibold text-xs py-3.5">{t("schedulingConstraint")}</TableHead>
+                    <TableHead className="font-semibold text-xs py-3.5">{t("operationalScope")}</TableHead>
+                    <TableHead className="font-semibold text-xs py-3.5">{t("dateCreated")}</TableHead>
+                    <TableHead className="text-right font-semibold text-xs py-3.5 pr-6">{t("actions")}</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
@@ -612,15 +618,15 @@ export default function ActivitiesPage() {
                           </TableCell>
                           <TableCell className="py-4 text-sm font-semibold text-text-secondary">
                             <div>
-                              <span>{act.plannedSessionCount} {act.plannedSessionCount === 1 ? "session" : "sessions"}</span>
+                              <span>{act.plannedSessionCount} {act.plannedSessionCount === 1 ? t("session") : t("sessions")}</span>
                               {act._count?.sessions ? (
-                                <span className="flex items-center gap-1 text-[11px] text-emerald-600 font-semibold mt-0.5" title={`${act._count.sessions} sessions generated`}>
+                                <span className="flex items-center gap-1 text-[11px] text-emerald-600 font-semibold mt-0.5" title={`${act._count.sessions} ${t("sessions")} ${t("generated")}`}>
                                   <CheckCircle className="size-3 text-emerald-500 fill-emerald-50" />
-                                  Generated
+                                  {t("generated")}
                                 </span>
                               ) : (
                                 <span className="block text-[11px] text-text-muted font-normal mt-0.5">
-                                  Not generated
+                                  {t("notGenerated")}
                                 </span>
                               )}
                             </div>
@@ -635,13 +641,13 @@ export default function ActivitiesPage() {
                                 <Building2 className="size-3.5 text-text-muted" />
                                 <span className="font-semibold">{act.activityCenters.length}</span>
                                 <span className="text-text-muted text-xs">
-                                  {act.activityCenters.length === 1 ? "center" : "centers"}
+                                  {act.activityCenters.length === 1 ? t("center") : t("centers")}
                                 </span>
                               </TooltipTrigger>
                               <TooltipContent className="max-w-[280px]">
                                 <div className="space-y-1.5 p-1">
                                   <p className="text-xs font-semibold border-b border-border/30 pb-1">
-                                    Participating Branches
+                                    {t("participatingBranches")}
                                   </p>
                                   <ul className="text-xs space-y-1">
                                     {act.activityCenters.map((ac) => (
@@ -660,28 +666,28 @@ export default function ActivitiesPage() {
                               <div className="flex items-center gap-1 text-xs">
                                 <Calendar className="size-3.5 text-text-muted" />
                                 <span>
-                                  {act.startDate ? new Date(act.startDate).toLocaleDateString() : "Any"}
+                                  {act.startDate ? new Date(act.startDate).toLocaleDateString(locale) : tCommon("any")}
                                   {" → "}
-                                  {act.endDate ? new Date(act.endDate).toLocaleDateString() : "Any"}
+                                  {act.endDate ? new Date(act.endDate).toLocaleDateString(locale) : tCommon("any")}
                                 </span>
                               </div>
                             ) : (
-                              <span className="text-xs text-text-muted italic">No constraint</span>
+                              <span className="text-xs text-text-muted italic">{t("noConstraint")}</span>
                             )}
                           </TableCell>
                           <TableCell className="py-4 text-sm">
                             {act.isVolunteer ? (
                               <Badge variant="secondary" className="bg-emerald-500/10 text-emerald-600 border-emerald-500/20 text-[11px] font-semibold">
-                                Volunteer
+                                {t("volunteer")}
                               </Badge>
                             ) : (
                               <Badge variant="outline" className="border-border text-[11px] font-semibold text-text-secondary">
-                                Core Required
+                                {t("coreRequired")}
                               </Badge>
                             )}
                           </TableCell>
                           <TableCell className="py-4 text-xs text-text-muted">
-                            {new Date(act.createdAt).toLocaleDateString()}
+                            {new Date(act.createdAt).toLocaleDateString(locale)}
                           </TableCell>
                           <TableCell className="py-4 text-right pr-6">
                             <div className="flex items-center justify-end gap-1.5">
@@ -696,11 +702,11 @@ export default function ActivitiesPage() {
                                         setIsGenerateOpen(true);
                                       }}
                                       disabled={isProjectArchived}
-                                      title={isProjectArchived ? "Project is archived (Read-Only)" : "Generate Sessions"}
+                                      title={isProjectArchived ? t("archivedReadOnly") : t("generateSessions")}
                                       className="h-8 text-xs font-semibold px-2.5 flex items-center gap-1 border-border/80 hover:bg-primary/5 hover:text-primary hover:border-primary/30"
                                     >
                                       <CheckCircle className="size-3.5 text-text-muted" />
-                                      Generate
+                                      {t("generate")}
                                     </Button>
                                   )}
                                   <Button
@@ -708,7 +714,7 @@ export default function ActivitiesPage() {
                                     size="icon"
                                     onClick={() => handleOpenEdit(act)}
                                     disabled={isProjectArchived}
-                                    title={isProjectArchived ? "Project is archived (Read-Only)" : "Edit Activity"}
+                                    title={isProjectArchived ? t("archivedReadOnly") : t("editActivity")}
                                     className="size-8 text-text-muted hover:text-text-primary hover:bg-muted disabled:opacity-50"
                                   >
                                     <Edit2 className="size-3.5" />
@@ -721,14 +727,14 @@ export default function ActivitiesPage() {
                                       setIsDeleteOpen(true);
                                     }}
                                     disabled={isProjectArchived}
-                                    title={isProjectArchived ? "Project is archived (Read-Only)" : "Archive Activity"}
+                                    title={isProjectArchived ? t("archivedReadOnly") : t("archiveActivity")}
                                     className="size-8 text-destructive hover:text-destructive hover:bg-destructive/10 disabled:opacity-50"
                                   >
                                     <Trash2 className="size-3.5" />
                                   </Button>
                                 </>
                               ) : (
-                                <span className="text-xs text-text-muted italic">Read-only</span>
+                                <span className="text-xs text-text-muted italic">{t("readOnly")}</span>
                               )}
                             </div>
                           </TableCell>
@@ -748,19 +754,19 @@ export default function ActivitiesPage() {
         <DialogContent className="sm:max-w-[480px]">
           <form onSubmit={handleCreateSubmit}>
             <DialogHeader>
-              <DialogTitle>Plan Activity</DialogTitle>
+              <DialogTitle>{t("planActivityDialog")}</DialogTitle>
               <DialogDescription>
-                Define operational parameters, date filters, and active branch participation inside{" "}
+                {t("planActivityDesc")}{" "}
                 <strong>{activeProject.name}</strong>.
               </DialogDescription>
             </DialogHeader>
 
             <div className="grid gap-4 py-4 max-h-[60vh] overflow-y-auto px-1">
               <div className="grid gap-1.5">
-                <Label htmlFor="create-title">Activity Title *</Label>
+                <Label htmlFor="create-title">{t("activityTitleLabel")}</Label>
                 <Input
                   id="create-title"
-                  placeholder="e.g. Intermediate Web Dev Workshop"
+                  placeholder={t("activityTitlePlaceholder")}
                   value={formTitle}
                   onChange={(e) => setFormTitle(e.target.value)}
                   required
@@ -768,10 +774,10 @@ export default function ActivitiesPage() {
               </div>
 
               <div className="grid gap-1.5">
-                <Label htmlFor="create-desc">Description</Label>
+                <Label htmlFor="create-desc">{t("descriptionLabel")}</Label>
                 <Textarea
                   id="create-desc"
-                  placeholder="Summarize planning targets, materials, or agendas..."
+                  placeholder={t("descriptionPlaceholder")}
                   value={formDesc}
                   onChange={(e) => setFormDesc(e.target.value)}
                   className="min-h-[70px]"
@@ -780,7 +786,7 @@ export default function ActivitiesPage() {
 
               <div className="grid grid-cols-2 gap-4">
                 <div className="grid gap-1.5">
-                  <Label htmlFor="create-session-count">Planned Session Count *</Label>
+                  <Label htmlFor="create-session-count">{t("plannedSessionCount")}</Label>
                   <Input
                     id="create-session-count"
                     type="number"
@@ -800,14 +806,14 @@ export default function ActivitiesPage() {
                     className="size-4.5 rounded border-input text-primary focus:ring-primary/40 focus:ring-offset-background"
                   />
                   <Label htmlFor="create-volunteer" className="text-sm font-medium cursor-pointer">
-                    Volunteer Initiative
+                    {t("volunteerInitiative")}
                   </Label>
                 </div>
               </div>
 
               <div className="grid grid-cols-2 gap-4 border-t border-border/40 pt-3">
                 <div className="grid gap-1.5">
-                  <Label htmlFor="create-start">Start Date (Optional)</Label>
+                  <Label htmlFor="create-start">{t("startDateOptional")}</Label>
                   <Input
                     id="create-start"
                     type="date"
@@ -816,7 +822,7 @@ export default function ActivitiesPage() {
                   />
                 </div>
                 <div className="grid gap-1.5">
-                  <Label htmlFor="create-end">End Date (Optional)</Label>
+                  <Label htmlFor="create-end">{t("endDateOptional")}</Label>
                   <Input
                     id="create-end"
                     type="date"
@@ -827,9 +833,9 @@ export default function ActivitiesPage() {
               </div>
 
               <div className="grid gap-2 border-t border-border/40 pt-3">
-                <Label className="text-sm font-semibold">Participating Centers *</Label>
+                <Label className="text-sm font-semibold">{t("participatingCentersLabel")}</Label>
                 <p className="text-[11px] text-text-muted mt-0.5 mb-1.5">
-                  Select which assigned project branches will run sessions for this activity.
+                  {t("participatingCentersDesc")}
                 </p>
                 <div className="grid gap-2 max-h-[140px] overflow-y-auto border border-border rounded-lg p-2.5 bg-muted/10">
                   {projectCenters.map((pc) => (
@@ -861,10 +867,10 @@ export default function ActivitiesPage() {
                 onClick={() => setIsCreateOpen(false)}
                 disabled={submitting}
               >
-                Cancel
+                {tCommon("cancel")}
               </Button>
               <Button type="submit" disabled={submitting}>
-                {submitting ? "Planning..." : "Plan Activity"}
+                {submitting ? t("planning") : t("planActivity")}
               </Button>
             </DialogFooter>
           </form>
@@ -876,18 +882,18 @@ export default function ActivitiesPage() {
         <DialogContent className="sm:max-w-[480px]">
           <form onSubmit={handleEditSubmit}>
             <DialogHeader>
-              <DialogTitle>Edit Activity Parameters</DialogTitle>
+              <DialogTitle>{t("editActivityTitle")}</DialogTitle>
               <DialogDescription>
-                Modify operational scope, dates, and active branch assignments.
+                {t("editActivityDesc")}
               </DialogDescription>
             </DialogHeader>
 
             <div className="grid gap-4 py-4 max-h-[60vh] overflow-y-auto px-1">
               <div className="grid gap-1.5">
-                <Label htmlFor="edit-title">Activity Title *</Label>
+                <Label htmlFor="edit-title">{t("activityTitleLabel")}</Label>
                 <Input
                   id="edit-title"
-                  placeholder="e.g. Intermediate Web Dev Workshop"
+                  placeholder={t("activityTitlePlaceholder")}
                   value={formTitle}
                   onChange={(e) => setFormTitle(e.target.value)}
                   required
@@ -895,10 +901,10 @@ export default function ActivitiesPage() {
               </div>
 
               <div className="grid gap-1.5">
-                <Label htmlFor="edit-desc">Description</Label>
+                <Label htmlFor="edit-desc">{t("descriptionLabel")}</Label>
                 <Textarea
                   id="edit-desc"
-                  placeholder="Summarize planning targets, materials, or agendas..."
+                  placeholder={t("descriptionPlaceholder")}
                   value={formDesc}
                   onChange={(e) => setFormDesc(e.target.value)}
                   className="min-h-[70px]"
@@ -907,7 +913,7 @@ export default function ActivitiesPage() {
 
               <div className="grid grid-cols-2 gap-4">
                 <div className="grid gap-1.5">
-                  <Label htmlFor="edit-session-count">Planned Session Count *</Label>
+                  <Label htmlFor="edit-session-count">{t("plannedSessionCount")}</Label>
                   <Input
                     id="edit-session-count"
                     type="number"
@@ -927,14 +933,14 @@ export default function ActivitiesPage() {
                     className="size-4.5 rounded border-input text-primary focus:ring-primary/40 focus:ring-offset-background"
                   />
                   <Label htmlFor="edit-volunteer" className="text-sm font-medium cursor-pointer">
-                    Volunteer Initiative
+                    {t("volunteerInitiative")}
                   </Label>
                 </div>
               </div>
 
               <div className="grid grid-cols-2 gap-4 border-t border-border/40 pt-3">
                 <div className="grid gap-1.5">
-                  <Label htmlFor="edit-start">Start Date (Optional)</Label>
+                  <Label htmlFor="edit-start">{t("startDateOptional")}</Label>
                   <Input
                     id="edit-start"
                     type="date"
@@ -943,7 +949,7 @@ export default function ActivitiesPage() {
                   />
                 </div>
                 <div className="grid gap-1.5">
-                  <Label htmlFor="edit-end">End Date (Optional)</Label>
+                  <Label htmlFor="edit-end">{t("endDateOptional")}</Label>
                   <Input
                     id="edit-end"
                     type="date"
@@ -954,9 +960,9 @@ export default function ActivitiesPage() {
               </div>
 
               <div className="grid gap-2 border-t border-border/40 pt-3">
-                <Label className="text-sm font-semibold">Participating Centers *</Label>
+                <Label className="text-sm font-semibold">{t("participatingCentersLabel")}</Label>
                 <p className="text-[11px] text-text-muted mt-0.5 mb-1.5">
-                  Select which assigned project branches will run sessions for this activity.
+                  {t("participatingCentersDesc")}
                 </p>
                 <div className="grid gap-2 max-h-[140px] overflow-y-auto border border-border rounded-lg p-2.5 bg-muted/10">
                   {projectCenters.map((pc) => (
@@ -988,10 +994,10 @@ export default function ActivitiesPage() {
                 onClick={() => setIsEditOpen(false)}
                 disabled={submitting}
               >
-                Cancel
+                {tCommon("cancel")}
               </Button>
               <Button type="submit" disabled={submitting}>
-                {submitting ? "Saving..." : "Save Changes"}
+                {submitting ? t("saving") : t("saveChanges")}
               </Button>
             </DialogFooter>
           </form>
@@ -1002,16 +1008,13 @@ export default function ActivitiesPage() {
       <AlertDialog open={isDeleteOpen} onOpenChange={setIsDeleteOpen}>
         <AlertDialogContent>
           <AlertDialogHeader>
-            <AlertDialogTitle>Archive Activity</AlertDialogTitle>
+            <AlertDialogTitle>{t("archiveActivityTitle")}</AlertDialogTitle>
             <AlertDialogDescription>
-              Are you sure you want to archive <strong>{selectedActivity?.title}</strong>?
-              <br />
-              <br />
-              Archiving an activity soft-deletes it. Scheduled execution sessions related to this activity will remain in the database but the activity will be filtered out of active lists.
+              {selectedActivity && t("archiveActivityDesc", { title: selectedActivity.title })}
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
-            <AlertDialogCancel disabled={submitting}>Cancel</AlertDialogCancel>
+            <AlertDialogCancel disabled={submitting}>{tCommon("cancel")}</AlertDialogCancel>
             <AlertDialogAction
               onClick={(e) => {
                 e.preventDefault();
@@ -1020,7 +1023,7 @@ export default function ActivitiesPage() {
               disabled={submitting}
               className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
             >
-              {submitting ? "Archiving..." : "Archive Activity"}
+              {submitting ? t("archiving") : t("archiveActivity")}
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>
@@ -1030,17 +1033,18 @@ export default function ActivitiesPage() {
       <AlertDialog open={isGenerateOpen} onOpenChange={setIsGenerateOpen}>
         <AlertDialogContent>
           <AlertDialogHeader>
-            <AlertDialogTitle>Generate Execution Sessions</AlertDialogTitle>
+            <AlertDialogTitle>{t("generateTitle")}</AlertDialogTitle>
             <AlertDialogDescription>
-              This will automatically distribute <strong>{selectedActivity?.plannedSessionCount}</strong> planned sessions across the <strong>{selectedActivity?.activityCenters.length}</strong> participating centers.
+              {selectedActivity && t("generateDesc", {
+                count: selectedActivity.plannedSessionCount,
+                centers: selectedActivity.activityCenters.length,
+              })}
               <br />
-              <br />
-              The scheduling engine uses a fully deterministic round-robin distribution to map dates and centers. Generated sessions will be created as <strong>PENDING</strong> and <strong>NOT_SUBMITTED</strong>.
 
               {distributionInfo && (
                 <div className="mt-4 space-y-3.5 border-t border-border/40 pt-4">
                   <div className="flex flex-col gap-1">
-                    <span className="text-[10px] uppercase font-bold tracking-wider text-text-muted">Scheduling Boundaries</span>
+                    <span className="text-[10px] uppercase font-bold tracking-wider text-text-muted">{t("schedulingBoundaries")}</span>
                     <div className="flex items-center gap-1.5 text-xs text-text-primary mt-0.5">
                       <Calendar className="size-3.5 text-primary" />
                       <span>{distributionInfo.formattedRange}</span>
@@ -1048,12 +1052,12 @@ export default function ActivitiesPage() {
                   </div>
 
                   <div className="flex flex-col gap-1.5">
-                    <span className="text-[10px] uppercase font-bold tracking-wider text-text-muted">Center Allocation Preview</span>
+                    <span className="text-[10px] uppercase font-bold tracking-wider text-text-muted">{t("centerAllocationPreview")}</span>
                     <div className="grid gap-2 border border-border/50 rounded-lg p-2.5 bg-muted/10 max-h-[160px] overflow-y-auto mt-0.5">
                       {Object.entries(distributionInfo.counts).map(([name, count]) => (
                         <div key={name} className="flex justify-between items-center text-xs">
                           <span className="font-medium text-text-primary text-[11px]">{name}</span>
-                          <Badge variant="secondary" className="px-1.5 py-0 text-[10px]">{count} {count === 1 ? 'session' : 'sessions'}</Badge>
+                          <Badge variant="secondary" className="px-1.5 py-0 text-[10px]">{count} {count === 1 ? t("session") : t("sessions")}</Badge>
                         </div>
                       ))}
                     </div>
@@ -1063,9 +1067,12 @@ export default function ActivitiesPage() {
                     <div className="flex items-start gap-2 p-3 rounded-lg border border-amber-500/20 bg-amber-500/5 text-xs text-amber-600 dark:text-amber-400 mt-1">
                       <Info className="size-4 shrink-0 mt-0.5" />
                       <div>
-                        <p className="font-semibold text-[10px] uppercase tracking-wider mb-0.5">⚠️ Imbalanced Distribution Notice</p>
+                        <p className="font-semibold text-[10px] uppercase tracking-wider mb-0.5">{t("imbalancedNotice")}</p>
                         <p className="leading-relaxed text-[10px]">
-                          {distributionInfo.plannedCount} sessions cannot be divided perfectly equally across {distributionInfo.centersCount} participating centers. Some centers will be assigned 1 extra session to cover the total planned scope.
+                          {t("imbalancedDesc", {
+                            count: distributionInfo.plannedCount,
+                            centers: distributionInfo.centersCount,
+                          })}
                         </p>
                       </div>
                     </div>
@@ -1074,11 +1081,11 @@ export default function ActivitiesPage() {
               )}
               
               <br />
-              <span className="font-semibold text-text-primary">Note:</span> This action is permanent and cannot be undone or re-run once sessions are generated.
+              <span className="text-xs text-text-muted">{t("permanentNote")}</span>
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
-            <AlertDialogCancel disabled={submitting}>Cancel</AlertDialogCancel>
+            <AlertDialogCancel disabled={submitting}>{tCommon("cancel")}</AlertDialogCancel>
             <AlertDialogAction
               onClick={(e) => {
                 e.preventDefault();
@@ -1087,7 +1094,7 @@ export default function ActivitiesPage() {
               disabled={submitting}
               className="bg-primary text-primary-foreground hover:bg-primary/95"
             >
-              {submitting ? "Generating..." : "Generate Sessions"}
+              {submitting ? t("generating") : t("generateSessions")}
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>

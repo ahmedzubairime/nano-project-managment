@@ -29,6 +29,8 @@ import {
   FileText,
 } from "lucide-react";
 
+import { useTranslations } from "next-intl";
+
 interface ReviewDialogProps {
   session: {
     id: string;
@@ -61,6 +63,8 @@ export function ReviewDialog({
   onSuccess,
   isProjectArchived = false,
 }: ReviewDialogProps) {
+  const t = useTranslations("approvals");
+  const tCommon = useTranslations("common");
   const [reviewNotes, setReviewNotes] = React.useState<string>("");
   const [submitting, setSubmitting] = React.useState<boolean>(false);
 
@@ -78,10 +82,10 @@ export function ReviewDialog({
 
   if (!session) return null;
 
-  const activityTitle = session.activity?.title || "Session Activity";
-  const centerName = session.center?.name || "Center";
+  const activityTitle = session.activity?.title || t("activity");
+  const centerName = session.center?.name || t("center");
   const city = session.center?.city || "";
-  const managerEmail = session.center?.manager?.email || "No manager assigned";
+  const managerEmail = session.center?.manager?.email || t("noManagerAssigned");
   const isVol = session.activity?.isVolunteer || false;
 
   async function handleReview(action: "APPROVE" | "REJECT") {
@@ -90,7 +94,7 @@ export function ReviewDialog({
 
     // Rejection notes validation
     if (action === "REJECT" && !formattedNotes) {
-      toast.error("Validation failed: Rejection notes are required to reject this session.");
+      toast.error(t("validationRejectionNotesRequired"));
       return;
     }
 
@@ -107,18 +111,18 @@ export function ReviewDialog({
 
       if (!response.ok) {
         const errData = await response.json();
-        throw new Error(errData.error || "Failed to process review decision");
+        throw new Error(errData.error || t("errorReviewProcess"));
       }
 
       toast.success(
         action === "APPROVE"
-          ? "Session approved successfully!"
-          : "Session rejected. Rejection notes logged and notified."
+          ? t("sessionApprovedSuccess")
+          : t("sessionRejectedSuccess")
       );
       onOpenChange(false);
       if (onSuccess) onSuccess();
     } catch (err: any) {
-      toast.error(err.message || "Error submitting review");
+      toast.error(err.message || t("errorSubmittingReview"));
     } finally {
       setSubmitting(false);
     }
@@ -130,10 +134,10 @@ export function ReviewDialog({
         <DialogHeader>
           <DialogTitle className="text-lg font-bold flex items-center gap-2">
             <FileCheck className="size-5 text-primary shrink-0" />
-            <span>Review Operational Execution</span>
+            <span>{t("reviewTitle")}</span>
           </DialogTitle>
           <DialogDescription>
-            Audit documentation, verify execution quality, and submit your final approval decision.
+            {t("reviewDesc")}
           </DialogDescription>
         </DialogHeader>
 
@@ -141,7 +145,7 @@ export function ReviewDialog({
           <div className="flex gap-2 p-3 bg-amber-50 border border-amber-100 dark:bg-amber-950/20 dark:border-amber-900/30 rounded-lg text-xs leading-normal text-amber-600 dark:text-amber-400">
             <AlertTriangle className="size-4 shrink-0 mt-0.5" />
             <span>
-              <strong>Read-Only:</strong> The parent project container is archived and locked. Review decisions are frozen.
+              <strong>{tCommon("archivedReadOnly")}:</strong> {t("readOnlyFrozen")}
             </span>
           </div>
         )}
@@ -158,7 +162,7 @@ export function ReviewDialog({
                   variant={isVol ? "secondary" : "default"}
                   className={isVol ? "bg-amber-500/10 text-amber-600 border-amber-500/20" : "bg-primary/10 text-primary border-primary/20"}
                 >
-                  {isVol ? "Volunteer" : "Core Activity"}
+                  {isVol ? t("volunteer") : t("coreActivity")}
                 </Badge>
               </div>
             </div>
@@ -182,13 +186,13 @@ export function ReviewDialog({
 
             <div className="flex items-center gap-1.5 min-w-0">
               <Calendar className="size-3.5 text-text-muted shrink-0" />
-              <span>Scheduled: {new Date(session.scheduledDate).toLocaleDateString()}</span>
+              <span>{t("scheduledDate")}: {new Date(session.scheduledDate).toLocaleDateString()}</span>
             </div>
 
             {session.submittedAt && (
               <div className="flex items-center gap-1.5 min-w-0 justify-end">
                 <FileText className="size-3.5 text-text-muted shrink-0" />
-                <span>Submitted: {new Date(session.submittedAt).toLocaleDateString()}</span>
+                <span>{t("submittedDate")}: {new Date(session.submittedAt).toLocaleDateString()}</span>
               </div>
             )}
           </div>
@@ -197,7 +201,7 @@ export function ReviewDialog({
         {/* ═══ Evidence documentation links ═══ */}
         <div className="space-y-2">
           <Label className="text-xs font-semibold text-text-primary flex items-center justify-between">
-            <span>Execution Evidence & Docs</span>
+            <span>{t("evidenceDocs")}</span>
             {session.documentationUrl && parsedLink?.isValid ? (
               <a
                 href={parsedLink.normalizedUrl}
@@ -205,11 +209,11 @@ export function ReviewDialog({
                 rel="noopener noreferrer"
                 className="text-xs text-primary hover:underline flex items-center gap-0.5 font-medium"
               >
-                Open evidence link <ExternalLink className="size-3 shrink-0" />
+                {t("openEvidenceLink")} <ExternalLink className="size-3 shrink-0" />
               </a>
             ) : (
               <span className="text-rose-500 flex items-center gap-1 font-semibold text-[11px]">
-                <AlertTriangle className="size-3 shrink-0" /> Missing Drive link
+                <AlertTriangle className="size-3 shrink-0" /> {t("missingDriveLink")}
               </span>
             )}
           </Label>
@@ -266,7 +270,7 @@ export function ReviewDialog({
           ) : (
             <div className="border border-rose-500/20 bg-rose-500/5 rounded-lg p-3 text-xs text-rose-600 flex items-start gap-2">
               <AlertTriangle className="size-4 shrink-0 mt-0.5" />
-              <span>No active documentation URL was supplied. Sessions require folder proof to officially count.</span>
+              <span>{t("driveLinkRequiredDesc")}</span>
             </div>
           )}
         </div>
@@ -274,9 +278,9 @@ export function ReviewDialog({
 
         {/* ═══ Execution Notes ═══ */}
         <div className="space-y-1.5">
-          <Label className="text-xs font-semibold text-text-primary">Center Manager Execution Notes</Label>
+          <Label className="text-xs font-semibold text-text-primary">{t("managerNotes")}</Label>
           <div className="border border-border/80 rounded-lg p-3 text-xs bg-muted/20 text-text-secondary min-h-[50px] leading-relaxed max-h-[120px] overflow-y-auto">
-            {session.notes || <span className="text-text-muted italic">No execution notes logged.</span>}
+            {session.notes || <span className="text-text-muted italic">{t("noNotes")}</span>}
           </div>
         </div>
 
@@ -284,15 +288,15 @@ export function ReviewDialog({
         <div className="space-y-1.5">
           <div className="flex justify-between items-center">
             <Label htmlFor="review-notes" className="text-xs font-semibold text-text-primary">
-              Review Decisions & Rejection Notes
+              {t("reviewDecisionsTitle")}
             </Label>
             <span className="text-[10px] text-text-muted">
-              Notes are required when rejecting session submissions.
+              {t("notesRequired")}
             </span>
           </div>
           <Textarea
             id="review-notes"
-            placeholder="Type your feedback here..."
+            placeholder={t("feedbackPlaceholder")}
             value={reviewNotes}
             onChange={(e) => setReviewNotes(e.target.value)}
             disabled={submitting || isProjectArchived}
@@ -309,7 +313,7 @@ export function ReviewDialog({
             className="text-xs"
             disabled={submitting}
           >
-            Cancel
+            {tCommon("cancel")}
           </Button>
 
           <div className="flex gap-2">
@@ -320,14 +324,14 @@ export function ReviewDialog({
               className="text-xs font-semibold bg-rose-600 hover:bg-rose-700 flex items-center gap-1 disabled:opacity-50"
               onClick={() => handleReview("REJECT")}
               disabled={submitting || isProjectArchived || !reviewNotes.trim()}
-              title={isProjectArchived ? "Project is archived (Read-Only)" : (!reviewNotes.trim() ? "Rejection notes are required to reject" : "Reject execution and request revisions")}
+              title={isProjectArchived ? tCommon("archivedReadOnly") : (!reviewNotes.trim() ? t("notesRequired") : t("rejectExecution"))}
             >
               {submitting ? (
                 <Loader2 className="size-3 animate-spin mr-1" />
               ) : (
                 <X className="size-3.5 stroke-[2.5px]" />
               )}
-              Reject Execution
+              {t("rejectExecution")}
             </Button>
 
             {/* Approve Button */}
@@ -336,14 +340,14 @@ export function ReviewDialog({
               className="text-xs font-semibold bg-emerald-600 hover:bg-emerald-700 text-white flex items-center gap-1 disabled:opacity-50"
               onClick={() => handleReview("APPROVE")}
               disabled={submitting || isProjectArchived}
-              title={isProjectArchived ? "Project is archived (Read-Only)" : "Officially approve execution and count session metrics"}
+              title={isProjectArchived ? tCommon("archivedReadOnly") : t("approveSession")}
             >
               {submitting ? (
                 <Loader2 className="size-3 animate-spin mr-1" />
               ) : (
                 <Check className="size-3.5 stroke-[2.5px]" />
               )}
-              Approve Session
+              {t("approveSession")}
             </Button>
           </div>
         </DialogFooter>

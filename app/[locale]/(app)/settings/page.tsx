@@ -18,6 +18,7 @@ import {
   Sliders,
   Sparkles,
 } from "lucide-react";
+import { useTranslations, useLocale } from "next-intl";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -84,6 +85,9 @@ interface ProjectCenterAssignment {
 export default function SettingsPage() {
   const { user } = useUser();
   const { activeProject, updateProject, projects } = useProject();
+  const t = useTranslations("settings");
+  const tCommon = useTranslations("common");
+  const locale = useLocale();
 
   // Role permissions
   const role = (user?.publicMetadata?.role as string) || "VIEWER";
@@ -118,7 +122,7 @@ export default function SettingsPage() {
 
   // General settings mock states
   const [prefTheme, setPrefTheme] = React.useState("system");
-  const [prefLang, setPrefLang] = React.useState("en");
+  const [prefLang, setPrefLang] = React.useState(locale);
   const [prefNotify, setPrefNotify] = React.useState(true);
 
   // Fetch project-specific assignments
@@ -127,28 +131,28 @@ export default function SettingsPage() {
     setLoadingAssignments(true);
     try {
       const res = await fetch(`/api/projects/${activeProject.id}/centers`);
-      if (!res.ok) throw new Error("Failed to load assigned centers");
+      if (!res.ok) throw new Error(t("errorLoadCenters"));
       const data = await res.json();
       setAssignedCenters(data);
     } catch (err: any) {
       console.error(err);
-      toast.error(err.message || "Error fetching assigned centers");
+      toast.error(err.message || t("errorLoadCenters"));
     } finally {
       setLoadingAssignments(false);
     }
-  }, [activeProject]);
+  }, [activeProject, t]);
 
   // Fetch global centers list
   const fetchGlobalCenters = React.useCallback(async () => {
     try {
       const res = await fetch("/api/centers");
-      if (!res.ok) throw new Error("Failed to load global centers");
+      if (!res.ok) throw new Error(t("errorLoadGlobalCenters"));
       const data = await res.json();
       setGlobalCenters(data);
     } catch (err: any) {
       console.error(err);
     }
-  }, []);
+  }, [t]);
 
   // Fetch data on activeProject change
   React.useEffect(() => {
@@ -186,12 +190,12 @@ export default function SettingsPage() {
     if (!activeProject || !isProjectManager) return;
 
     if (!projectName.trim()) {
-      toast.error("Project name is required");
+      toast.error(t("errorNameRequired"));
       return;
     }
 
     if (new Date(projectStart) >= new Date(projectEnd)) {
-      toast.error("Start date must be before end date");
+      toast.error(t("errorDatesInvalid"));
       return;
     }
 
@@ -204,9 +208,9 @@ export default function SettingsPage() {
         endDate: new Date(projectEnd).toISOString(),
         status: projectStatus,
       });
-      toast.success("Project settings updated successfully");
+      toast.success(t("successUpdateProject"));
     } catch (err: any) {
-      toast.error(err.message || "Failed to update project settings");
+      toast.error(err.message || t("errorUpdateProject"));
     } finally {
       setSubmittingDetails(false);
     }
@@ -227,15 +231,15 @@ export default function SettingsPage() {
 
       if (!response.ok) {
         const errorData = await response.json();
-        throw new Error(errorData.error || "Failed to assign center");
+        throw new Error(errorData.error || t("errorAssignCenter"));
       }
 
-      toast.success("Center assigned to project successfully");
+      toast.success(t("successAssignCenter"));
       setIsAssignOpen(false);
       setSelectedCenterId("");
       fetchAssignments();
     } catch (err: any) {
-      toast.error(err.message || "Error assigning center");
+      toast.error(err.message || t("errorAssignCenter"));
     } finally {
       setSubmittingAssign(false);
     }
@@ -256,15 +260,15 @@ export default function SettingsPage() {
 
       if (!response.ok) {
         const errorData = await response.json();
-        throw new Error(errorData.error || "Failed to remove assignment");
+        throw new Error(errorData.error || t("errorRemoveCenter"));
       }
 
-      toast.success("Center removed from project successfully");
+      toast.success(t("successRemoveCenter"));
       setIsRemoveOpen(false);
       setSelectedAssignment(null);
       fetchAssignments();
     } catch (err: any) {
-      toast.error(err.message || "Error removing center");
+      toast.error(err.message || t("errorRemoveCenter"));
     } finally {
       setSubmittingRemove(false);
     }
@@ -273,7 +277,7 @@ export default function SettingsPage() {
   // Save General Prefs
   function handleGeneralSave(e: React.FormEvent) {
     e.preventDefault();
-    toast.success("Preferences saved successfully (Demo mode)");
+    toast.success(t("successSavePreferences"));
   }
 
   // Render header
@@ -281,9 +285,9 @@ export default function SettingsPage() {
     <div className="layout-section">
       <div className="layout-page-header">
         <div>
-          <h1 className="text-2xl font-bold tracking-tight text-text-primary">Settings</h1>
+          <h1 className="text-2xl font-bold tracking-tight text-text-primary">{t("title")}</h1>
           <p className="text-sm text-text-muted mt-1">
-            Manage active project configuration, center assignments, and application preferences.
+            {t("subtitle")}
           </p>
         </div>
       </div>
@@ -292,11 +296,11 @@ export default function SettingsPage() {
         <TabsList className="w-full justify-start max-w-md border-b border-border/40 pb-px">
           <TabsTrigger value="project" className="flex items-center gap-1.5 px-4 py-2">
             <Sliders className="size-4" />
-            Project Settings
+            {t("projectSettings")}
           </TabsTrigger>
           <TabsTrigger value="app" className="flex items-center gap-1.5 px-4 py-2">
             <Settings className="size-4" />
-            App Preferences
+            {t("appPreferences")}
           </TabsTrigger>
         </TabsList>
 
@@ -305,8 +309,8 @@ export default function SettingsPage() {
           {!activeProject ? (
             <EmptyState
               icon={FolderOpen}
-              title="No project selected"
-              description="Select an active project from the project switcher in the navbar to configure its settings."
+              title={t("noProject")}
+              description={t("noProjectDesc")}
             />
           ) : (
             <div className="grid gap-8 lg:grid-cols-3">
@@ -315,16 +319,16 @@ export default function SettingsPage() {
                 <div>
                   <h2 className="text-base font-semibold text-text-primary flex items-center gap-2">
                     <FolderOpen className="size-4.5 text-primary" />
-                    Project Details
+                    {t("projectDetails")}
                   </h2>
                   <p className="text-xs text-text-muted mt-0.5">
-                    Update metadata and scheduling status.
+                    {t("updateMetadata")}
                   </p>
                 </div>
 
                 <form onSubmit={handleDetailsSubmit} className="space-y-4">
                   <div className="grid gap-1.5">
-                    <Label htmlFor="proj-name">Project Name *</Label>
+                    <Label htmlFor="proj-name">{t("projectNameRequired")}</Label>
                     <Input
                       id="proj-name"
                       value={projectName}
@@ -335,7 +339,7 @@ export default function SettingsPage() {
                   </div>
 
                   <div className="grid gap-1.5">
-                    <Label htmlFor="proj-desc">Description</Label>
+                    <Label htmlFor="proj-desc">{tCommon("description")}</Label>
                     <Textarea
                       id="proj-desc"
                       value={projectDesc}
@@ -347,7 +351,7 @@ export default function SettingsPage() {
 
                   <div className="grid grid-cols-2 gap-4">
                     <div className="grid gap-1.5">
-                      <Label htmlFor="proj-start">Start Date *</Label>
+                      <Label htmlFor="proj-start">{t("startDateRequired")}</Label>
                       <Input
                         id="proj-start"
                         type="date"
@@ -358,7 +362,7 @@ export default function SettingsPage() {
                       />
                     </div>
                     <div className="grid gap-1.5">
-                      <Label htmlFor="proj-end">End Date *</Label>
+                      <Label htmlFor="proj-end">{t("endDateRequired")}</Label>
                       <Input
                         id="proj-end"
                         type="date"
@@ -371,7 +375,7 @@ export default function SettingsPage() {
                   </div>
 
                   <div className="grid gap-1.5">
-                    <Label htmlFor="proj-status">Status *</Label>
+                    <Label htmlFor="proj-status">{t("statusRequired")}</Label>
                     <select
                       id="proj-status"
                       value={projectStatus}
@@ -389,7 +393,7 @@ export default function SettingsPage() {
                     <div className="flex gap-2 p-3 bg-muted/50 rounded-lg text-xs text-text-muted items-start">
                       <Info className="size-4 text-amber-500 shrink-0 mt-0.5" />
                       <span>
-                        This project is archived and read-only. Unarchive it to enable editing.
+                        {t("archivedReadOnly")}
                       </span>
                     </div>
                   )}
@@ -397,13 +401,13 @@ export default function SettingsPage() {
                   {!isProjectManager && (
                     <div className="flex gap-2 p-3 bg-muted/50 rounded-lg text-xs text-text-muted items-start">
                       <Info className="size-4 text-blue-500 shrink-0 mt-0.5" />
-                      <span>Only project managers can modify project metadata.</span>
+                      <span>{t("viewerOnly")}</span>
                     </div>
                   )}
 
                   {isProjectManager && (
                     <Button type="submit" disabled={submittingDetails} className="w-full">
-                      {submittingDetails ? "Saving Changes..." : "Save Project Settings"}
+                      {submittingDetails ? t("savingChanges") : t("saveProjectSettings")}
                     </Button>
                   )}
                 </form>
@@ -415,10 +419,10 @@ export default function SettingsPage() {
                   <div>
                     <h2 className="text-base font-semibold text-text-primary flex items-center gap-2">
                       <Building2 className="size-4.5 text-primary" />
-                      Participating Centers
+                      {t("participatingCenters")}
                     </h2>
                     <p className="text-xs text-text-muted mt-0.5">
-                      Configure the operational centers assigned to this planning container.
+                      {t("participatingCentersDesc")}
                     </p>
                   </div>
                   {canModify && (
@@ -428,7 +432,7 @@ export default function SettingsPage() {
                       className="flex items-center gap-1.5"
                     >
                       <Plus className="size-4" />
-                      Assign Center
+                      {t("assignCenter")}
                     </Button>
                   )}
                 </div>
@@ -436,7 +440,7 @@ export default function SettingsPage() {
                 {/* Search */}
                 <div className="relative max-w-sm">
                   <Input
-                    placeholder="Search assigned centers..."
+                    placeholder={t("searchAssignedCenters")}
                     value={searchQuery}
                     onChange={(e) => setSearchQuery(e.target.value)}
                     className="h-8 pr-8"
@@ -447,17 +451,17 @@ export default function SettingsPage() {
                 {loadingAssignments ? (
                   <div className="flex flex-col items-center justify-center py-12 gap-2">
                     <Loader2 className="size-6 text-primary animate-spin" />
-                    <p className="text-xs text-text-muted">Loading assigned centers...</p>
+                    <p className="text-xs text-text-muted">{t("loadingAssignedCenters")}</p>
                   </div>
                 ) : filteredAssignments.length === 0 ? (
                   <div className="py-12 border border-dashed border-border rounded-lg bg-muted/10">
                     <EmptyState
                       icon={Building2}
-                      title={searchQuery ? "No results found" : "No centers assigned"}
+                      title={searchQuery ? t("noResults") : t("noAssignments")}
                       description={
                         searchQuery
-                          ? `No assigned centers matched "${searchQuery}".`
-                          : "This project operates through participating branches. Link one now."
+                          ? t("noResultsDesc", { query: searchQuery })
+                          : t("noAssignmentsDesc")
                       }
                     />
                   </div>
@@ -466,17 +470,17 @@ export default function SettingsPage() {
                     <Table>
                       <TableHeader>
                         <TableRow>
-                          <TableHead className="font-semibold text-xs">Center Name</TableHead>
-                          <TableHead className="font-semibold text-xs">City</TableHead>
-                          <TableHead className="font-semibold text-xs">Assigned Manager</TableHead>
-                          <TableHead className="font-semibold text-xs">Linked Date</TableHead>
-                          {canModify && <TableHead className="text-right font-semibold text-xs">Actions</TableHead>}
+                          <TableHead className="font-semibold text-xs">{t("centerName")}</TableHead>
+                          <TableHead className="font-semibold text-xs">{t("city")}</TableHead>
+                          <TableHead className="font-semibold text-xs">{t("assignedManager")}</TableHead>
+                          <TableHead className="font-semibold text-xs">{t("linkedDate")}</TableHead>
+                          {canModify && <TableHead className="text-right font-semibold text-xs">{tCommon("actions")}</TableHead>}
                         </TableRow>
                       </TableHeader>
                       <TableBody>
                         {filteredAssignments.map((assignment) => {
-                          const isCenterArchived = !!assignment.center.archivedAt;
-                          return (
+                           const isCenterArchived = !!assignment.center.archivedAt;
+                           return (
                             <TableRow key={assignment.id} className={isCenterArchived ? "opacity-60 bg-muted/20" : ""}>
                               <TableCell className="font-medium text-sm">
                                 <div className="flex items-center gap-2">
@@ -484,7 +488,7 @@ export default function SettingsPage() {
                                   <span>{assignment.center.name}</span>
                                   {isCenterArchived && (
                                     <Badge variant="secondary" className="text-[10px] py-0 px-1.5 font-normal bg-muted">
-                                      Archived
+                                      {t("archived")}
                                     </Badge>
                                   )}
                                 </div>
@@ -502,13 +506,13 @@ export default function SettingsPage() {
                                     <span>{assignment.center.manager.email}</span>
                                   </div>
                                 ) : (
-                                  <span className="text-xs text-text-muted italic">Unassigned</span>
+                                  <span className="text-xs text-text-muted italic">{t("unassigned")}</span>
                                 )}
                               </TableCell>
                               <TableCell className="text-sm text-text-muted">
                                 <div className="flex items-center gap-1">
                                   <Calendar className="size-3 text-text-muted" />
-                                  {new Date(assignment.createdAt).toLocaleDateString()}
+                                  {new Date(assignment.createdAt).toLocaleDateString(locale)}
                                 </div>
                               </TableCell>
                               {canModify && (
@@ -520,7 +524,7 @@ export default function SettingsPage() {
                                       setSelectedAssignment(assignment);
                                       setIsRemoveOpen(true);
                                     }}
-                                    title="Remove Center Assignment"
+                                    title={t("removeAssignment")}
                                     className="size-7 text-destructive hover:bg-destructive/10 hover:text-destructive"
                                   >
                                     <Trash2 className="size-3.5" />
@@ -545,48 +549,58 @@ export default function SettingsPage() {
             <div>
               <h2 className="text-base font-semibold text-text-primary flex items-center gap-2">
                 <Sparkles className="size-4.5 text-primary" />
-                App Preferences
+                {t("appPreferences")}
               </h2>
               <p className="text-xs text-text-muted mt-0.5">
-                Customize language, themes, and notification profiles.
+                {t("customize")}
               </p>
             </div>
 
             <form onSubmit={handleGeneralSave} className="space-y-5">
               <div className="grid gap-1.5">
-                <Label htmlFor="pref-lang">System Language</Label>
+                <Label htmlFor="pref-lang">{t("systemLanguage")}</Label>
                 <select
                   id="pref-lang"
                   value={prefLang}
-                  onChange={(e) => setPrefLang(e.target.value)}
-                  className="flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-sm transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring dark:bg-zinc-950"
+                  onChange={(e) => {
+                    setPrefLang(e.target.value);
+                    // Redirect to update locale route if preferred language changes
+                    const newLocale = e.target.value;
+                    const path = window.location.pathname;
+                    const segments = path.split("/");
+                    if (segments[1] === locale) {
+                      segments[1] = newLocale;
+                      window.location.href = segments.join("/");
+                    }
+                  }}
+                  className="flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-sm transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring dark:bg-zinc-950 dark:text-zinc-50"
                 >
-                  <option value="en">English (LTR)</option>
-                  <option value="ar">العربية (RTL)</option>
+                  <option value="en">{t("englishLtr")}</option>
+                  <option value="ar">{t("arabicRtl")}</option>
                 </select>
               </div>
 
               <div className="grid gap-1.5">
-                <Label htmlFor="pref-theme">Visual Theme</Label>
+                <Label htmlFor="pref-theme">{t("visualTheme")}</Label>
                 <select
                   id="pref-theme"
                   value={prefTheme}
                   onChange={(e) => setPrefTheme(e.target.value)}
-                  className="flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-sm transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring dark:bg-zinc-950"
+                  className="flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-sm transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring dark:bg-zinc-950 dark:text-zinc-50"
                 >
-                  <option value="light">Light</option>
-                  <option value="dark">Dark</option>
-                  <option value="system">System Default</option>
+                  <option value="light">{t("light")}</option>
+                  <option value="dark">{t("dark")}</option>
+                  <option value="system">{t("systemDefault")}</option>
                 </select>
               </div>
 
               <div className="flex items-center justify-between p-3 rounded-lg border border-border bg-muted/20">
                 <div className="space-y-0.5">
                   <Label htmlFor="pref-notify" className="text-sm font-medium">
-                    Push Notifications
+                    {t("pushNotifications")}
                   </Label>
                   <p className="text-xs text-text-muted">
-                    Receive operational alerts, delays, and approvals alerts.
+                    {t("pushNotificationsDesc")}
                   </p>
                 </div>
                 <input
@@ -599,7 +613,7 @@ export default function SettingsPage() {
               </div>
 
               <Button type="submit" className="w-fit">
-                Save Preferences
+                {t("savePreferences")}
               </Button>
             </form>
           </div>
@@ -611,16 +625,16 @@ export default function SettingsPage() {
         <DialogContent className="sm:max-w-[425px]">
           <form onSubmit={handleAssignSubmit}>
             <DialogHeader>
-              <DialogTitle>Assign Center</DialogTitle>
+              <DialogTitle>{t("assignCenter")}</DialogTitle>
               <DialogDescription>
-                Assign an active operational center to participate in <strong>{activeProject?.name}</strong>.
+                {t("assignCenterDesc")} <strong>{activeProject?.name}</strong>.
               </DialogDescription>
             </DialogHeader>
 
             <div className="grid gap-4 py-4">
               <div className="grid gap-2">
                 <Label htmlFor="assign-select" className="text-sm font-medium">
-                  Select Center *
+                  {t("selectCenter")}
                 </Label>
                 <select
                   id="assign-select"
@@ -630,7 +644,7 @@ export default function SettingsPage() {
                   className="flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-sm transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring dark:bg-zinc-950 dark:text-zinc-50"
                 >
                   <option value="" className="text-text-muted">
-                    -- Select an active Center --
+                    {t("selectCenterOption")}
                   </option>
                   {availableCenters.map((c) => (
                     <option key={c.id} value={c.id}>
@@ -641,7 +655,7 @@ export default function SettingsPage() {
                 {availableCenters.length === 0 && (
                   <p className="text-xs text-amber-500 italic mt-1 flex gap-1 items-center">
                     <Info className="size-3 shrink-0" />
-                    No additional active centers available for assignment.
+                    {t("noAvailableCenters")}
                   </p>
                 )}
               </div>
@@ -654,10 +668,10 @@ export default function SettingsPage() {
                 onClick={() => setIsAssignOpen(false)}
                 disabled={submittingAssign}
               >
-                Cancel
+                {tCommon("cancel")}
               </Button>
               <Button type="submit" disabled={submittingAssign || !selectedCenterId}>
-                {submittingAssign ? "Assigning..." : "Assign to Project"}
+                {submittingAssign ? t("assigning") : t("assignToProject")}
               </Button>
             </DialogFooter>
           </form>
@@ -668,17 +682,13 @@ export default function SettingsPage() {
       <AlertDialog open={isRemoveOpen} onOpenChange={setIsRemoveOpen}>
         <AlertDialogContent>
           <AlertDialogHeader>
-            <AlertDialogTitle>Remove Center Assignment</AlertDialogTitle>
+            <AlertDialogTitle>{t("removeCenterTitle")}</AlertDialogTitle>
             <AlertDialogDescription>
-              Are you sure you want to remove <strong>{selectedAssignment?.center.name}</strong> from{" "}
-              <strong>{activeProject?.name}</strong>?
-              <br />
-              <br />
-              This action removes the operational center association. All scheduling and activities bound to this project inside this center will need to be reassessed.
+              {t("removeCenterDesc", { center: selectedAssignment?.center.name || "", project: activeProject?.name || "" })}
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
-            <AlertDialogCancel disabled={submittingRemove}>Cancel</AlertDialogCancel>
+            <AlertDialogCancel disabled={submittingRemove}>{tCommon("cancel")}</AlertDialogCancel>
             <AlertDialogAction
               onClick={(e) => {
                 e.preventDefault();
@@ -687,7 +697,7 @@ export default function SettingsPage() {
               disabled={submittingRemove}
               className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
             >
-              {submittingRemove ? "Removing..." : "Remove Assignment"}
+              {submittingRemove ? t("removing") : t("removeAssignment")}
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>

@@ -17,6 +17,7 @@ import {
   AlertCircle,
   ShieldAlert,
 } from "lucide-react";
+import { useTranslations, useLocale } from "next-intl";
 import { EmptyState } from "@/components/empty-state";
 import { useProject } from "@/lib/project-context";
 import { Button } from "@/components/ui/button";
@@ -83,6 +84,9 @@ interface HistoryItem {
 export default function ApprovalsPage() {
   const { activeProject } = useProject();
   const { user } = useUser();
+  const t = useTranslations("approvals");
+  const tCommon = useTranslations("common");
+  const locale = useLocale();
 
   // State Management
   const [dbUser, setDbUser] = React.useState<DBUser | null>(null);
@@ -147,8 +151,8 @@ export default function ApprovalsPage() {
     return (
       <EmptyState
         icon={ClipboardCheck}
-        title="No project selected"
-        description="Select a project from the top bar navigation to manage reviews."
+        title={t("noProject")}
+        description={t("noProjectDesc")}
       />
     );
   }
@@ -166,8 +170,8 @@ export default function ApprovalsPage() {
     return (
       <EmptyState
         icon={ShieldAlert}
-        title="Access Denied"
-        description="Only Project Managers are authorized to view and review session approval queues. Center managers can submit execution data within their respective branch workspaces."
+        title={t("accessDenied")}
+        description={t("accessDeniedDesc")}
       />
     );
   }
@@ -210,15 +214,15 @@ export default function ApprovalsPage() {
         <div>
           <h1 className="text-xl font-bold text-text-primary flex items-center gap-2">
             <ClipboardCheck className="size-5 text-primary" />
-            <span>Session Approvals Workflow</span>
+            <span>{t("title")}</span>
           </h1>
           <p className="text-sm text-text-muted">
-            Manage operational execution audits and quality controls for <strong className="text-text-primary font-medium">{activeProject.name}</strong>.
+            {t("subtitle")} <strong className="text-text-primary font-medium">{activeProject.name}</strong>.
           </p>
         </div>
         {isProjectArchived && (
           <Badge className="bg-amber-500/10 text-amber-600 border-amber-500/20 px-3 py-1 font-semibold uppercase text-[10px]">
-            Archived (Read-Only)
+            {tCommon("archivedReadOnly")}
           </Badge>
         )}
       </div>
@@ -231,7 +235,7 @@ export default function ApprovalsPage() {
             <Clock className="size-5 text-amber-600" />
           </div>
           <div>
-            <span className="text-[10px] uppercase font-bold text-text-muted block tracking-wider">Awaiting Review</span>
+            <span className="text-[10px] uppercase font-bold text-text-muted block tracking-wider">{t("awaitingReview")}</span>
             <span className="text-2xl font-bold text-text-primary">{queue.length}</span>
           </div>
         </div>
@@ -242,7 +246,7 @@ export default function ApprovalsPage() {
             <CheckCircle2 className="size-5 text-emerald-600" />
           </div>
           <div>
-            <span className="text-[10px] uppercase font-bold text-text-muted block tracking-wider">Approved (Total)</span>
+            <span className="text-[10px] uppercase font-bold text-text-muted block tracking-wider">{t("approvedTotal")}</span>
             <span className="text-2xl font-bold text-text-primary">{approvedHistoryCount}</span>
           </div>
         </div>
@@ -253,7 +257,7 @@ export default function ApprovalsPage() {
             <XCircle className="size-5 text-rose-600" />
           </div>
           <div>
-            <span className="text-[10px] uppercase font-bold text-text-muted block tracking-wider">Revisions Requested</span>
+            <span className="text-[10px] uppercase font-bold text-text-muted block tracking-wider">{t("revisionsRequested")}</span>
             <span className="text-2xl font-bold text-text-primary">{rejectedHistoryCount}</span>
           </div>
         </div>
@@ -266,7 +270,7 @@ export default function ApprovalsPage() {
           <div className="bg-card border border-border/80 rounded-xl p-5 shadow-sm space-y-4">
             <div className="flex justify-between items-center pb-3 border-b border-border/40">
               <h2 className="text-sm font-bold text-text-primary uppercase tracking-wider">
-                Pending Audits Queue ({filteredQueue.length})
+                {t("pendingQueue")} ({filteredQueue.length})
               </h2>
             </div>
 
@@ -276,7 +280,7 @@ export default function ApprovalsPage() {
               <div className="relative flex-1">
                 <Search className="absolute left-3 top-2.5 size-4 text-text-muted" />
                 <Input
-                  placeholder="Search activity or center branch..."
+                  placeholder={t("searchPlaceholder")}
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
                   className="pl-9 text-xs"
@@ -290,9 +294,9 @@ export default function ApprovalsPage() {
                   onChange={(e) => setActivityTypeFilter(e.target.value)}
                   className="flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1.5 text-xs shadow-sm focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring dark:bg-zinc-950 dark:text-zinc-50"
                 >
-                  <option value="ALL">All Types</option>
-                  <option value="CORE">Core Sessions</option>
-                  <option value="VOLUNTEER">Volunteer Sessions</option>
+                  <option value="ALL">{t("allTypes")}</option>
+                  <option value="CORE">{t("coreSessions")}</option>
+                  <option value="VOLUNTEER">{t("volunteerSessions")}</option>
                 </select>
               </div>
 
@@ -304,7 +308,7 @@ export default function ApprovalsPage() {
                 className="text-xs flex items-center gap-1.5 h-9"
               >
                 <AlertCircle className="size-3.5" />
-                <span>Overdue Only</span>
+                <span>{t("overdueOnly")}</span>
               </Button>
             </div>
 
@@ -312,14 +316,14 @@ export default function ApprovalsPage() {
             {loadingData ? (
               <div className="h-64 flex flex-col items-center justify-center gap-2">
                 <Loader2 className="size-6 animate-spin text-primary" />
-                <span className="text-xs text-text-muted">Fetching project approvals queue...</span>
+                <span className="text-xs text-text-muted">{t("fetchingQueue")}</span>
               </div>
             ) : filteredQueue.length === 0 ? (
               <div className="py-12 flex flex-col items-center justify-center text-center">
                 <ClipboardCheck className="size-12 text-text-muted/40 mb-3" />
-                <span className="text-sm font-semibold text-text-secondary">No pending approvals</span>
+                <span className="text-sm font-semibold text-text-secondary">{t("noQueue")}</span>
                 <p className="text-xs text-text-muted max-w-[340px] mt-1 leading-normal">
-                  All physically executed sessions have been successfully reviewed, or no executions match current search criteria.
+                  {t("noQueueDesc")}
                 </p>
               </div>
             ) : (
@@ -327,12 +331,12 @@ export default function ApprovalsPage() {
                 <table className="w-full text-left border-collapse text-xs">
                   <thead>
                     <tr className="bg-muted/40 border-b border-border/80 text-[10px] font-bold text-text-muted uppercase tracking-wider">
-                      <th className="p-3">Activity</th>
-                      <th className="p-3">Center</th>
-                      <th className="p-3">Scheduled Date</th>
-                      <th className="p-3">Submitted</th>
-                      <th className="p-3">Evidence</th>
-                      <th className="p-3 text-right">Actions</th>
+                      <th className="p-3">{t("activity")}</th>
+                      <th className="p-3">{t("center")}</th>
+                      <th className="p-3">{t("scheduledDate")}</th>
+                      <th className="p-3">{t("submittedDate")}</th>
+                      <th className="p-3">{t("evidence")}</th>
+                      <th className="p-3 text-right">{tCommon("actions")}</th>
                     </tr>
                   </thead>
                   <tbody>
@@ -356,7 +360,7 @@ export default function ApprovalsPage() {
                                   : "bg-primary/10 text-primary border-primary/20"
                               }`}
                             >
-                              {isVol ? "Volunteer" : "Core"}
+                              {isVol ? t("volunteer") : t("core")}
                             </Badge>
                           </td>
 
@@ -376,17 +380,17 @@ export default function ApprovalsPage() {
                           {/* Scheduled Date */}
                           <td className="p-3">
                             <span className={isOverdue ? "text-rose-600 font-medium" : "text-text-secondary"}>
-                              {new Date(session.scheduledDate).toLocaleDateString()}
+                              {new Date(session.scheduledDate).toLocaleDateString(locale)}
                             </span>
                             {isOverdue && (
-                              <span className="text-[9px] text-rose-500 block font-medium">Overdue!</span>
+                              <span className="text-[9px] text-rose-500 block font-medium">{t("overdue")}</span>
                             )}
                           </td>
 
                           {/* Submission Date */}
                           <td className="p-3 text-text-secondary">
                             {session.submittedAt
-                              ? new Date(session.submittedAt).toLocaleDateString()
+                              ? new Date(session.submittedAt).toLocaleDateString(locale)
                               : "N/A"}
                           </td>
 
@@ -399,11 +403,11 @@ export default function ApprovalsPage() {
                                 rel="noopener noreferrer"
                                 className="inline-flex items-center gap-1 bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-600 border border-emerald-500/20 rounded px-1.5 py-0.5 font-medium transition-colors"
                               >
-                                <span>Drive</span>
+                                <span>{t("drive")}</span>
                                 <ExternalLink className="size-2.5 shrink-0" />
                               </a>
                             ) : (
-                              <span className="text-text-muted italic">Missing</span>
+                              <span className="text-text-muted italic">{t("missing")}</span>
                             )}
                           </td>
 
@@ -414,7 +418,7 @@ export default function ApprovalsPage() {
                               className="bg-primary hover:bg-primary/95 text-white font-semibold text-[11px] px-3.5 py-1 flex items-center gap-1 ml-auto"
                               onClick={() => handleOpenReview(session)}
                             >
-                              <span>Review</span>
+                              <span>{t("review")}</span>
                               <ChevronRight className="size-3" />
                             </Button>
                           </td>
@@ -432,7 +436,7 @@ export default function ApprovalsPage() {
         <div className="space-y-4">
           <div className="bg-card border border-border/80 rounded-xl p-5 shadow-sm space-y-4">
             <h2 className="text-sm font-bold text-text-primary uppercase tracking-wider pb-3 border-b border-border/40">
-              Audit Operations Log
+              {t("recentHistory")}
             </h2>
 
             {loadingData ? (
@@ -441,7 +445,7 @@ export default function ApprovalsPage() {
               </div>
             ) : history.length === 0 ? (
               <div className="py-8 text-center text-text-muted">
-                <span className="text-xs">No historical reviews logged.</span>
+                <span className="text-xs">{t("noHistoryLogs")}</span>
               </div>
             ) : (
               <div className="space-y-3.5 max-h-[480px] overflow-y-auto pr-1">
@@ -462,11 +466,11 @@ export default function ApprovalsPage() {
                             <XCircle className="size-4 text-rose-600 shrink-0" />
                           )}
                           <span className={`font-bold ${isApproved ? "text-emerald-700" : "text-rose-700"}`}>
-                            {isApproved ? "Approved" : "Revision Requested"}
+                            {isApproved ? t("approved") : t("revisionRequested")}
                           </span>
                         </div>
                         <span className="text-[10px] text-text-muted">
-                          {new Date(record.reviewedAt).toLocaleDateString()}
+                          {new Date(record.reviewedAt).toLocaleDateString(locale)}
                         </span>
                       </div>
 
@@ -475,7 +479,7 @@ export default function ApprovalsPage() {
                           {activityTitle}
                         </span>
                         <span className="text-[10px] text-text-secondary block truncate" title={centerName}>
-                          Branch: {centerName}
+                          {t("branchLabel")}: {centerName}
                         </span>
                       </div>
 
@@ -486,15 +490,15 @@ export default function ApprovalsPage() {
                       )}
 
                       <div className="pt-1.5 border-t border-border/20 flex justify-between items-center text-[10px] text-text-muted">
-                        <span>By: {record.reviewer?.email.split("@")[0]}</span>
+                        <span>{t("byLabel")}: {record.reviewer?.email.split("@")[0]}</span>
                         {record.session?.documentationUrl && (
                           <a
-                            href={record.session.documentationUrl}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="text-primary hover:underline inline-flex items-center gap-0.5"
+                              href={record.session.documentationUrl}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="text-primary hover:underline inline-flex items-center gap-0.5"
                           >
-                            Docs <ExternalLink className="size-2" />
+                            {t("docs")} <ExternalLink className="size-2" />
                           </a>
                         )}
                       </div>

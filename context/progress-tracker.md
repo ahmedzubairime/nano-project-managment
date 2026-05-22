@@ -205,6 +205,23 @@ Update this file after every meaningful implementation change.
   - [x] Update `ReportOverviewTab` with "Documentation Compliance" metrics and warning banner
   - [x] Verify production build compiles perfectly with 0 errors
 
+- Feature 22: Bilingual & RTL Support
+  - [x] Install `next-intl` localization framework dependency
+  - [x] Create centralized routing helpers (`i18n/routing.ts`) and request configurations (`i18n/request.ts`)
+  - [x] Author comprehensive JSON translation dictionaries for Arabic (`messages/ar.json`) and English (`messages/en.json`) covering all UI namespaces
+  - [x] Restructure file hierarchy: created `app/[locale]/` directory and moved `(app)` and `(auth)` layouts/pages into it
+  - [x] Simplify root `app/layout.tsx` to act as a pass-through, and created localized `app/[locale]/layout.tsx` dynamically setting HTML `lang` and `dir` tags
+  - [x] Chain Clerk authentication and next-intl middlewares in `proxy.ts` with explicit bypasses for API paths
+  - [x] Refactor sidebar navigation to translate navigation paths and labels dynamically using `useTranslations("navigation")`
+  - [x] Update navbar language toggler to switch locale dynamically via `router.replace` without page reloads
+  - [x] Localize global `ArchiveBanner` and `ProjectSelector` component states, inputs, error logs, and confirmation prompts
+  - [x] Fully internationalize the main Operational Dashboard (empty states, progress charts, health cards, bottleneck lists, center grids) using custom `useLocale` and next-intl helpers
+  - [x] Fully localize the Settings page (metadata settings, center assignment data-dense tables, dialog warnings, toast messages, and redirect redirects)
+  - [x] Fully localize the Gantt Timeline page (toolbar views, zoom options, data-dense Gantt component, Mobile fallback cards, legends, and DetailPreview sidebars)
+  - [x] Fully localize the Approvals Review Dialog (validation toasts, details preview, execution notes, action buttons)
+  - [x] Typecheck and compile the entire project, achieving 0 TypeScript/Lint compiler errors
+
+
 ## In Progress
 
 - None.
@@ -240,3 +257,5 @@ Update this file after every meaningful implementation change.
 - Feature 19: Created modular report aggregation services under `services/reports/` with a shared `ReportFilters` interface supporting date range, center, activity, approval state, and volunteer-only filtering. Implemented four specialized report generators (overview, centers, timeline, volunteer) using parallel Prisma queries and single-pass session traversals. Exposed four secure GET endpoints under `/api/projects/[projectId]/reports/` with query-string filter parsing. Built a tabbed reports dashboard page with Recharts BarChart for weekly execution density visualization. All report components are separated into `components/reports/` for maintainability. Center reports include approval turnaround calculations. Timeline reports identify bottleneck periods automatically. Data is structured for future export compatibility without implementing actual exports.
 - Feature 20: Developed the global `ArchiveBanner` to provide visual warning cues across the interface. Integrated strict operational read-only overrides across the Center Manager workspace execution dialogs, approvals page review dialogs, and manual scheduling adjustments in the Sessions registry page. Configured the project status API to allow unarchiving of projects back to DRAFT or ACTIVE by Project Managers, keeping all other fields read-only when in the archived state. Enforced backend status checks within notification schedulers, program mutation APIs, and approvals/scheduling engines.
 - Feature 21: Developed a robust Google Drive link utility (`lib/drive-links.ts`) to validate, normalize, and parse Drive resource URLs (Docs, Sheets, Slides, Forms, Files, Folders) without external API dependencies. Enforced strict backend API check inside `PATCH /api/sessions/[sessionId]/execute`. Added live client-side validation, customized oklch-based document badges, and secure target-blank links to the `SessionExecutionDialog`, approvals `ReviewDialog`, and timeline sidebar `DetailPreview` pane with warning alerts for completed, undocumented sessions. Extended operational report aggregation to track completed documentation compliance rates and missing documentation totals, accompanied by a premium compliance visualization segment and advisory warnings on the Overview tab of the Reports dashboard.
+- Feature 22: Implemented standardized Next.js localization using `next-intl` with full App Router integration, locale-aware routing (`/ar`, `/en`), Arabic RTL-first layouts, and Clerk middleware chaining. Created comprehensive dictionary dictionaries for complete static operational UI translation. Refactored shell, settings, metadata panels, sidebar navigation, dynamic popups, and the main aggregated metrics dashboard to natively translate layout-direction and date/number strings.
+

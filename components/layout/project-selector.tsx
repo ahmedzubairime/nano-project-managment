@@ -1,7 +1,7 @@
 "use client";
 
 import * as React from "react";
-import { ChevronsUpDown, FolderOpen, Check, Plus, Edit2, Archive, Calendar, Loader2 } from "lucide-react";
+import { ChevronsUpDown, FolderOpen, Check, Plus, Edit2, Archive, Loader2 } from "lucide-react";
 import { useProject, type Project } from "@/lib/project-context";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
@@ -42,6 +42,7 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { toast } from "sonner";
+import { useTranslations } from "next-intl";
 
 export function ProjectSelector() {
   const { user } = useUser();
@@ -68,6 +69,11 @@ export function ProjectSelector() {
   const [startDate, setStartDate] = React.useState("");
   const [endDate, setEndDate] = React.useState("");
   const [isSubmitting, setIsSubmitting] = React.useState(false);
+
+  // Translations
+  const tNav = useTranslations("navigation");
+  const tProj = useTranslations("projects");
+  const tCommon = useTranslations("common");
 
   // Auth/Permissions checks
   const role = (user?.publicMetadata?.role as string) || "VIEWER";
@@ -118,11 +124,11 @@ export function ProjectSelector() {
   async function handleCreateSubmit(e: React.FormEvent) {
     e.preventDefault();
     if (!name.trim()) {
-      toast.error("Project name is required");
+      toast.error(tProj("nameRequired"));
       return;
     }
     if (new Date(startDate) >= new Date(endDate)) {
-      toast.error("Start date must be before end date");
+      toast.error(tProj("dateError"));
       return;
     }
 
@@ -146,11 +152,11 @@ export function ProjectSelector() {
     e.preventDefault();
     if (!activeProject) return;
     if (!name.trim()) {
-      toast.error("Project name is required");
+      toast.error(tProj("nameRequired"));
       return;
     }
     if (new Date(startDate) >= new Date(endDate)) {
-      toast.error("Start date must be before end date");
+      toast.error(tProj("dateError"));
       return;
     }
 
@@ -192,7 +198,7 @@ export function ProjectSelector() {
               variant="outline"
               role="combobox"
               aria-expanded={open}
-              aria-label="Select project"
+              aria-label={tNav("selectProject")}
               className="w-[240px] justify-between gap-2 text-sm font-normal bg-card hover:bg-muted border border-border/80 shadow-xs h-9 px-3 rounded-md"
             />
           }
@@ -203,19 +209,19 @@ export function ProjectSelector() {
             <FolderOpen className="shrink-0 size-4 text-muted-foreground" />
           )}
           <span className="truncate flex-1 text-start font-medium">
-            {activeProject?.name ?? (isLoading ? "Loading projects..." : "Select project")}
+            {activeProject?.name ?? (isLoading ? tNav("loadingProjects") : tNav("selectProject"))}
           </span>
           <ChevronsUpDown className="shrink-0 size-4 text-muted-foreground opacity-50" />
         </PopoverTrigger>
         <PopoverContent className="w-[300px] p-0 shadow-md border border-border/60 bg-popover rounded-lg overflow-hidden" align="start">
           <Command className="bg-transparent">
-            <CommandInput placeholder="Search projects..." className="border-none focus:ring-0 text-sm h-10" />
+            <CommandInput placeholder={tNav("searchProjects")} className="border-none focus:ring-0 text-sm h-10" />
             <CommandList className="max-h-[220px]">
               <CommandEmpty className="py-6 text-center text-xs text-muted-foreground">
-                No projects found.
+                {tNav("noProjectsFound")}
               </CommandEmpty>
               {activeProjects.length > 0 && (
-                <CommandGroup heading="Active & Draft Projects" className="px-1.5 py-1 text-[11px] font-medium text-muted-foreground">
+                <CommandGroup heading={tNav("activeAndDraft")} className="px-1.5 py-1 text-[11px] font-medium text-muted-foreground">
                   {activeProjects.map((project) => (
                     <CommandItem
                       key={project.id}
@@ -234,7 +240,7 @@ export function ProjectSelector() {
                       <span className="truncate flex-1">{project.name}</span>
                       {project.status === "DRAFT" && (
                         <Badge variant="outline" className="text-[10px] px-1.5 py-0 border-amber-500/20 bg-amber-500/5 text-amber-600 font-normal">
-                          draft
+                          {tNav("draft")}
                         </Badge>
                       )}
                     </CommandItem>
@@ -242,7 +248,7 @@ export function ProjectSelector() {
                 </CommandGroup>
               )}
               {archivedProjects.length > 0 && (
-                <CommandGroup heading="Archived Projects" className="px-1.5 py-1 text-[11px] font-medium text-muted-foreground">
+                <CommandGroup heading={tNav("archivedProjects")} className="px-1.5 py-1 text-[11px] font-medium text-muted-foreground">
                   {archivedProjects.map((project) => (
                     <CommandItem
                       key={project.id}
@@ -260,7 +266,7 @@ export function ProjectSelector() {
                       />
                       <span className="truncate flex-1">{project.name}</span>
                       <Badge variant="secondary" className="text-[10px] px-1.5 py-0 font-normal bg-muted/70 text-muted-foreground/80">
-                        archived
+                        {tNav("archived")}
                       </Badge>
                     </CommandItem>
                   ))}
@@ -279,7 +285,7 @@ export function ProjectSelector() {
                 className="w-full justify-start text-xs font-medium text-primary hover:text-primary hover:bg-primary/5 h-8 gap-1.5"
               >
                 <Plus className="size-3.5" />
-                Create New Project
+                {tNav("createNewProject")}
               </Button>
             )}
             {activeProject && activeProject.status !== "ARCHIVED" && (
@@ -292,7 +298,7 @@ export function ProjectSelector() {
                     className="flex-1 justify-center text-xs font-medium h-8 gap-1.5"
                   >
                     <Edit2 className="size-3" />
-                    Edit Project
+                    {tNav("editProject")}
                   </Button>
                 )}
                 {isOwner && (
@@ -303,14 +309,14 @@ export function ProjectSelector() {
                     className="flex-1 justify-center text-xs font-medium text-destructive hover:bg-destructive/5 hover:text-destructive h-8 gap-1.5"
                   >
                     <Archive className="size-3" />
-                    Archive
+                    {tNav("archive")}
                   </Button>
                 )}
               </div>
             )}
             {activeProject?.status === "ARCHIVED" && (
               <div className="text-[10px] py-1 text-center font-medium text-muted-foreground/80 bg-muted/40 rounded">
-                This project is archived (Read-Only)
+                {tNav("projectArchived")}
               </div>
             )}
           </div>
@@ -324,18 +330,18 @@ export function ProjectSelector() {
             <DialogHeader>
               <DialogTitle className="text-lg font-semibold flex items-center gap-2">
                 <FolderOpen className="size-5 text-primary" />
-                Create New Project
+                {tProj("createTitle")}
               </DialogTitle>
               <DialogDescription>
-                Establish a new top-level operational planning container for scheduling activities and physical centers.
+                {tProj("createDescription")}
               </DialogDescription>
             </DialogHeader>
             <div className="grid gap-4 py-4">
               <div className="grid gap-2">
-                <Label htmlFor="name" className="text-sm font-medium">Project Name</Label>
+                <Label htmlFor="name" className="text-sm font-medium">{tProj("projectName")}</Label>
                 <Input
                   id="name"
-                  placeholder="e.g. Youth Development Program 2026"
+                  placeholder={tProj("projectNamePlaceholder")}
                   value={name}
                   onChange={(e) => setName(e.target.value)}
                   required
@@ -343,10 +349,10 @@ export function ProjectSelector() {
                 />
               </div>
               <div className="grid gap-2">
-                <Label htmlFor="description" className="text-sm font-medium">Description (Optional)</Label>
+                <Label htmlFor="description" className="text-sm font-medium">{tProj("descriptionLabel")}</Label>
                 <Textarea
                   id="description"
-                  placeholder="Explain scope, goals, or target demographic..."
+                  placeholder={tProj("descriptionPlaceholder")}
                   value={description}
                   onChange={(e) => setDescription(e.target.value)}
                   className="min-h-[80px]"
@@ -354,7 +360,7 @@ export function ProjectSelector() {
               </div>
               <div className="grid grid-cols-2 gap-4">
                 <div className="grid gap-2">
-                  <Label htmlFor="startDate" className="text-sm font-medium">Start Date</Label>
+                  <Label htmlFor="startDate" className="text-sm font-medium">{tProj("startDate")}</Label>
                   <div className="relative">
                     <Input
                       id="startDate"
@@ -366,7 +372,7 @@ export function ProjectSelector() {
                   </div>
                 </div>
                 <div className="grid gap-2">
-                  <Label htmlFor="endDate" className="text-sm font-medium">End Date</Label>
+                  <Label htmlFor="endDate" className="text-sm font-medium">{tProj("endDate")}</Label>
                   <div className="relative">
                     <Input
                       id="endDate"
@@ -386,18 +392,18 @@ export function ProjectSelector() {
                 onClick={() => setIsCreateOpen(false)}
                 disabled={isSubmitting}
               >
-                Cancel
+                {tCommon("cancel")}
               </Button>
               <Button type="submit" disabled={isSubmitting} className="gap-1.5">
                 {isSubmitting ? (
                   <>
                     <Loader2 className="size-4 animate-spin" />
-                    Creating...
+                    {tCommon("creating")}
                   </>
                 ) : (
                   <>
                     <Plus className="size-4" />
-                    Create Project
+                    {tProj("createProject")}
                   </>
                 )}
               </Button>
@@ -413,15 +419,15 @@ export function ProjectSelector() {
             <DialogHeader>
               <DialogTitle className="text-lg font-semibold flex items-center gap-2">
                 <Edit2 className="size-5 text-primary" />
-                Edit Project Metadata
+                {tProj("editTitle")}
               </DialogTitle>
               <DialogDescription>
-                Update description, names, or target schedule range for this project.
+                {tProj("editDescription")}
               </DialogDescription>
             </DialogHeader>
             <div className="grid gap-4 py-4">
               <div className="grid gap-2">
-                <Label htmlFor="edit-name" className="text-sm font-medium">Project Name</Label>
+                <Label htmlFor="edit-name" className="text-sm font-medium">{tProj("projectName")}</Label>
                 <Input
                   id="edit-name"
                   value={name}
@@ -430,7 +436,7 @@ export function ProjectSelector() {
                 />
               </div>
               <div className="grid gap-2">
-                <Label htmlFor="edit-description" className="text-sm font-medium">Description (Optional)</Label>
+                <Label htmlFor="edit-description" className="text-sm font-medium">{tProj("descriptionLabel")}</Label>
                 <Textarea
                   id="edit-description"
                   value={description}
@@ -440,7 +446,7 @@ export function ProjectSelector() {
               </div>
               <div className="grid grid-cols-2 gap-4">
                 <div className="grid gap-2">
-                  <Label htmlFor="edit-startDate" className="text-sm font-medium">Start Date</Label>
+                  <Label htmlFor="edit-startDate" className="text-sm font-medium">{tProj("startDate")}</Label>
                   <Input
                     id="edit-startDate"
                     type="date"
@@ -450,7 +456,7 @@ export function ProjectSelector() {
                   />
                 </div>
                 <div className="grid gap-2">
-                  <Label htmlFor="edit-endDate" className="text-sm font-medium">End Date</Label>
+                  <Label htmlFor="edit-endDate" className="text-sm font-medium">{tProj("endDate")}</Label>
                   <Input
                     id="edit-endDate"
                     type="date"
@@ -468,18 +474,18 @@ export function ProjectSelector() {
                 onClick={() => setIsEditOpen(false)}
                 disabled={isSubmitting}
               >
-                Cancel
+                {tCommon("cancel")}
               </Button>
               <Button type="submit" disabled={isSubmitting} className="gap-1.5">
                 {isSubmitting ? (
                   <>
                     <Loader2 className="size-4 animate-spin" />
-                    Saving...
+                    {tCommon("saving")}
                   </>
                 ) : (
                   <>
                     <Check className="size-4" />
-                    Save Changes
+                    {tProj("saveChanges")}
                   </>
                 )}
               </Button>
@@ -494,16 +500,14 @@ export function ProjectSelector() {
           <AlertDialogHeader>
             <AlertDialogTitle className="text-lg font-semibold flex items-center gap-2 text-destructive">
               <Archive className="size-5" />
-              Archive Project?
+              {tProj("archiveTitle")}
             </AlertDialogTitle>
             <AlertDialogDescription className="text-sm text-muted-foreground leading-relaxed">
-              Are you sure you want to archive <strong>{activeProject?.name}</strong>?
-              <br /><br />
-              Archiving makes this project <strong>read-only</strong>. Historical planning, centers, and activity progress remain fully accessible in reports, but no further mutations or scheduling additions will be permitted.
+              {tProj("archiveDescription", { name: activeProject?.name ?? "" })}
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
-            <AlertDialogCancel disabled={isSubmitting}>Cancel</AlertDialogCancel>
+            <AlertDialogCancel disabled={isSubmitting}>{tCommon("cancel")}</AlertDialogCancel>
             <AlertDialogAction
               onClick={(e) => {
                 e.preventDefault();
@@ -515,12 +519,12 @@ export function ProjectSelector() {
               {isSubmitting ? (
                 <>
                   <Loader2 className="size-4 animate-spin" />
-                  Archiving...
+                  {tCommon("archiving")}
                 </>
               ) : (
                 <>
                   <Archive className="size-4" />
-                  Confirm Archive
+                  {tProj("confirmArchive")}
                 </>
               )}
             </AlertDialogAction>

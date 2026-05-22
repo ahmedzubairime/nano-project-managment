@@ -10,8 +10,20 @@ import { ProjectSelector } from "@/components/layout/project-selector";
 import { MobileSidebar } from "@/components/layout/mobile-sidebar";
 import { NavbarNotifications } from "@/components/layout/navbar-notifications";
 
+import { usePathname, useRouter } from "@/i18n/routing";
+import { useLocale, useTranslations } from "next-intl";
+
 export function Navbar() {
   const [mobileOpen, setMobileOpen] = React.useState(false);
+  const pathname = usePathname();
+  const router = useRouter();
+  const locale = useLocale();
+  const t = useTranslations("navigation");
+
+  const toggleLanguage = () => {
+    const nextLocale = locale === "ar" ? "en" : "ar";
+    router.replace(pathname, { locale: nextLocale });
+  };
 
   return (
     <>
@@ -35,17 +47,13 @@ export function Navbar() {
 
         {/* Right-side controls */}
         <div className="flex items-center gap-1">
-          {/* Language switcher placeholder */}
+          {/* Language switcher */}
           <Button
             variant="ghost"
             size="icon"
-            aria-label="Switch language"
-            onClick={() => {
-              const html = document.documentElement;
-              const isRTL = html.dir === "rtl";
-              html.dir = isRTL ? "ltr" : "rtl";
-              html.lang = isRTL ? "en" : "ar";
-            }}
+            aria-label={t("switchLanguage")}
+            onClick={toggleLanguage}
+            title={t("switchLanguage")}
           >
             <Languages />
           </Button>

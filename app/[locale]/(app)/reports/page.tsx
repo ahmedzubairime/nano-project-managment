@@ -12,6 +12,7 @@ import {
   Sparkles,
   ShieldAlert,
 } from "lucide-react";
+import { useTranslations } from "next-intl";
 import { EmptyState } from "@/components/empty-state";
 import { useProject } from "@/lib/project-context";
 import { useUser } from "@clerk/nextjs";
@@ -30,6 +31,8 @@ type ActiveTab = "overview" | "centers" | "timeline" | "volunteer";
 export default function ReportsPage() {
   const { activeProject } = useProject();
   const { user } = useUser();
+  const t = useTranslations("reports");
+  const tCommon = useTranslations("common");
 
   const role = (user?.publicMetadata?.role as string) || "VIEWER";
   const canAccessReports = role === "PROJECT_MANAGER" || role === "VIEWER";
@@ -83,11 +86,11 @@ export default function ReportsPage() {
       setTimelineData(tl);
       setVolunteerData(vl);
     } catch (err: any) {
-      toast.error(err.message || "Failed to load report data");
+      toast.error(err.message || t("noReportData"));
     } finally {
       setLoading(false);
     }
-  }, [activeProject, buildQueryString]);
+  }, [activeProject, buildQueryString, t]);
 
   // Fetch centers list for filter
   React.useEffect(() => {
@@ -115,8 +118,8 @@ export default function ReportsPage() {
     return (
       <EmptyState
         icon={BarChart3}
-        title="No project selected"
-        description="Select a project to view its reports."
+        title={t("noProject")}
+        description={t("noProjectDesc")}
       />
     );
   }
@@ -125,8 +128,8 @@ export default function ReportsPage() {
     return (
       <EmptyState
         icon={ShieldAlert}
-        title="Access Denied"
-        description="Only Project Managers and Viewers can access operational reports."
+        title={t("accessDenied")}
+        description={t("accessDeniedDesc")}
       />
     );
   }
@@ -140,17 +143,17 @@ export default function ReportsPage() {
         <div>
           <h1 className="text-xl font-bold text-text-primary flex items-center gap-2">
             <BarChart3 className="size-5 text-primary" />
-            Operational Reports
+            {t("title")}
           </h1>
           <p className="text-sm text-text-muted">
-            Actionable insights and performance analytics for{" "}
+            {t("subtitle")}{" "}
             <strong className="text-text-primary font-medium">{activeProject.name}</strong>.
           </p>
         </div>
         <div className="flex items-center gap-2 shrink-0">
           {isProjectArchived && (
             <Badge className="bg-amber-500/10 text-amber-600 border-amber-500/20 px-3 py-1 font-semibold uppercase text-[10px]">
-              Archived (Read-Only)
+              {tCommon("archivedReadOnly")}
             </Badge>
           )}
           <Button
@@ -161,7 +164,7 @@ export default function ReportsPage() {
             className="flex items-center gap-1.5"
           >
             <RefreshCw className={`size-3.5 ${loading ? "animate-spin" : ""}`} />
-            Refresh
+            {tCommon("refresh")}
           </Button>
         </div>
       </div>
@@ -170,11 +173,11 @@ export default function ReportsPage() {
       <div className="bg-card border border-border/80 rounded-xl p-4 shadow-sm">
         <div className="flex items-center gap-2 mb-3">
           <Filter className="size-4 text-text-muted" />
-          <span className="text-xs font-bold text-text-muted uppercase tracking-wider">Report Filters</span>
+          <span className="text-xs font-bold text-text-muted uppercase tracking-wider">{t("reportFilters")}</span>
         </div>
         <div className="flex flex-col md:flex-row gap-3 items-end">
           <div className="grid gap-1.5 flex-1 min-w-0">
-            <label className="text-[10px] font-semibold text-text-muted uppercase">From</label>
+            <label className="text-[10px] font-semibold text-text-muted uppercase">{t("from")}</label>
             <Input
               type="date"
               value={dateFrom}
@@ -183,7 +186,7 @@ export default function ReportsPage() {
             />
           </div>
           <div className="grid gap-1.5 flex-1 min-w-0">
-            <label className="text-[10px] font-semibold text-text-muted uppercase">To</label>
+            <label className="text-[10px] font-semibold text-text-muted uppercase">{t("to")}</label>
             <Input
               type="date"
               value={dateTo}
@@ -192,13 +195,13 @@ export default function ReportsPage() {
             />
           </div>
           <div className="grid gap-1.5 flex-1 min-w-0">
-            <label className="text-[10px] font-semibold text-text-muted uppercase">Center</label>
+            <label className="text-[10px] font-semibold text-text-muted uppercase">{t("centerFilter")}</label>
             <select
               value={centerId}
               onChange={(e) => setCenterId(e.target.value)}
               className="flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1.5 text-xs shadow-sm focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring dark:bg-zinc-950 dark:text-zinc-50"
             >
-              <option value="">All Centers</option>
+              <option value="">{t("allCenters")}</option>
               {centers.map((c) => (
                 <option key={c.id} value={c.id}>{c.name}</option>
               ))}
@@ -211,7 +214,7 @@ export default function ReportsPage() {
             className="text-xs flex items-center gap-1.5 h-9 shrink-0"
           >
             <Sparkles className="size-3.5" />
-            Volunteer Only
+            {t("volunteerOnly")}
           </Button>
           <Button
             size="sm"
@@ -219,7 +222,7 @@ export default function ReportsPage() {
             disabled={loading}
             className="text-xs h-9 shrink-0"
           >
-            Apply Filters
+            {t("applyFilters")}
           </Button>
         </div>
       </div>
@@ -228,26 +231,26 @@ export default function ReportsPage() {
       {loading ? (
         <div className="flex flex-col items-center justify-center py-24 gap-2">
           <Loader2 className="size-8 text-primary animate-spin" />
-          <p className="text-sm text-text-muted">Compiling report data...</p>
+          <p className="text-sm text-text-muted">{t("compilingData")}</p>
         </div>
       ) : (
         <Tabs value={activeTab} onValueChange={(v) => setActiveTab(v as ActiveTab)}>
           <TabsList className="grid grid-cols-4 w-full max-w-lg">
             <TabsTrigger value="overview" className="text-xs gap-1.5">
               <BarChart3 className="size-3.5" />
-              Overview
+              {t("overview")}
             </TabsTrigger>
             <TabsTrigger value="centers" className="text-xs gap-1.5">
               <Building2 className="size-3.5" />
-              Centers
+              {t("centersReport")}
             </TabsTrigger>
             <TabsTrigger value="timeline" className="text-xs gap-1.5">
               <Calendar className="size-3.5" />
-              Timeline
+              {t("timelineReport")}
             </TabsTrigger>
             <TabsTrigger value="volunteer" className="text-xs gap-1.5">
               <Sparkles className="size-3.5" />
-              Volunteer
+              {t("volunteerReport")}
             </TabsTrigger>
           </TabsList>
 
@@ -255,7 +258,7 @@ export default function ReportsPage() {
             {overviewData ? (
               <ReportOverviewTab data={overviewData} />
             ) : (
-              <p className="text-xs text-text-muted italic py-8 text-center">No overview data available.</p>
+              <p className="text-xs text-text-muted italic py-8 text-center">{t("noOverviewData")}</p>
             )}
           </TabsContent>
 
@@ -263,7 +266,7 @@ export default function ReportsPage() {
             {centersData ? (
               <ReportCentersTab data={centersData} />
             ) : (
-              <p className="text-xs text-text-muted italic py-8 text-center">No centers data available.</p>
+              <p className="text-xs text-text-muted italic py-8 text-center">{t("noCentersData")}</p>
             )}
           </TabsContent>
 
@@ -271,7 +274,7 @@ export default function ReportsPage() {
             {timelineData ? (
               <ReportTimelineTab data={timelineData} />
             ) : (
-              <p className="text-xs text-text-muted italic py-8 text-center">No timeline data available.</p>
+              <p className="text-xs text-text-muted italic py-8 text-center">{t("noTimelineData")}</p>
             )}
           </TabsContent>
 
@@ -279,7 +282,7 @@ export default function ReportsPage() {
             {volunteerData ? (
               <ReportVolunteerTab data={volunteerData} />
             ) : (
-              <p className="text-xs text-text-muted italic py-8 text-center">No volunteer data available.</p>
+              <p className="text-xs text-text-muted italic py-8 text-center">{t("noVolunteerData")}</p>
             )}
           </TabsContent>
         </Tabs>
@@ -287,3 +290,4 @@ export default function ReportsPage() {
     </div>
   );
 }
+

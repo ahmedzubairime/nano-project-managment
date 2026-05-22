@@ -40,6 +40,7 @@ import { Label } from "@/components/ui/label";
 import { toast } from "sonner";
 import { Badge } from "@/components/ui/badge";
 import { CenterManagerWorkspace } from "@/components/dashboard/center-manager-workspace";
+import { useTranslations, useLocale } from "next-intl";
 
 // Interface definitions matching backend
 interface DashboardOverview {
@@ -134,6 +135,12 @@ export default function DashboardPage() {
   const [dashboardData, setDashboardData] = React.useState<DashboardAggregateData | null>(null);
   const [dashboardLoading, setDashboardLoading] = React.useState(false);
 
+  // Translations
+  const t = useTranslations("dashboard");
+  const tCommon = useTranslations("common");
+  const tProj = useTranslations("projects");
+  const locale = useLocale();
+
   // Role permissions
   const role = (user?.publicMetadata?.role as string) || "VIEWER";
   const isProjectManager = role === "PROJECT_MANAGER";
@@ -181,11 +188,11 @@ export default function DashboardPage() {
   async function handleCreateSubmit(e: React.FormEvent) {
     e.preventDefault();
     if (!name.trim()) {
-      toast.error("Project name is required");
+      toast.error(tProj("nameRequired"));
       return;
     }
     if (new Date(startDate) >= new Date(endDate)) {
-      toast.error("Start date must be before end date");
+      toast.error(tProj("dateError"));
       return;
     }
 
@@ -210,7 +217,7 @@ export default function DashboardPage() {
     return (
       <div className="flex flex-col items-center justify-center min-h-[50vh] gap-3">
         <Loader2 className="size-8 animate-spin text-primary" />
-        <p className="text-sm text-text-muted">Loading projects...</p>
+        <p className="text-sm text-text-muted">{tCommon("loading")}</p>
       </div>
     );
   }
@@ -230,17 +237,17 @@ export default function DashboardPage() {
       <div className="layout-section max-w-lg mx-auto py-12">
         <EmptyState
           icon={FolderOpen}
-          title="No projects found"
+          title={t("noProjectsTitle")}
           description={
             isProjectManager
-              ? "Get started by creating your first top-level planning and operational container."
-              : "No projects have been set up in the database. Ask your project manager to create one."
+              ? t("noProjectsPmDesc")
+              : t("noProjectsViewerDesc")
           }
         >
           {isProjectManager && (
             <Button onClick={openCreate} className="mt-2 gap-1.5 shadow-sm">
               <Plus className="size-4" />
-              Create First Project
+              {t("createFirstProject")}
             </Button>
           )}
         </EmptyState>
@@ -252,18 +259,18 @@ export default function DashboardPage() {
               <DialogHeader>
                 <DialogTitle className="text-lg font-semibold flex items-center gap-2">
                   <FolderOpen className="size-5 text-primary" />
-                  Create New Project
+                  {tProj("createTitle")}
                 </DialogTitle>
                 <DialogDescription>
-                  Establish a new top-level operational planning container for scheduling activities and physical centers.
+                  {tProj("createDescription")}
                 </DialogDescription>
               </DialogHeader>
               <div className="grid gap-4 py-4">
                 <div className="grid gap-2">
-                  <Label htmlFor="db-name" className="text-sm font-medium">Project Name</Label>
+                  <Label htmlFor="db-name" className="text-sm font-medium">{tProj("projectName")}</Label>
                   <Input
                     id="db-name"
-                    placeholder="e.g. Youth Development Program 2026"
+                    placeholder={tProj("projectNamePlaceholder")}
                     value={name}
                     onChange={(e) => setName(e.target.value)}
                     required
@@ -271,10 +278,10 @@ export default function DashboardPage() {
                   />
                 </div>
                 <div className="grid gap-2">
-                  <Label htmlFor="db-description" className="text-sm font-medium">Description (Optional)</Label>
+                  <Label htmlFor="db-description" className="text-sm font-medium">{tProj("descriptionLabel")}</Label>
                   <Textarea
                     id="db-description"
-                    placeholder="Explain scope, goals, or target demographic..."
+                    placeholder={tProj("descriptionPlaceholder")}
                     value={description}
                     onChange={(e) => setDescription(e.target.value)}
                     className="min-h-[80px]"
@@ -282,7 +289,7 @@ export default function DashboardPage() {
                 </div>
                 <div className="grid grid-cols-2 gap-4">
                   <div className="grid gap-2">
-                    <Label htmlFor="db-startDate" className="text-sm font-medium">Start Date</Label>
+                    <Label htmlFor="db-startDate" className="text-sm font-medium">{tProj("startDate")}</Label>
                     <Input
                       id="db-startDate"
                       type="date"
@@ -292,7 +299,7 @@ export default function DashboardPage() {
                     />
                   </div>
                   <div className="grid gap-2">
-                    <Label htmlFor="db-endDate" className="text-sm font-medium">End Date</Label>
+                    <Label htmlFor="db-endDate" className="text-sm font-medium">{tProj("endDate")}</Label>
                     <Input
                       id="db-endDate"
                       type="date"
@@ -310,18 +317,18 @@ export default function DashboardPage() {
                   onClick={() => setIsCreateOpen(false)}
                   disabled={isSubmitting}
                 >
-                  Cancel
+                  {tCommon("cancel")}
                 </Button>
                 <Button type="submit" disabled={isSubmitting} className="gap-1.5">
                   {isSubmitting ? (
                     <>
                       <Loader2 className="size-4 animate-spin" />
-                      Creating...
+                      {tCommon("creating")}
                     </>
                   ) : (
                     <>
                       <Plus className="size-4" />
-                      Create Project
+                      {tProj("createProject")}
                     </>
                   )}
                 </Button>
@@ -339,13 +346,13 @@ export default function DashboardPage() {
       <div className="layout-section max-w-lg mx-auto py-12">
         <EmptyState
           icon={Archive}
-          title="All projects are archived"
-          description="All planning containers are currently in read-only archive status. You can switch to an archived project using the project switcher in the navbar to view history, or create a new active project."
+          title={t("allArchivedTitle")}
+          description={t("allArchivedDesc")}
         >
           {isProjectManager && (
             <Button onClick={openCreate} className="mt-2 gap-1.5 shadow-sm">
               <Plus className="size-4" />
-              Create Active Project
+              {t("createActiveProject")}
             </Button>
           )}
         </EmptyState>
@@ -357,18 +364,18 @@ export default function DashboardPage() {
               <DialogHeader>
                 <DialogTitle className="text-lg font-semibold flex items-center gap-2">
                   <FolderOpen className="size-5 text-primary" />
-                  Create New Project
+                  {tProj("createTitle")}
                 </DialogTitle>
                 <DialogDescription>
-                  Establish a new top-level operational planning container for scheduling activities and physical centers.
+                  {tProj("createDescription")}
                 </DialogDescription>
               </DialogHeader>
               <div className="grid gap-4 py-4">
                 <div className="grid gap-2">
-                  <Label htmlFor="arch-name" className="text-sm font-medium">Project Name</Label>
+                  <Label htmlFor="arch-name" className="text-sm font-medium">{tProj("projectName")}</Label>
                   <Input
                     id="arch-name"
-                    placeholder="e.g. Youth Development Program 2026"
+                    placeholder={tProj("projectNamePlaceholder")}
                     value={name}
                     onChange={(e) => setName(e.target.value)}
                     required
@@ -376,10 +383,10 @@ export default function DashboardPage() {
                   />
                 </div>
                 <div className="grid gap-2">
-                  <Label htmlFor="arch-description" className="text-sm font-medium">Description (Optional)</Label>
+                  <Label htmlFor="arch-description" className="text-sm font-medium">{tProj("descriptionLabel")}</Label>
                   <Textarea
                     id="arch-description"
-                    placeholder="Explain scope, goals, or target demographic..."
+                    placeholder={tProj("descriptionPlaceholder")}
                     value={description}
                     onChange={(e) => setDescription(e.target.value)}
                     className="min-h-[80px]"
@@ -387,7 +394,7 @@ export default function DashboardPage() {
                 </div>
                 <div className="grid grid-cols-2 gap-4">
                   <div className="grid gap-2">
-                    <Label htmlFor="arch-startDate" className="text-sm font-medium">Start Date</Label>
+                    <Label htmlFor="arch-startDate" className="text-sm font-medium">{tProj("startDate")}</Label>
                     <Input
                       id="arch-startDate"
                       type="date"
@@ -397,7 +404,7 @@ export default function DashboardPage() {
                     />
                   </div>
                   <div className="grid gap-2">
-                    <Label htmlFor="arch-endDate" className="text-sm font-medium">End Date</Label>
+                    <Label htmlFor="arch-endDate" className="text-sm font-medium">{tProj("endDate")}</Label>
                     <Input
                       id="arch-endDate"
                       type="date"
@@ -415,18 +422,18 @@ export default function DashboardPage() {
                   onClick={() => setIsCreateOpen(false)}
                   disabled={isSubmitting}
                 >
-                  Cancel
+                  {tCommon("cancel")}
                 </Button>
                 <Button type="submit" disabled={isSubmitting} className="gap-1.5">
                   {isSubmitting ? (
                     <>
                       <Loader2 className="size-4 animate-spin" />
-                      Creating...
+                      {tCommon("creating")}
                     </>
                   ) : (
                     <>
                       <Plus className="size-4" />
-                      Create Project
+                      {tProj("createProject")}
                     </>
                   )}
                 </Button>
@@ -443,8 +450,8 @@ export default function DashboardPage() {
     return (
       <EmptyState
         icon={LayoutDashboard}
-        title="No project selected"
-        description="Select an active project from the project switcher in the navbar to view its dashboard."
+        title={t("noProjectSelected")}
+        description={t("noProjectSelectedDesc")}
       />
     );
   }
@@ -454,21 +461,21 @@ export default function DashboardPage() {
       {/* Header */}
       <div className="layout-page-header flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-bold tracking-tight text-text-primary">Operational Dashboard</h1>
+          <h1 className="text-2xl font-bold tracking-tight text-text-primary">{t("title")}</h1>
           <p className="text-sm text-text-muted mt-1">
-            Real-time planning progress and execution health for <strong>{activeProject.name}</strong>.
+            {t("subtitle")} <strong>{activeProject.name}</strong>.
           </p>
         </div>
         <div className="flex items-center gap-2 shrink-0">
           {activeProject.status === "ARCHIVED" && (
             <Badge variant="secondary" className="px-2.5 py-1 font-medium bg-muted text-muted-foreground flex gap-1 items-center">
               <Archive className="size-3.5" />
-              Archived (Read-Only)
+              {t("archivedReadOnly")}
             </Badge>
           )}
           {activeProject.status === "DRAFT" && (
             <Badge variant="outline" className="px-2.5 py-1 border-amber-500/20 bg-amber-500/5 text-amber-600 font-medium">
-              Draft Mode
+              {t("draftMode")}
             </Badge>
           )}
           <Button
@@ -479,7 +486,7 @@ export default function DashboardPage() {
             className="flex items-center gap-1.5 shrink-0"
           >
             <RefreshCw className={`size-3.5 ${dashboardLoading ? "animate-spin" : ""}`} />
-            Refresh
+            {tCommon("refresh")}
           </Button>
         </div>
       </div>
@@ -487,36 +494,36 @@ export default function DashboardPage() {
       {dashboardLoading ? (
         <div className="flex flex-col items-center justify-center py-24 gap-2">
           <Loader2 className="size-8 text-primary animate-spin" />
-          <p className="text-sm text-text-muted">Compiling real-time dashboard data...</p>
+          <p className="text-sm text-text-muted">{t("loadingData")}</p>
         </div>
       ) : !dashboardData ? (
         <div className="py-20 text-center">
-          <p className="text-sm text-text-muted">Error fetching metrics or project does not exist.</p>
+          <p className="text-sm text-text-muted">{t("errorLoading")}</p>
         </div>
       ) : dashboardData.progressOverview.totalSessions === 0 ? (
         /* Empty State inside dashboard for projects with no sessions generated yet */
         <div className="mt-8 bg-card border border-dashed border-border rounded-xl p-10 max-w-lg mx-auto text-center space-y-4 shadow-xs">
           <LayoutDashboard className="size-10 text-text-muted mx-auto" />
-          <h3 className="text-base font-semibold text-text-primary">No planning sessions scheduled</h3>
+          <h3 className="text-base font-semibold text-text-primary">{t("noSessionsTitle")}</h3>
           <p className="text-xs text-text-muted leading-relaxed">
-            This project container currently has <strong>{dashboardData.projectOverview.totalActivitiesCount}</strong> activities but zero scheduled sessions.
+            {t("noSessionsDesc", { count: dashboardData.projectOverview.totalActivitiesCount })}
           </p>
           <div className="bg-muted/30 border border-border/40 p-3.5 rounded-lg text-left text-xs space-y-1.5">
             <div className="flex justify-between">
-              <span className="text-text-muted">Start Date:</span>
-              <span className="font-semibold text-text-secondary">{new Date(dashboardData.projectOverview.startDate).toLocaleDateString()}</span>
+              <span className="text-text-muted">{t("startDate")}:</span>
+              <span className="font-semibold text-text-secondary">{new Date(dashboardData.projectOverview.startDate).toLocaleDateString(locale)}</span>
             </div>
             <div className="flex justify-between">
-              <span className="text-text-muted">End Date:</span>
-              <span className="font-semibold text-text-secondary">{new Date(dashboardData.projectOverview.endDate).toLocaleDateString()}</span>
+              <span className="text-text-muted">{t("endDate")}:</span>
+              <span className="font-semibold text-text-secondary">{new Date(dashboardData.projectOverview.endDate).toLocaleDateString(locale)}</span>
             </div>
             <div className="flex justify-between">
-              <span className="text-text-muted">Participating Branches:</span>
-              <span className="font-semibold text-text-secondary">{dashboardData.projectOverview.participatingCentersCount} centers</span>
+              <span className="text-text-muted">{t("participatingBranches")}:</span>
+              <span className="font-semibold text-text-secondary">{dashboardData.projectOverview.participatingCentersCount} {t("centersLabel")}</span>
             </div>
           </div>
           <p className="text-xs text-text-muted leading-relaxed">
-            Navigate to the <strong>Activities</strong> tab to assign center participation and generate your deterministic session scheduling grid.
+            {t("navigateActivities")}
           </p>
         </div>
       ) : (
@@ -529,7 +536,7 @@ export default function DashboardPage() {
             {/* Card 1: Core Progress */}
             <div className="p-5 bg-card border border-border/80 rounded-xl shadow-xs flex flex-col justify-between h-36">
               <div className="flex justify-between items-start">
-                <span className="text-xs font-semibold text-text-muted uppercase tracking-wider">Core Program Progress</span>
+                <span className="text-xs font-semibold text-text-muted uppercase tracking-wider">{t("coreProgress")}</span>
                 <TrendingUp className="size-4.5 text-emerald-500" />
               </div>
               <div className="mt-2">
@@ -537,7 +544,7 @@ export default function DashboardPage() {
                   {dashboardData.progressOverview.completionPercentage}%
                 </span>
                 <span className="text-xs text-text-muted ml-2">
-                  ({dashboardData.progressOverview.completedSessions} finished)
+                  ({dashboardData.progressOverview.completedSessions} {t("finished")})
                 </span>
               </div>
               <div className="w-full bg-muted rounded-full h-2 overflow-hidden mt-3">
@@ -551,23 +558,23 @@ export default function DashboardPage() {
             {/* Card 2: Execution Health & Overdue */}
             <div className="p-5 bg-card border border-border/80 rounded-xl shadow-xs flex flex-col justify-between h-36">
               <div className="flex justify-between items-start">
-                <span className="text-xs font-semibold text-text-muted uppercase tracking-wider">Delays & Overdue</span>
+                <span className="text-xs font-semibold text-text-muted uppercase tracking-wider">{t("delaysOverdue")}</span>
                 <AlertTriangle className={`size-4.5 ${dashboardData.progressOverview.delayedSessions > 0 ? "text-rose-500 animate-pulse" : "text-text-muted"}`} />
               </div>
               <div className="mt-2">
                 <span className="text-2xl font-bold text-text-primary">
                   {dashboardData.progressOverview.delayedSessions}
                 </span>
-                <span className="text-xs text-text-muted ml-2">sessions delayed</span>
+                <span className="text-xs text-text-muted ml-2">{t("sessionsDelayed")}</span>
               </div>
               <div className="mt-3">
                 {dashboardData.progressOverview.delayedSessions > 0 ? (
                   <Badge variant="destructive" className="bg-rose-500/10 text-rose-600 border-rose-500/20 text-[10px] py-0.5">
-                    Needs Schedule Adjustments
+                    {t("needsAdjustments")}
                   </Badge>
                 ) : (
                   <Badge variant="outline" className="border-emerald-300 text-emerald-600 bg-emerald-50/50 text-[10px] py-0.5 flex items-center gap-1 w-fit">
-                    <CheckCircle2 className="size-2.5" /> Healthy
+                    <CheckCircle2 className="size-2.5" /> {t("healthy")}
                   </Badge>
                 )}
               </div>
@@ -576,22 +583,22 @@ export default function DashboardPage() {
             {/* Card 3: Action Required / Approvals */}
             <div className="p-5 bg-card border border-border/80 rounded-xl shadow-xs flex flex-col justify-between h-36">
               <div className="flex justify-between items-start">
-                <span className="text-xs font-semibold text-text-muted uppercase tracking-wider">Reviews Queue</span>
+                <span className="text-xs font-semibold text-text-muted uppercase tracking-wider">{t("reviewsQueue")}</span>
                 <Clock className="size-4.5 text-amber-500" />
               </div>
               <div className="mt-2">
                 <span className="text-2xl font-bold text-text-primary">
                   {dashboardData.progressOverview.approvalQueueCount}
                 </span>
-                <span className="text-xs text-text-muted ml-2">pending approval</span>
+                <span className="text-xs text-text-muted ml-2">{t("pendingApproval")}</span>
               </div>
               <div className="mt-3">
                 {dashboardData.progressOverview.approvalQueueCount > 0 ? (
                   <Badge variant="secondary" className="bg-amber-500/10 text-amber-600 border-amber-500/20 text-[10px] py-0.5">
-                    Awaiting Manager Review
+                    {t("awaitingReview")}
                   </Badge>
                 ) : (
-                  <span className="text-[11px] text-text-muted italic">All documentation approved</span>
+                  <span className="text-[11px] text-text-muted italic">{t("allApproved")}</span>
                 )}
               </div>
             </div>
@@ -599,21 +606,21 @@ export default function DashboardPage() {
             {/* Card 4: Project Scope */}
             <div className="p-5 bg-card border border-border/80 rounded-xl shadow-xs flex flex-col justify-between h-36">
               <div className="flex justify-between items-start">
-                <span className="text-xs font-semibold text-text-muted uppercase tracking-wider">Assigned Scope</span>
+                <span className="text-xs font-semibold text-text-muted uppercase tracking-wider">{t("assignedScope")}</span>
                 <Building2 className="size-4.5 text-text-muted" />
               </div>
               <div className="mt-1 space-y-1">
                 <div className="flex justify-between text-xs text-text-muted">
-                  <span>Branches:</span>
-                  <span className="font-semibold text-text-primary">{dashboardData.projectOverview.participatingCentersCount} centers</span>
+                  <span>{t("branches")}:</span>
+                  <span className="font-semibold text-text-primary">{dashboardData.projectOverview.participatingCentersCount} {t("centersLabel")}</span>
                 </div>
                 <div className="flex justify-between text-xs text-text-muted border-t border-border/40 pt-1">
-                  <span>Activities:</span>
-                  <span className="font-semibold text-text-primary">{dashboardData.projectOverview.totalActivitiesCount} series</span>
+                  <span>{t("activitiesLabel")}:</span>
+                  <span className="font-semibold text-text-primary">{dashboardData.projectOverview.totalActivitiesCount} {t("series")}</span>
                 </div>
                 <div className="flex justify-between text-xs text-text-muted border-t border-border/40 pt-1">
-                  <span>Schedules:</span>
-                  <span className="font-semibold text-text-primary">{dashboardData.projectOverview.totalSessionsCount} sessions</span>
+                  <span>{t("schedules")}:</span>
+                  <span className="font-semibold text-text-primary">{dashboardData.projectOverview.totalSessionsCount} {t("sessionsLabel")}</span>
                 </div>
               </div>
             </div>
@@ -629,11 +636,11 @@ export default function DashboardPage() {
                 <div className="flex justify-between items-center pb-2 border-b border-border/40">
                   <h3 className="text-sm font-semibold text-text-primary flex items-center gap-1.5">
                     <Activity className="size-4 text-primary" />
-                    Timeline Health & Scheduling
+                    {t("timelineHealth")}
                   </h3>
                   {dashboardData.timelineHealth.todaySessionsCount > 0 && (
                     <Badge className="bg-primary/10 text-primary border-primary/20 text-[10px] font-bold">
-                      {dashboardData.timelineHealth.todaySessionsCount} Sessions Today
+                      {dashboardData.timelineHealth.todaySessionsCount} {t("sessionsToday")}
                     </Badge>
                   )}
                 </div>
@@ -642,17 +649,17 @@ export default function DashboardPage() {
                 {dashboardData.timelineHealth.overdueSessions.length > 0 && (
                   <div className="space-y-2">
                     <span className="text-[11px] font-bold text-rose-600 bg-rose-50 px-2 py-0.5 rounded uppercase tracking-wider block w-fit">
-                      ⚠️ Overdue / Missed Schedules
+                      {t("overdueSchedules")}
                     </span>
                     <div className="space-y-2 bg-rose-50/5 border border-rose-200/50 rounded-lg p-3">
                       {dashboardData.timelineHealth.overdueSessions.map((session) => (
                         <div key={session.id} className="flex items-center justify-between text-xs py-1 border-b border-rose-100 last:border-0 last:pb-0">
                           <div className="space-y-0.5">
                             <span className="font-semibold text-text-primary block">{session.activityTitle}</span>
-                            <span className="text-text-muted block text-[10px]">Branch: {session.centerName} ({session.city})</span>
+                            <span className="text-text-muted block text-[10px]">{t("branch")}: {session.centerName} ({session.city})</span>
                           </div>
                           <span className="text-rose-600 font-semibold shrink-0">
-                            {new Date(session.scheduledDate).toLocaleDateString()}
+                            {new Date(session.scheduledDate).toLocaleDateString(locale)}
                           </span>
                         </div>
                       ))}
@@ -663,20 +670,20 @@ export default function DashboardPage() {
                 {/* Upcoming List */}
                 <div className="space-y-2 pt-2">
                   <span className="text-[11px] font-bold text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded uppercase tracking-wider block w-fit">
-                    📅 Next Upcoming Sessions
+                    {t("upcomingSessions")}
                   </span>
                   {dashboardData.timelineHealth.upcomingSessions.length === 0 ? (
-                    <p className="text-xs text-text-muted italic py-2">No upcoming planning schedules.</p>
+                    <p className="text-xs text-text-muted italic py-2">{t("noUpcoming")}</p>
                   ) : (
                     <div className="space-y-2.5">
                       {dashboardData.timelineHealth.upcomingSessions.map((session) => (
                         <div key={session.id} className="flex items-center justify-between text-xs py-1.5 border-b border-border/40 last:border-0 last:pb-0">
                           <div className="space-y-0.5">
                             <span className="font-semibold text-text-primary block">{session.activityTitle}</span>
-                            <span className="text-text-muted block text-[10px]">Branch: {session.centerName} ({session.city})</span>
+                            <span className="text-text-muted block text-[10px]">{t("branch")}: {session.centerName} ({session.city})</span>
                           </div>
                           <span className="text-text-secondary font-medium bg-muted px-2 py-0.5 rounded shrink-0">
-                            {new Date(session.scheduledDate).toLocaleDateString()}
+                            {new Date(session.scheduledDate).toLocaleDateString(locale)}
                           </span>
                         </div>
                       ))}
@@ -690,20 +697,20 @@ export default function DashboardPage() {
                 <div className="flex justify-between items-center pb-1">
                   <h3 className="text-sm font-semibold text-text-primary flex items-center gap-1.5">
                     <Sparkles className="size-4 text-purple-500" />
-                    Volunteer Activity Scope
+                    {t("volunteerScope")}
                   </h3>
                   <Badge variant="outline" className="border-purple-200 text-purple-600 bg-purple-50/50 text-[10px]">
-                    Non-Core Contribution
+                    {t("nonCoreContribution")}
                   </Badge>
                 </div>
                 {dashboardData.volunteerSummary.volunteerSessionsCount === 0 ? (
-                  <p className="text-xs text-text-muted italic py-1">No separate volunteer activities registered for this project.</p>
+                  <p className="text-xs text-text-muted italic py-1">{t("noVolunteer")}</p>
                 ) : (
                   <div className="space-y-2 pt-1">
                     <div className="flex justify-between text-xs">
-                      <span className="text-text-muted">Volunteer Sessions Progress:</span>
+                      <span className="text-text-muted">{t("volunteerProgress")}</span>
                       <span className="font-semibold text-text-primary">
-                        {dashboardData.volunteerSummary.volunteerCompletedCount} of {dashboardData.volunteerSummary.volunteerSessionsCount} ({dashboardData.volunteerSummary.volunteerCompletionPercentage}%)
+                        {dashboardData.volunteerSummary.volunteerCompletedCount} {tCommon("of")} {dashboardData.volunteerSummary.volunteerSessionsCount} ({dashboardData.volunteerSummary.volunteerCompletionPercentage}%)
                       </span>
                     </div>
                     <div className="w-full bg-muted rounded-full h-2 overflow-hidden">
@@ -721,12 +728,12 @@ export default function DashboardPage() {
             <div className="p-5 bg-card border border-border/80 rounded-xl shadow-xs space-y-4">
               <h3 className="text-sm font-semibold text-text-primary pb-2 border-b border-border/40 flex items-center gap-1.5">
                 <SlidersHorizontal className="size-4 text-text-muted" />
-                Recent Operational Activity
+                {t("recentActivity")}
               </h3>
               {dashboardData.recentActivity.length === 0 ? (
                 <div className="flex flex-col items-center justify-center py-12 text-center">
                   <Info className="size-6 text-text-muted mb-1.5" />
-                  <p className="text-xs text-text-muted italic">No operational logs recorded yet.</p>
+                  <p className="text-xs text-text-muted italic">{t("noOperationalLogs")}</p>
                 </div>
               ) : (
                 <div className="space-y-4 max-h-[460px] overflow-y-auto pr-1">
@@ -756,7 +763,7 @@ export default function DashboardPage() {
                         <span className="font-semibold text-text-primary block">{act.title}</span>
                         <p className="text-[11px] text-text-muted leading-relaxed">{act.description}</p>
                         <span className="text-[10px] text-text-muted block pt-0.5">
-                          {new Date(act.timestamp).toLocaleString()}
+                          {new Date(act.timestamp).toLocaleString(locale)}
                         </span>
                       </div>
                     </div>
@@ -771,22 +778,22 @@ export default function DashboardPage() {
           <div className="p-5 bg-card border border-border/80 rounded-xl shadow-xs space-y-4">
             <h3 className="text-sm font-semibold text-text-primary pb-2 border-b border-border/40 flex items-center gap-1.5">
               <Building2 className="size-4 text-primary" />
-              Participating Branches Performance Matrix
+              {t("centerPerformance")}
             </h3>
             {dashboardData.centerPerformance.length === 0 ? (
-              <p className="text-xs text-text-muted italic py-4">No participating centers assigned to this project settings.</p>
+              <p className="text-xs text-text-muted italic py-4">{t("noCenters")}</p>
             ) : (
               <div className="overflow-hidden border border-border/60 rounded-lg">
                 <table className="w-full text-left text-xs border-collapse">
                   <thead>
                     <tr className="bg-muted/40 font-semibold text-text-muted border-b border-border/60">
-                      <th className="py-2.5 px-4 font-semibold">Center Branch</th>
-                      <th className="py-2.5 px-4 font-semibold">City Location</th>
-                      <th className="py-2.5 px-4 font-semibold text-center">Assigned Sessions</th>
-                      <th className="py-2.5 px-4 font-semibold text-center">Completed</th>
-                      <th className="py-2.5 px-4 font-semibold text-center">Delayed / Overdue</th>
-                      <th className="py-2.5 px-4 font-semibold text-center">Volunteer Contribution</th>
-                      <th className="py-2.5 px-4 font-semibold text-right pr-6">Completion Progress</th>
+                      <th className="py-2.5 px-4 font-semibold">{t("centerBranch")}</th>
+                      <th className="py-2.5 px-4 font-semibold">{t("cityLocation")}</th>
+                      <th className="py-2.5 px-4 font-semibold text-center">{t("assignedSessions")}</th>
+                      <th className="py-2.5 px-4 font-semibold text-center">{t("completed")}</th>
+                      <th className="py-2.5 px-4 font-semibold text-center">{t("delayedOverdue")}</th>
+                      <th className="py-2.5 px-4 font-semibold text-center">{t("volunteerContribution")}</th>
+                      <th className="py-2.5 px-4 font-semibold text-right pr-6">{t("completionProgress")}</th>
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-border/40">
@@ -818,7 +825,7 @@ export default function DashboardPage() {
                                 </div>
                               </div>
                             ) : (
-                              <span className="text-[10px] text-text-disabled italic">None</span>
+                              <span className="text-[10px] text-text-disabled italic">{tCommon("none")}</span>
                             )}
                           </td>
                           <td className="py-3 px-4 text-right pr-6">
@@ -853,12 +860,12 @@ export default function DashboardPage() {
                   <span className="font-semibold text-foreground uppercase">{activeProject.status}</span>
                 </div>
                 <div className="flex justify-between py-1 border-b border-border/40">
-                  <span className="font-medium">Start Duration</span>
-                  <span>{new Date(activeProject.startDate).toLocaleDateString()}</span>
+                  <span className="font-medium">{t("startDate")}</span>
+                  <span>{new Date(activeProject.startDate).toLocaleDateString(locale)}</span>
                 </div>
                 <div className="flex justify-between py-1 border-b border-border/40">
-                  <span className="font-medium">Close Duration</span>
-                  <span>{new Date(activeProject.endDate).toLocaleDateString()}</span>
+                  <span className="font-medium">{t("endDate")}</span>
+                  <span>{new Date(activeProject.endDate).toLocaleDateString(locale)}</span>
                 </div>
                 <div className="flex justify-between py-1">
                   <span className="font-medium">Owner Identity</span>
@@ -873,16 +880,16 @@ export default function DashboardPage() {
             <div className="p-5 bg-card border border-border/80 rounded-xl shadow-xs flex flex-col gap-3">
               <h2 className="text-xs font-semibold text-purple-600 dark:text-purple-400 uppercase tracking-wider flex items-center gap-1.5">
                 <Sparkles className="size-3.5" />
-                Volunteer Initiatives
+                {t("volunteerScope")}
               </h2>
               <div className="text-xs text-text-muted flex flex-col gap-1.5">
                 <div className="flex justify-between py-1 border-b border-border/40">
                   <span className="font-medium">Total Assigned</span>
-                  <span className="font-semibold text-text-primary">{dashboardData.volunteerSummary.volunteerSessionsCount} sessions</span>
+                  <span className="font-semibold text-text-primary">{dashboardData.volunteerSummary.volunteerSessionsCount} {t("sessionsLabel")}</span>
                 </div>
                 <div className="flex justify-between py-1 border-b border-border/40">
                   <span className="font-medium">Completed</span>
-                  <span className="font-semibold text-purple-600 dark:text-purple-400">{dashboardData.volunteerSummary.volunteerCompletedCount} sessions</span>
+                  <span className="font-semibold text-purple-600 dark:text-purple-400">{dashboardData.volunteerSummary.volunteerCompletedCount} {t("sessionsLabel")}</span>
                 </div>
                 <div className="flex justify-between py-1 border-b border-border/40">
                   <span className="font-medium">Participation Rate</span>

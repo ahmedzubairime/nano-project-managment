@@ -18,6 +18,7 @@ import {
   Send,
   Loader2,
 } from "lucide-react";
+import { useTranslations, useLocale } from "next-intl";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -36,6 +37,7 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Checkbox } from "@/components/ui/checkbox";
 import { toast } from "sonner";
+import { getLocalizedValue } from "@/lib/utils";
 
 interface NotificationItem {
   id: string;
@@ -60,6 +62,9 @@ interface CenterItem {
 export default function NotificationsPage() {
   const { user } = useUser();
   const { activeProject } = useProject();
+  const t = useTranslations("notifications");
+  const tCommon = useTranslations("common");
+  const locale = useLocale();
   const role = (user?.publicMetadata?.role as string) || "VIEWER";
   const isPM = role === "PROJECT_MANAGER";
 
@@ -93,15 +98,15 @@ export default function NotificationsPage() {
         setNotifications(data.notifications || []);
         setUnreadCount(data.unreadCount || 0);
       } else {
-        toast.error("Failed to load notifications");
+        toast.error(t("errorLoading"));
       }
     } catch (error) {
       console.error("Load notifications error:", error);
-      toast.error("Error connecting to server");
+      toast.error(t("errorConnecting"));
     } finally {
       setIsLoading(false);
     }
-  }, [activeProject?.id, unreadOnly]);
+  }, [activeProject?.id, unreadOnly, t]);
 
   // Load project centers (for broadcast targeting)
   const loadCenters = React.useCallback(async () => {
@@ -136,12 +141,12 @@ export default function NotificationsPage() {
           prev.map((n) => (n.id === id ? { ...n, read: true } : n))
         );
         setUnreadCount((prev) => Math.max(0, prev - 1));
-        toast.success("Marked as read");
+        toast.success(t("markedAsRead"));
       } else {
-        toast.error("Failed to update status");
+        toast.error(t("errorUpdatingStatus"));
       }
     } catch (error) {
-      toast.error("Network error");
+      toast.error(t("errorConnecting"));
     }
   };
 
@@ -158,9 +163,9 @@ export default function NotificationsPage() {
 
       setNotifications((prev) => prev.map((n) => ({ ...n, read: true })));
       setUnreadCount(0);
-      toast.success("All notifications marked as read");
+      toast.success(t("allMarkedRead"));
     } catch (error) {
-      toast.error("Failed to mark all as read");
+      toast.error(t("errorMarkingAll"));
     }
   };
 
@@ -168,11 +173,11 @@ export default function NotificationsPage() {
   const handleSendBroadcast = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!newTitle.trim()) {
-      toast.error("Please enter an announcement title");
+      toast.error(t("errorNoTitle"));
       return;
     }
     if (!newMessage.trim()) {
-      toast.error("Please enter an announcement message");
+      toast.error(t("errorNoMessage"));
       return;
     }
 
@@ -189,7 +194,7 @@ export default function NotificationsPage() {
       });
 
       if (res.ok) {
-        toast.success("Broadcast announcement sent successfully!");
+        toast.success(t("broadcastSent"));
         setNewTitle("");
         setNewMessage("");
         setSelectedCenterIds([]);
@@ -197,10 +202,10 @@ export default function NotificationsPage() {
         loadNotifications(); // Reload list
       } else {
         const errData = await res.json();
-        toast.error(errData.error || "Failed to send announcement");
+        toast.error(errData.error || t("errorSending"));
       }
     } catch (error) {
-      toast.error("Failed to connect to the server");
+      toast.error(t("errorConnecting"));
     } finally {
       setIsSubmitting(false);
     }
@@ -239,7 +244,7 @@ export default function NotificationsPage() {
           bg: "bg-amber-50 dark:bg-amber-950/20 border-amber-200 dark:border-amber-900/30",
           iconBg: "bg-amber-100 dark:bg-amber-900/30 text-amber-600 dark:text-amber-400",
           badge: "bg-amber-100 text-amber-800 dark:bg-amber-900/50 dark:text-amber-300",
-          label: "Warning",
+          label: t("warningLabel"),
         };
       case "DELAY":
         return {
@@ -247,7 +252,7 @@ export default function NotificationsPage() {
           bg: "bg-rose-50 dark:bg-rose-950/20 border-rose-200 dark:border-rose-900/30",
           iconBg: "bg-rose-100 dark:bg-rose-900/30 text-rose-600 dark:text-rose-400",
           badge: "bg-rose-100 text-rose-800 dark:bg-rose-900/50 dark:text-rose-300",
-          label: "Delay Alert",
+          label: t("delayAlert"),
         };
       case "DEADLINE":
         return {
@@ -255,7 +260,7 @@ export default function NotificationsPage() {
           bg: "bg-blue-50 dark:bg-blue-950/20 border-blue-200 dark:border-blue-900/30",
           iconBg: "bg-blue-100 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400",
           badge: "bg-blue-100 text-blue-800 dark:bg-blue-900/50 dark:text-blue-300",
-          label: "Deadline",
+          label: t("deadline"),
         };
       case "ANNOUNCEMENT":
         return {
@@ -263,7 +268,7 @@ export default function NotificationsPage() {
           bg: "bg-purple-50 dark:bg-purple-950/20 border-purple-200 dark:border-purple-900/30",
           iconBg: "bg-purple-100 dark:bg-purple-900/30 text-purple-600 dark:text-purple-400",
           badge: "bg-purple-100 text-purple-800 dark:bg-purple-900/50 dark:text-purple-300",
-          label: "Announcement",
+          label: t("announcement"),
         };
       default:
         return {
@@ -271,13 +276,13 @@ export default function NotificationsPage() {
           bg: "bg-slate-50 dark:bg-slate-900/20 border-slate-200 dark:border-slate-800",
           iconBg: "bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400",
           badge: "bg-slate-100 text-slate-800 dark:bg-slate-800 dark:text-slate-300",
-          label: "Info Alert",
+          label: t("infoAlert"),
         };
     }
   };
 
   const formatFullDate = (dateStr: string) => {
-    return new Date(dateStr).toLocaleDateString("en-US", {
+    return new Date(dateStr).toLocaleDateString(locale, {
       weekday: "short",
       month: "short",
       day: "numeric",
@@ -291,9 +296,9 @@ export default function NotificationsPage() {
     return (
       <div className="flex flex-col items-center justify-center p-12 text-center h-[70vh]">
         <Bell className="h-10 w-10 text-text-muted mb-4 animate-pulse" />
-        <h3 className="font-semibold text-text-primary text-lg">No Active Project Selected</h3>
+        <h3 className="font-semibold text-text-primary text-lg">{t("noActiveProject")}</h3>
         <p className="text-sm text-text-muted max-w-sm mt-1">
-          Select an active project from the top navigation bar to access the notifications feed.
+          {t("noActiveProjectDesc")}
         </p>
       </div>
     );
@@ -304,9 +309,9 @@ export default function NotificationsPage() {
       {/* Page Header */}
       <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div>
-          <h1 className="text-3xl font-extrabold tracking-tight text-text-primary">Notifications Center</h1>
+          <h1 className="text-3xl font-extrabold tracking-tight text-text-primary">{t("title")}</h1>
           <p className="text-text-muted text-sm mt-1.5 font-medium">
-            Monitor schedules, manage team alerts, and view manual broadcasts.
+            {t("subtitle")}
           </p>
         </div>
 
@@ -316,27 +321,27 @@ export default function NotificationsPage() {
             <Dialog open={isOpen} onOpenChange={setIsOpen}>
               <DialogTrigger render={<Button className="gap-2 shadow-sm font-semibold rounded-lg bg-primary hover:bg-primary/95 text-primary-foreground" />}>
                 <span className="flex items-center gap-2">
-                  <Plus className="h-4 w-4" /> Create Broadcast
+                  <Plus className="h-4 w-4" /> {t("createBroadcast")}
                 </span>
               </DialogTrigger>
               <DialogContent className="max-w-lg shadow-xl border border-border">
                 <DialogHeader>
                   <DialogTitle className="flex items-center gap-2 text-text-primary">
-                    <Megaphone className="h-5 w-5 text-primary" /> Create Manual Announcement
+                    <Megaphone className="h-5 w-5 text-primary" /> {t("createManualAnnouncement")}
                   </DialogTitle>
                   <DialogDescription className="text-text-muted text-xs">
-                    Broadcast a manual announcement to managers. Leave targeting empty for a project-wide broadcast.
+                    {t("broadcastDesc")}
                   </DialogDescription>
                 </DialogHeader>
 
                 <form onSubmit={handleSendBroadcast} className="space-y-4 py-2">
                   <div className="space-y-1.5">
                     <Label htmlFor="title" className="text-text-primary font-semibold text-xs">
-                      Title
+                      {t("announcementTitle")}
                     </Label>
                     <Input
                       id="title"
-                      placeholder="e.g. Center Maintenance Update"
+                      placeholder={t("titlePlaceholder")}
                       value={newTitle}
                       onChange={(e) => setNewTitle(e.target.value)}
                       required
@@ -346,12 +351,12 @@ export default function NotificationsPage() {
 
                   <div className="space-y-1.5">
                     <Label htmlFor="message" className="text-text-primary font-semibold text-xs">
-                      Message
+                      {t("announcementMessage")}
                     </Label>
                     <Textarea
                       id="message"
                       rows={4}
-                      placeholder="Enter detailed broadcast description here..."
+                      placeholder={t("messagePlaceholder")}
                       value={newMessage}
                       onChange={(e) => setNewMessage(e.target.value)}
                       required
@@ -362,7 +367,7 @@ export default function NotificationsPage() {
                   <div className="space-y-2">
                     <div className="flex items-center justify-between">
                       <Label className="text-text-primary font-semibold text-xs">
-                        Target Centers (Optional)
+                        {t("targetCenters")}
                       </Label>
                       {centers.length > 0 && (
                         <button
@@ -371,15 +376,15 @@ export default function NotificationsPage() {
                           className="text-[10px] font-semibold text-primary hover:underline"
                         >
                           {selectedCenterIds.length === centers.length
-                            ? "Deselect All"
-                            : "Select All Centers"}
+                            ? t("deselectAll")
+                            : t("selectAllCenters")}
                         </button>
                       )}
                     </div>
                     
                     {centers.length === 0 ? (
                       <p className="text-[10px] text-text-muted italic">
-                        No centers assigned to this project yet.
+                        {t("noCentersAssigned")}
                       </p>
                     ) : (
                       <div className="grid grid-cols-2 gap-2 max-h-36 overflow-y-auto p-2 border border-border rounded-md bg-muted/20">
@@ -413,7 +418,7 @@ export default function NotificationsPage() {
                       disabled={isSubmitting}
                       className="rounded-md font-semibold text-text-muted border-input hover:bg-muted"
                     >
-                      Cancel
+                      {tCommon("cancel")}
                     </Button>
                     <Button
                       type="submit"
@@ -422,11 +427,11 @@ export default function NotificationsPage() {
                     >
                       {isSubmitting ? (
                         <>
-                          <Loader2 className="h-4 w-4 animate-spin" /> Sending...
+                          <Loader2 className="h-4 w-4 animate-spin" /> {t("sending")}
                         </>
                       ) : (
                         <>
-                          <Send className="h-4 w-4" /> Send Announcement
+                          <Send className="h-4 w-4" /> {t("sendAnnouncement")}
                         </>
                       )}
                     </Button>
@@ -443,7 +448,7 @@ export default function NotificationsPage() {
               onClick={handleMarkAllRead}
               className="gap-2 text-xs font-semibold rounded-lg border-input hover:bg-muted text-text-muted hover:text-text-primary"
             >
-              <Check className="h-4 w-4" /> Mark all read
+              <Check className="h-4 w-4" /> {t("markAllRead")}
             </Button>
           )}
         </div>
@@ -456,13 +461,13 @@ export default function NotificationsPage() {
           <Card className="shadow-sm border border-border">
             <CardHeader className="p-4 pb-2 border-b border-border">
               <CardTitle className="text-xs font-bold uppercase tracking-wider text-text-muted flex items-center gap-1.5">
-                <Filter className="h-3.5 w-3.5 text-primary" /> Filters
+                <Filter className="h-3.5 w-3.5 text-primary" /> {t("filters")}
               </CardTitle>
             </CardHeader>
             <CardContent className="p-4 space-y-4">
               {/* Unread Switcher */}
               <div className="flex flex-col gap-2">
-                <Label className="text-text-primary font-semibold text-xs">Read Status</Label>
+                <Label className="text-text-primary font-semibold text-xs">{t("readStatus")}</Label>
                 <div className="grid grid-cols-2 gap-1 p-0.5 rounded-lg bg-muted border border-border">
                   <button
                     onClick={() => setUnreadOnly(false)}
@@ -472,7 +477,7 @@ export default function NotificationsPage() {
                         : "text-text-muted hover:text-text-primary"
                     }`}
                   >
-                    All Alerts
+                    {t("allAlerts")}
                   </button>
                   <button
                     onClick={() => setUnreadOnly(true)}
@@ -482,7 +487,7 @@ export default function NotificationsPage() {
                         : "text-text-muted hover:text-text-primary"
                     }`}
                   >
-                    Unread
+                    {t("unread")}
                     {unreadCount > 0 && (
                       <Badge className="bg-rose-500 hover:bg-rose-500 text-white text-[9px] px-1 py-0 h-4 min-w-4 flex items-center justify-center font-bold">
                         {unreadCount}
@@ -494,27 +499,27 @@ export default function NotificationsPage() {
 
               {/* Status Indicator Legend */}
               <div className="border-t border-border pt-4">
-                <Label className="text-text-primary font-semibold text-xs">Severity Types</Label>
+                <Label className="text-text-primary font-semibold text-xs">{t("severityTypes")}</Label>
                 <div className="space-y-2 mt-2">
                   <div className="flex items-center gap-2">
                     <span className="h-2 w-2 rounded-full bg-slate-400"></span>
-                    <span className="text-[11px] font-semibold text-text-primary">INFO — System operations</span>
+                    <span className="text-[11px] font-semibold text-text-primary">{t("infoOps")}</span>
                   </div>
                   <div className="flex items-center gap-2">
                     <span className="h-2 w-2 rounded-full bg-amber-400"></span>
-                    <span className="text-[11px] font-semibold text-text-primary">WARNING — Rejection events</span>
+                    <span className="text-[11px] font-semibold text-text-primary">{t("warningRejection")}</span>
                   </div>
                   <div className="flex items-center gap-2">
                     <span className="h-2 w-2 rounded-full bg-blue-400"></span>
-                    <span className="text-[11px] font-semibold text-text-primary">DEADLINE — Planned schedules</span>
+                    <span className="text-[11px] font-semibold text-text-primary">{t("deadlinePlanned")}</span>
                   </div>
                   <div className="flex items-center gap-2">
                     <span className="h-2 w-2 rounded-full bg-rose-400"></span>
-                    <span className="text-[11px] font-semibold text-text-primary">DELAY — Overdue items</span>
+                    <span className="text-[11px] font-semibold text-text-primary">{t("delayOverdue")}</span>
                   </div>
                   <div className="flex items-center gap-2">
                     <span className="h-2 w-2 rounded-full bg-purple-400"></span>
-                    <span className="text-[11px] font-semibold text-text-primary">BROADCAST — Manual posts</span>
+                    <span className="text-[11px] font-semibold text-text-primary">{t("broadcastManual")}</span>
                   </div>
                 </div>
               </div>
@@ -528,19 +533,19 @@ export default function NotificationsPage() {
           <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
             <TabsList className="grid grid-cols-4 sm:grid-cols-5 p-1 bg-muted rounded-lg border border-border">
               <TabsTrigger value="ALL" className="text-xs font-semibold rounded-md">
-                All
+                {t("all")}
               </TabsTrigger>
               <TabsTrigger value="INFO" className="text-xs font-semibold rounded-md hidden sm:inline-flex">
-                Reminders
+                {t("reminders")}
               </TabsTrigger>
               <TabsTrigger value="DEADLINES" className="text-xs font-semibold rounded-md">
-                Deadlines
+                {t("deadlines")}
               </TabsTrigger>
               <TabsTrigger value="WARNING" className="text-xs font-semibold rounded-md">
-                Warnings
+                {t("warnings")}
               </TabsTrigger>
               <TabsTrigger value="ANNOUNCEMENT" className="text-xs font-semibold rounded-md">
-                Broadcasts
+                {t("broadcasts")}
               </TabsTrigger>
             </TabsList>
           </Tabs>
@@ -568,9 +573,9 @@ export default function NotificationsPage() {
                   <div className="rounded-full bg-muted p-4 mb-3">
                     <Inbox className="h-6 w-6 text-text-muted" />
                   </div>
-                  <h3 className="font-semibold text-text-primary text-base">No notifications found</h3>
+                  <h3 className="font-semibold text-text-primary text-base">{t("noNotifications")}</h3>
                   <p className="text-text-muted text-xs max-w-sm mt-1 leading-relaxed">
-                    There are no {activeTab !== "ALL" ? activeTab.toLowerCase() : ""} alerts matching your selected filters.
+                    {t("noNotificationsDesc")}
                   </p>
                 </CardContent>
               </Card>
@@ -598,18 +603,18 @@ export default function NotificationsPage() {
                           <h4 className={`text-sm font-bold text-text-primary tracking-tight ${
                             !notif.read ? "font-extrabold text-[14.5px]" : ""
                           }`}>
-                            {notif.title}
+                            {getLocalizedValue(notif.title, locale)}
                           </h4>
                           <Badge className={`text-[10px] font-semibold tracking-wide ${styles.badge}`}>
                             {styles.label}
                           </Badge>
                           {!notif.read && (
-                            <span className="h-2 w-2 rounded-full bg-rose-500" title="Unread" />
+                            <span className="h-2 w-2 rounded-full bg-rose-500" title={t("unread")} />
                           )}
                         </div>
 
                         <p className="text-text-primary text-xs leading-relaxed mt-2 font-medium break-words">
-                          {notif.message}
+                          {getLocalizedValue(notif.message, locale)}
                         </p>
 
                         {/* Metadatas and Targets */}
@@ -620,7 +625,7 @@ export default function NotificationsPage() {
                             <>
                               <span>•</span>
                               <span>
-                                Sent by: <span className="font-semibold">{notif.sender.email}</span>
+                                {t("sentBy")}: <span className="font-semibold">{notif.sender.email}</span>
                               </span>
                             </>
                           )}
@@ -629,7 +634,7 @@ export default function NotificationsPage() {
                             <>
                               <span>•</span>
                               <span className="truncate max-w-[250px]" title={notif.centers.map(c => c.name).join(", ")}>
-                                Target: <span className="font-semibold text-text-primary">{notif.centers.map(c => c.name).join(", ")}</span>
+                                {t("target")}: <span className="font-semibold text-text-primary">{notif.centers.map(c => c.name).join(", ")}</span>
                               </span>
                             </>
                           )}
@@ -638,7 +643,7 @@ export default function NotificationsPage() {
                             <>
                               <span>•</span>
                               <span>
-                                Target: <span className="font-semibold text-text-primary">Project-Wide</span>
+                                {t("target")}: <span className="font-semibold text-text-primary">{t("projectWide")}</span>
                               </span>
                             </>
                           )}
@@ -647,7 +652,7 @@ export default function NotificationsPage() {
                             <>
                               <span>•</span>
                               <span>
-                                Linked to: <span className="font-semibold text-text-primary">"{notif.session.activityTitle}" at {notif.session.centerName}</span>
+                                {t("linkedTo")}: <span className="font-semibold text-text-primary">"{notif.session.activityTitle}" {t("atLabel")} {notif.session.centerName}</span>
                               </span>
                             </>
                           )}
@@ -658,7 +663,7 @@ export default function NotificationsPage() {
                       {!notif.read && (
                         <button
                           onClick={() => handleMarkRead(notif.id)}
-                          title="Mark as read"
+                          title={t("markAsRead")}
                           className="absolute right-4 top-4.5 h-7 w-7 flex items-center justify-center rounded-full border border-border bg-background hover:bg-muted text-text-muted hover:text-text-primary shadow-sm transition-all"
                         >
                           <Check className="h-3.5 w-3.5" />

@@ -53,8 +53,13 @@ export async function generateAutoNotifications(projectId: string): Promise<void
       const isOverdue = scheduledDate < now;
       const isUpcoming = scheduledDate >= now && scheduledDate <= upcomingThreshold;
 
-      // Format date for notification messages
-      const formattedDate = scheduledDate.toLocaleDateString("en-US", {
+      // Format date for notification messages in both English and Arabic
+      const formattedDateEn = scheduledDate.toLocaleDateString("en-US", {
+        month: "short",
+        day: "numeric",
+        year: "numeric",
+      });
+      const formattedDateAr = scheduledDate.toLocaleDateString("ar-EG", {
         month: "short",
         day: "numeric",
         year: "numeric",
@@ -76,8 +81,14 @@ export async function generateAutoNotifications(projectId: string): Promise<void
               data: {
                 projectId,
                 sessionId: session.id,
-                title: "Session Overdue",
-                message: `The session for "${session.activity.title}" at "${session.center.name}" is overdue (scheduled for ${formattedDate}).`,
+                title: JSON.stringify({
+                  en: "Session Overdue",
+                  ar: "جلسة متأخرة",
+                }),
+                message: JSON.stringify({
+                  en: `The session for "${session.activity.title}" at "${session.center.name}" is overdue (scheduled for ${formattedDateEn}).`,
+                  ar: `الجلسة الخاصة بـ "${session.activity.title}" في "${session.center.name}" متأخرة (كانت مجدولة في ${formattedDateAr}).`,
+                }),
                 type: "DELAY" as NotificationType,
               },
             });
@@ -107,8 +118,14 @@ export async function generateAutoNotifications(projectId: string): Promise<void
               data: {
                 projectId,
                 sessionId: session.id,
-                title: "Upcoming Session",
-                message: `The session for "${session.activity.title}" at "${session.center.name}" is scheduled for ${formattedDate}.`,
+                title: JSON.stringify({
+                  en: "Upcoming Session",
+                  ar: "جلسة قادمة",
+                }),
+                message: JSON.stringify({
+                  en: `The session for "${session.activity.title}" at "${session.center.name}" is scheduled for ${formattedDateEn}.`,
+                  ar: `الجلسة الخاصة بـ "${session.activity.title}" في "${session.center.name}" مجدولة في ${formattedDateAr}.`,
+                }),
                 type: "DEADLINE" as NotificationType,
               },
             });

@@ -18,13 +18,13 @@ export interface NavItem {
 }
 
 export const sidebarNavItems: NavItem[] = [
-  { title: "Dashboard", href: "/dashboard", icon: LayoutDashboard },
-  { title: "Activities", href: "/activities", icon: Activity },
-  { title: "Sessions", href: "/sessions", icon: CalendarDays },
-  { title: "Timeline", href: "/timeline", icon: GanttChart },
-  { title: "Centers", href: "/centers", icon: Building2 },
-  { title: "Approvals", href: "/approvals", icon: ClipboardCheck },
-  { title: "Reports", href: "/reports", icon: BarChart3 },
-  { title: "Notifications", href: "/notifications", icon: Bell },
-  { title: "Settings", href: "/settings", icon: Settings },
+  { title: "dashboard", href: "/dashboard", icon: LayoutDashboard },
+  { title: "activities", href: "/activities", icon: Activity },
+  { title: "sessions", href: "/sessions", icon: CalendarDays },
+  { title: "timeline", href: "/timeline", icon: GanttChart },
+  { title: "centers", href: "/centers", icon: Building2 },
+  { title: "approvals", href: "/approvals", icon: ClipboardCheck },
+  { title: "reports", href: "/reports", icon: BarChart3 },
+  { title: "notifications", href: "/notifications", icon: Bell },
+  { title: "settings", href: "/settings", icon: Settings },
 ];
