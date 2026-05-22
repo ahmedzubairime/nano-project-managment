@@ -219,6 +219,7 @@ Update this file after every meaningful implementation change.
   - [x] Fully localize the Settings page (metadata settings, center assignment data-dense tables, dialog warnings, toast messages, and redirect redirects)
   - [x] Fully localize the Gantt Timeline page (toolbar views, zoom options, data-dense Gantt component, Mobile fallback cards, legends, and DetailPreview sidebars)
   - [x] Fully localize the Approvals Review Dialog (validation toasts, details preview, execution notes, action buttons)
+  - [x] Fully localize the Center Manager Workspace (`centerWorkspace` namespace) — overview cards, progress summary, action queue, sessions table, status/approval badges, filters, empty states, and locale-aware date formatting
   - [x] Typecheck and compile the entire project, achieving 0 TypeScript/Lint compiler errors
 
 - Feature 23: AI Assistant Shell

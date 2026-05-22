@@ -37,6 +37,7 @@ import type {
   CenterActionItem,
 } from "@/services/center-dashboard/center-dashboard.service";
 import { SessionExecutionDialog } from "@/components/sessions/session-execution-dialog";
+import { useTranslations, useLocale } from "next-intl";
 
 interface CenterManagerWorkspaceProps {
   userId: string;
@@ -55,6 +56,11 @@ export function CenterManagerWorkspace({ userId }: CenterManagerWorkspaceProps) 
   // Execution modal states
   const [selectedSessionId, setSelectedSessionId] = React.useState<string | null>(null);
   const [isExecuteOpen, setIsExecuteOpen] = React.useState<boolean>(false);
+
+  // Translations
+  const t = useTranslations("centerWorkspace");
+  const tCommon = useTranslations("common");
+  const locale = useLocale();
 
   const selectedSession = React.useMemo(() => {
     if (!data || !selectedSessionId) return null;
@@ -89,15 +95,15 @@ export function CenterManagerWorkspace({ userId }: CenterManagerWorkspaceProps) 
     setLoading(true);
     try {
       const res = await fetch("/api/center/dashboard");
-      if (!res.ok) throw new Error("Failed to compile center workspace metrics");
+      if (!res.ok) throw new Error(t("errorLoading"));
       const result = await res.json();
       setData(result);
     } catch (err: any) {
-      toast.error(err.message || "Error loading center workspace data");
+      toast.error(err.message || t("errorGeneric"));
     } finally {
       setLoading(false);
     }
-  }, []);
+  }, [t]);
 
   React.useEffect(() => {
     fetchDashboardData();
@@ -145,7 +151,7 @@ export function CenterManagerWorkspace({ userId }: CenterManagerWorkspaceProps) 
     return (
       <div className="flex flex-col items-center justify-center py-24 gap-3">
         <Loader2 className="size-8 text-primary animate-spin" />
-        <p className="text-sm text-text-muted">Loading center manager workspace...</p>
+        <p className="text-sm text-text-muted">{t("loadingWorkspace")}</p>
       </div>
     );
   }
@@ -155,8 +161,8 @@ export function CenterManagerWorkspace({ userId }: CenterManagerWorkspaceProps) 
       <div className="layout-section max-w-lg mx-auto py-12">
         <EmptyState
           icon={Building2}
-          title="No centers assigned"
-          description="You are currently not assigned as a manager for any physical center branches. Please request your project manager to assign you to a center."
+          title={t("noCentersTitle")}
+          description={t("noCentersDesc")}
         />
       </div>
     );
@@ -170,10 +176,10 @@ export function CenterManagerWorkspace({ userId }: CenterManagerWorkspaceProps) 
       <div className="layout-page-header flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
           <h1 className="text-2xl font-bold tracking-tight text-text-primary">
-            Center Manager Workspace
+            {t("title")}
           </h1>
           <p className="text-sm text-text-muted mt-1">
-            Operational dashboard for{" "}
+            {t("operationalDashboardFor")}{" "}
             <strong>
               {overview.centers.map((c) => `${c.name} (${c.city})`).join(", ")}
             </strong>
@@ -187,7 +193,7 @@ export function CenterManagerWorkspace({ userId }: CenterManagerWorkspaceProps) 
           className="flex items-center gap-1.5 shrink-0"
         >
           <RefreshCw className={`size-3.5 ${loading ? "animate-spin" : ""}`} />
-          Refresh
+          {tCommon("refresh")}
         </Button>
       </div>
 
@@ -195,31 +201,31 @@ export function CenterManagerWorkspace({ userId }: CenterManagerWorkspaceProps) 
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
         <OverviewCard
           icon={<Layers className="size-4.5 text-brand-primary" />}
-          label="Assigned Projects"
+          label={t("assignedProjects")}
           value={overview.assignedProjects.length}
           subtext={
             overview.assignedProjects.length > 0
               ? overview.assignedProjects.map((p) => p.name).join(", ")
-              : "No active projects"
+              : t("noActiveProjects")
           }
         />
         <OverviewCard
           icon={<TrendingUp className="size-4.5 text-emerald-500" />}
-          label="Completion Progress"
+          label={t("completionProgress")}
           value={`${overview.completionPercentage}%`}
-          subtext={`${overview.completedSessions} of ${overview.totalSessions} sessions`}
+          subtext={t("sessionsOf", { completed: overview.completedSessions, total: overview.totalSessions })}
         />
         <OverviewCard
           icon={<AlertTriangle className={`size-4.5 ${overview.delayedSessions > 0 ? "text-rose-500 animate-pulse" : "text-text-muted"}`} />}
-          label="Overdue / Missed"
+          label={t("overdueMissed")}
           value={overview.delayedSessions}
-          subtext={overview.delayedSessions > 0 ? "Needs immediate completion" : "All schedules on track"}
+          subtext={overview.delayedSessions > 0 ? t("needsImmediateCompletion") : t("allOnTrack")}
         />
         <OverviewCard
           icon={<FileCheck className="size-4.5 text-amber-500" />}
-          label="Pending Approvals"
+          label={t("pendingApprovals")}
           value={overview.pendingApprovals}
-          subtext="Awaiting project manager review"
+          subtext={t("awaitingPmReview")}
         />
       </div>
 
@@ -230,13 +236,13 @@ export function CenterManagerWorkspace({ userId }: CenterManagerWorkspaceProps) 
           <div className="p-5 bg-card border border-border/80 rounded-xl shadow-xs space-y-4">
             <h3 className="text-sm font-semibold text-text-primary pb-2 border-b border-border/40 flex items-center gap-1.5">
               <TrendingUp className="size-4 text-primary" />
-              Progress Summary
+              {t("progressSummary")}
             </h3>
 
             {/* Overall center completion rate */}
             <div className="space-y-2">
               <div className="flex justify-between text-xs">
-                <span className="text-text-muted">Center Completion Rate</span>
+                <span className="text-text-muted">{t("centerCompletionRate")}</span>
                 <span className="font-semibold text-text-primary">
                   {progressSummary.centerCompletionRate}%
                 </span>
@@ -254,22 +260,22 @@ export function CenterManagerWorkspace({ userId }: CenterManagerWorkspaceProps) 
               <div className="flex justify-between items-center">
                 <span className="text-xs text-text-muted font-medium flex items-center gap-1">
                   <Sparkles className="size-3.5 text-purple-500" />
-                  Volunteer Contributions
+                  {t("volunteerContributions")}
                 </span>
                 <Badge variant="outline" className="border-purple-200 text-purple-600 bg-purple-50/50 text-[10px] py-0">
-                  Volunteers
+                  {t("volunteers")}
                 </Badge>
               </div>
               {progressSummary.volunteerSessionsCount === 0 ? (
                 <p className="text-xs text-text-muted italic">
-                  No volunteer activities assigned.
+                  {t("noVolunteerActivities")}
                 </p>
               ) : (
                 <div className="space-y-2">
                   <div className="flex justify-between text-xs">
-                    <span className="text-text-muted">Volunteer Completion</span>
+                    <span className="text-text-muted">{t("volunteerCompletion")}</span>
                     <span className="font-semibold text-text-primary">
-                      {progressSummary.volunteerCompletedCount} of {progressSummary.volunteerSessionsCount} ({progressSummary.volunteerCompletionPercentage}%)
+                      {t("volunteerOf", { completed: progressSummary.volunteerCompletedCount, total: progressSummary.volunteerSessionsCount, percentage: progressSummary.volunteerCompletionPercentage })}
                     </span>
                   </div>
                   <div className="w-full bg-muted rounded-full h-2 overflow-hidden">
@@ -286,7 +292,7 @@ export function CenterManagerWorkspace({ userId }: CenterManagerWorkspaceProps) 
             <div className="flex gap-2 p-3 bg-muted/30 border border-border/40 rounded-lg text-xs leading-normal text-text-muted">
               <Info className="size-4 shrink-0 text-text-secondary mt-0.5" />
               <span>
-                To execute sessions, upload documentation or modify scheduling rules, contact your assigned Project Manager.
+                {t("infoNotice")}
               </span>
             </div>
           </div>
@@ -297,15 +303,15 @@ export function CenterManagerWorkspace({ userId }: CenterManagerWorkspaceProps) 
           <div className="p-5 bg-card border border-border/80 rounded-xl shadow-xs space-y-4 h-full flex flex-col">
             <h3 className="text-sm font-semibold text-text-primary pb-2 border-b border-border/40 flex items-center gap-1.5">
               <ClipboardList className="size-4 text-primary" />
-              Operational Action Queue
+              {t("actionQueue")}
             </h3>
 
             {actionQueue.length === 0 ? (
               <div className="flex-1 flex flex-col items-center justify-center py-12 text-center">
                 <FileCheck className="size-8 text-emerald-500 mb-2" />
-                <p className="text-sm font-medium text-text-primary">Action queue empty!</p>
+                <p className="text-sm font-medium text-text-primary">{t("actionQueueEmpty")}</p>
                 <p className="text-xs text-text-muted">
-                  All assigned sessions are completed and documented.
+                  {t("actionQueueEmptyDesc")}
                 </p>
               </div>
             ) : (
@@ -315,6 +321,8 @@ export function CenterManagerWorkspace({ userId }: CenterManagerWorkspaceProps) 
                     key={item.id}
                     item={item}
                     onClick={() => handleOpenExecute(item.id)}
+                    t={t}
+                    locale={locale}
                   />
                 ))}
               </div>
@@ -328,10 +336,10 @@ export function CenterManagerWorkspace({ userId }: CenterManagerWorkspaceProps) 
         <div className="flex flex-col md:flex-row md:items-center justify-between pb-3 border-b border-border/40 gap-3">
           <h3 className="text-sm font-semibold text-text-primary flex items-center gap-1.5">
             <Calendar className="size-4 text-primary" />
-            Assigned Sessions
+            {t("assignedSessions")}
           </h3>
           <span className="text-xs text-text-muted">
-            Displaying <strong>{filteredSessions.length}</strong> of <strong>{data.sessions.length}</strong> sessions
+            {t("displayingSessions", { filtered: filteredSessions.length, total: data.sessions.length })}
           </span>
         </div>
 
@@ -341,7 +349,7 @@ export function CenterManagerWorkspace({ userId }: CenterManagerWorkspaceProps) 
           <div className="relative lg:col-span-2">
             <Search className="absolute left-2.5 top-2.5 size-4 text-text-muted" />
             <Input
-              placeholder="Search by activity title..."
+              placeholder={t("searchByActivity")}
               value={search}
               onChange={(e) => setSearch(e.target.value)}
               className="pl-9 text-xs"
@@ -352,15 +360,15 @@ export function CenterManagerWorkspace({ userId }: CenterManagerWorkspaceProps) 
           <div>
             <Select value={statusFilter} onValueChange={(val) => setStatusFilter(val || "ALL")}>
               <SelectTrigger className="text-xs h-9">
-                <SelectValue placeholder="Session Status" />
+                <SelectValue placeholder={t("sessionStatus")} />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="ALL">All Statuses</SelectItem>
-                <SelectItem value="PENDING">Pending</SelectItem>
-                <SelectItem value="IN_PROGRESS">In Progress</SelectItem>
-                <SelectItem value="COMPLETED">Completed</SelectItem>
-                <SelectItem value="DELAYED">Delayed</SelectItem>
-                <SelectItem value="CANCELLED">Cancelled</SelectItem>
+                <SelectItem value="ALL">{t("allStatuses")}</SelectItem>
+                <SelectItem value="PENDING">{t("pending")}</SelectItem>
+                <SelectItem value="IN_PROGRESS">{t("inProgress")}</SelectItem>
+                <SelectItem value="COMPLETED">{t("completed")}</SelectItem>
+                <SelectItem value="DELAYED">{t("delayed")}</SelectItem>
+                <SelectItem value="CANCELLED">{t("cancelled")}</SelectItem>
               </SelectContent>
             </Select>
           </div>
@@ -369,14 +377,14 @@ export function CenterManagerWorkspace({ userId }: CenterManagerWorkspaceProps) 
           <div>
             <Select value={approvalFilter} onValueChange={(val) => setApprovalFilter(val || "ALL")}>
               <SelectTrigger className="text-xs h-9">
-                <SelectValue placeholder="Approval Status" />
+                <SelectValue placeholder={t("approvalStatus")} />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="ALL">All Approvals</SelectItem>
-                <SelectItem value="NOT_SUBMITTED">Not Submitted</SelectItem>
-                <SelectItem value="PENDING_APPROVAL">Pending Approval</SelectItem>
-                <SelectItem value="APPROVED">Approved</SelectItem>
-                <SelectItem value="REJECTED">Rejected</SelectItem>
+                <SelectItem value="ALL">{t("allApprovals")}</SelectItem>
+                <SelectItem value="NOT_SUBMITTED">{t("notSubmitted")}</SelectItem>
+                <SelectItem value="PENDING_APPROVAL">{t("pendingApproval")}</SelectItem>
+                <SelectItem value="APPROVED">{t("approved")}</SelectItem>
+                <SelectItem value="REJECTED">{t("rejected")}</SelectItem>
               </SelectContent>
             </Select>
           </div>
@@ -385,13 +393,13 @@ export function CenterManagerWorkspace({ userId }: CenterManagerWorkspaceProps) 
           <div>
             <Select value={dateFilter} onValueChange={(val) => setDateFilter(val || "ALL")}>
               <SelectTrigger className="text-xs h-9">
-                <SelectValue placeholder="Date Target" />
+                <SelectValue placeholder={t("dateTarget")} />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="ALL">All Dates</SelectItem>
-                <SelectItem value="TODAY">Scheduled Today</SelectItem>
-                <SelectItem value="WEEK">This Week</SelectItem>
-                <SelectItem value="OVERDUE">Overdue / Delayed</SelectItem>
+                <SelectItem value="ALL">{t("allDates")}</SelectItem>
+                <SelectItem value="TODAY">{t("scheduledToday")}</SelectItem>
+                <SelectItem value="WEEK">{t("thisWeek")}</SelectItem>
+                <SelectItem value="OVERDUE">{t("overdueDelayed")}</SelectItem>
               </SelectContent>
             </Select>
           </div>
@@ -402,8 +410,8 @@ export function CenterManagerWorkspace({ userId }: CenterManagerWorkspaceProps) 
           <div className="py-12 border border-dashed border-border rounded-xl">
             <EmptyState
               icon={Calendar}
-              title="No sessions match filters"
-              description="Adjust your search query or dropdown filters to view assigned schedules."
+              title={t("noSessionsMatch")}
+              description={t("noSessionsMatchDesc")}
             />
           </div>
         ) : (
@@ -411,13 +419,13 @@ export function CenterManagerWorkspace({ userId }: CenterManagerWorkspaceProps) 
             <table className="w-full text-left text-xs border-collapse">
               <thead>
                 <tr className="bg-muted/40 font-semibold text-text-muted border-b border-border/60">
-                  <th className="py-2.5 px-4 font-semibold">Activity</th>
-                  <th className="py-2.5 px-4 font-semibold">Project</th>
-                  <th className="py-2.5 px-4 font-semibold">Center Branch</th>
-                  <th className="py-2.5 px-4 font-semibold">Scheduled Date</th>
-                  <th className="py-2.5 px-4 font-semibold text-center">Status</th>
-                  <th className="py-2.5 px-4 font-semibold text-center">Approval State</th>
-                  <th className="py-2.5 px-4 font-semibold text-right pr-6">Actions</th>
+                  <th className="py-2.5 px-4 font-semibold">{t("activityColumn")}</th>
+                  <th className="py-2.5 px-4 font-semibold">{t("projectColumn")}</th>
+                  <th className="py-2.5 px-4 font-semibold">{t("centerBranch")}</th>
+                  <th className="py-2.5 px-4 font-semibold">{t("scheduledDate")}</th>
+                  <th className="py-2.5 px-4 font-semibold text-center">{t("statusColumn")}</th>
+                  <th className="py-2.5 px-4 font-semibold text-center">{t("approvalState")}</th>
+                  <th className="py-2.5 px-4 font-semibold text-right pr-6">{t("actionsColumn")}</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-border/40">
@@ -433,13 +441,13 @@ export function CenterManagerWorkspace({ userId }: CenterManagerWorkspaceProps) 
                       {session.centerName}
                     </td>
                     <td className="py-3 px-4 text-text-secondary font-medium">
-                      {new Date(session.scheduledDate).toLocaleDateString()}
+                      {new Date(session.scheduledDate).toLocaleDateString(locale)}
                     </td>
                     <td className="py-3 px-4 text-center">
-                      <StatusBadge status={session.status} isDelayed={session.isDelayed} />
+                      <StatusBadge status={session.status} isDelayed={session.isDelayed} t={t} />
                     </td>
                     <td className="py-3 px-4 text-center">
-                      <ApprovalBadge status={session.approvalStatus} />
+                      <ApprovalBadge status={session.approvalStatus} t={t} />
                     </td>
                     <td className="py-3 px-4 text-right pr-6">
                       <Button
@@ -448,7 +456,7 @@ export function CenterManagerWorkspace({ userId }: CenterManagerWorkspaceProps) 
                         onClick={() => handleOpenExecute(session.id)}
                         className="text-xs h-7 text-primary hover:text-primary-hover font-semibold px-2.5"
                       >
-                        Execute
+                        {t("execute")}
                       </Button>
                     </td>
                   </tr>
@@ -507,28 +515,32 @@ function OverviewCard({
 function ActionQueueCard({
   item,
   onClick,
+  t,
+  locale,
 }: {
   item: CenterActionItem;
   onClick?: () => void;
+  t: ReturnType<typeof useTranslations>;
+  locale: string;
 }) {
   const config = {
     EXECUTION: {
       border: "border-status-pending/30 bg-status-pending/5",
       icon: <BadgeAlert className="size-4.5 text-status-pending shrink-0" />,
-      label: "Requires Execution",
-      sub: "Perform operational tasks and schedule activities.",
+      label: t("requiresExecution"),
+      sub: t("requiresExecutionDesc"),
     },
     DOCUMENTATION: {
       border: "border-status-warning/30 bg-status-warning/5",
       icon: <Info className="size-4.5 text-status-warning shrink-0" />,
-      label: "Awaiting Documentation",
-      sub: "Activity finalized. Please upload documentation or operational evidence.",
+      label: t("awaitingDocumentation"),
+      sub: t("awaitingDocumentationDesc"),
     },
     REVISION: {
       border: "border-status-rejected/30 bg-status-rejected/5",
       icon: <AlertCircle className="size-4.5 text-status-rejected shrink-0" />,
-      label: "Revision Needed",
-      sub: item.reason ? `Rejection feedback: "${item.reason}"` : "Session details were rejected by manager. Revise settings.",
+      label: t("revisionNeeded"),
+      sub: item.reason ? t("revisionFeedback", { reason: item.reason }) : t("revisionDefaultDesc"),
     },
   };
 
@@ -546,7 +558,7 @@ function ActionQueueCard({
             {item.activityTitle}
           </span>
           <span className="text-[10px] font-semibold text-text-muted shrink-0 bg-background/50 border px-1.5 py-0.5 rounded">
-            {new Date(item.scheduledDate).toLocaleDateString()}
+            {new Date(item.scheduledDate).toLocaleDateString(locale)}
           </span>
         </div>
         <p className="text-[11px] font-medium text-text-secondary">{c.label}</p>
@@ -558,27 +570,27 @@ function ActionQueueCard({
   );
 }
 
-function StatusBadge({ status, isDelayed }: { status: string; isDelayed: boolean }) {
+function StatusBadge({ status, isDelayed, t }: { status: string; isDelayed: boolean; t: ReturnType<typeof useTranslations> }) {
   const config: Record<string, { className: string; label: string }> = {
     PENDING: {
       className: "bg-status-pending/15 text-status-pending-foreground border-status-pending/30",
-      label: "Pending",
+      label: t("pending"),
     },
     IN_PROGRESS: {
       className: "bg-status-in-progress/15 text-status-in-progress-foreground border-status-in-progress/30",
-      label: "In Progress",
+      label: t("inProgress"),
     },
     COMPLETED: {
       className: "bg-status-completed/15 text-status-completed-foreground border-status-completed/30",
-      label: "Completed",
+      label: t("completed"),
     },
     DELAYED: {
       className: "bg-status-delayed/15 text-status-delayed-foreground border-status-delayed/30",
-      label: "Delayed",
+      label: t("delayed"),
     },
     CANCELLED: {
       className: "bg-muted text-text-muted border-border",
-      label: "Cancelled",
+      label: t("cancelled"),
     },
   };
 
@@ -592,23 +604,23 @@ function StatusBadge({ status, isDelayed }: { status: string; isDelayed: boolean
   );
 }
 
-function ApprovalBadge({ status }: { status: string }) {
+function ApprovalBadge({ status, t }: { status: string; t: ReturnType<typeof useTranslations> }) {
   const config: Record<string, { className: string; label: string }> = {
     NOT_SUBMITTED: {
       className: "bg-muted text-text-muted border-border",
-      label: "Not Submitted",
+      label: t("notSubmitted"),
     },
     PENDING_APPROVAL: {
       className: "bg-status-warning/15 text-status-warning-foreground border-status-warning/30",
-      label: "Pending Review",
+      label: t("pendingReview"),
     },
     APPROVED: {
       className: "bg-status-approved/15 text-status-approved-foreground border-status-approved/30",
-      label: "Approved",
+      label: t("approved"),
     },
     REJECTED: {
       className: "bg-status-rejected/15 text-status-rejected-foreground border-status-rejected/30",
-      label: "Rejected",
+      label: t("rejected"),
     },
   };
 
