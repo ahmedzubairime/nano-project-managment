@@ -221,6 +221,15 @@ Update this file after every meaningful implementation change.
   - [x] Fully localize the Approvals Review Dialog (validation toasts, details preview, execution notes, action buttons)
   - [x] Typecheck and compile the entire project, achieving 0 TypeScript/Lint compiler errors
 
+- Feature 23: AI Assistant Shell
+  - [x] Create OpenRouter provider abstraction (`services/ai/openrouter.ts`)
+  - [x] Create context builder functions (`services/ai/context-builders.ts`)
+  - [x] Create system prompt template (`services/ai/prompts/system-prompt.ts`)
+  - [x] Create POST `/api/ai/chat` API route with auth + role enforcement
+  - [x] Build AI sidebar panel component (`components/ai/ai-assistant-panel.tsx`)
+  - [x] Add PM-only trigger button in navbar
+  - [x] Add bilingual translations (en.json + ar.json)
+  - [x] Verify production build passes
 
 ## In Progress
 

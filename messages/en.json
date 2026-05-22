@@ -712,5 +712,23 @@
     "multiProject": "Multi-project operations management",
     "sessionScheduling": "Session scheduling and distribution",
     "approvalWorkflows": "Approval workflows and progress tracking"
+  },
+  "ai": {
+    "title": "AI Copilot Assistant",
+    "subtitle": "Operational insights for",
+    "noProject": "Select a project to start",
+    "clearChat": "Clear conversation",
+    "emptyTitle": "How can I help you today?",
+    "emptyDesc": "Ask operational questions about your project metrics, timeline schedules, approval queues, or center performances.",
+    "suggestion1": "What sessions are currently delayed?",
+    "suggestion2": "Summarize my core project progress.",
+    "suggestion3": "Compare participating centers performance.",
+    "suggestion4": "Show any approval queue bottlenecks.",
+    "thinking": "Analyzing project telemetry...",
+    "errorGeneric": "Failed to generate AI response. Please check your network or try again.",
+    "retry": "Retry Request",
+    "placeholder": "Ask about delays, progress, or center metrics...",
+    "noProjectPlaceholder": "Please select a project to enable AI...",
+    "disclaimer": "AI answers are generated based on active database snapshots. Always verify execution schedules manually."
   }
 }
