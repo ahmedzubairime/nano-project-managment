@@ -121,6 +121,90 @@ export function GanttChart({ tasks, viewMode = "Month", onTaskClick }: GanttChar
     }
   }, [viewMode]);
 
+  // Premium mouse drag-to-scroll interaction on scroll container
+  React.useEffect(() => {
+    const el = containerRef.current;
+    if (!el || tasks.length === 0) return;
+
+    let isDown = false;
+    let startX: number;
+    let scrollLeft: number;
+
+    const handleMouseDown = (e: MouseEvent) => {
+      // Only drag with left click
+      if (e.button !== 0) return;
+
+      // Do not drag-scroll if the user clicks on interactive elements like a task bar/popup
+      const target = e.target as HTMLElement;
+      if (target.closest(".bar-wrapper")) return;
+
+      isDown = true;
+      el.classList.add("dragging");
+      startX = e.pageX - el.offsetLeft;
+      scrollLeft = el.scrollLeft;
+    };
+
+    const handleMouseLeave = () => {
+      isDown = false;
+      el.classList.remove("dragging");
+    };
+
+    const handleMouseUp = () => {
+      isDown = false;
+      el.classList.remove("dragging");
+    };
+
+    const handleMouseMove = (e: MouseEvent) => {
+      if (!isDown) return;
+      e.preventDefault();
+      const x = e.pageX - el.offsetLeft;
+      const walk = (x - startX) * 1.5; // Drag scroll multiplier
+      el.scrollLeft = scrollLeft - walk;
+    };
+
+    el.addEventListener("mousedown", handleMouseDown);
+    el.addEventListener("mouseleave", handleMouseLeave);
+    el.addEventListener("mouseup", handleMouseUp);
+    el.addEventListener("mousemove", handleMouseMove);
+
+    return () => {
+      el.removeEventListener("mousedown", handleMouseDown);
+      el.removeEventListener("mouseleave", handleMouseLeave);
+      el.removeEventListener("mouseup", handleMouseUp);
+      el.removeEventListener("mousemove", handleMouseMove);
+    };
+  }, [tasks]);
+
+  // Smooth auto-scroll to today indicator or first active task inside scroll container
+  React.useEffect(() => {
+    if (!containerRef.current || tasks.length === 0) return;
+
+    const timer = setTimeout(() => {
+      const container = containerRef.current;
+      if (!container) return;
+
+      const todayHighlight = container.querySelector(".today-highlight");
+      if (todayHighlight) {
+        todayHighlight.scrollIntoView({
+          behavior: "smooth",
+          inline: "center",
+          block: "nearest",
+        });
+      } else {
+        const firstBar = container.querySelector(".bar-wrapper");
+        if (firstBar) {
+          firstBar.scrollIntoView({
+            behavior: "smooth",
+            inline: "center",
+            block: "nearest",
+          });
+        }
+      }
+    }, 600); // Small delay to let frappe-gantt SVG layout compile
+
+    return () => clearTimeout(timer);
+  }, [tasks, viewMode]);
+
   if (tasks.length === 0) {
     return null;
   }
@@ -128,7 +212,8 @@ export function GanttChart({ tasks, viewMode = "Month", onTaskClick }: GanttChar
   return (
     <div
       ref={containerRef}
-      className="gantt-container w-full overflow-x-auto"
+      dir="ltr"
+      className="gantt-container w-full overflow-x-auto ltr border border-border rounded-xl scrollbar-thin"
       style={{ minHeight: Math.max(200, tasks.length * 46 + 80) }}
     />
   );

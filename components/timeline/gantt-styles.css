@@ -7,7 +7,25 @@
 .gantt-container {
   background: var(--card);
   border-radius: var(--radius);
-  overflow: hidden;
+  overflow-x: auto !important;
+  overflow-y: hidden !important;
+
+  /* Custom design token mappings for native light & dark theme matching */
+  --g-header-background: var(--card) !important;
+  --g-row-color: var(--card) !important;
+  --g-border-color: var(--border-subtle) !important;
+  --g-row-border-color: var(--border-subtle) !important;
+  --g-text-dark: var(--text-primary) !important;
+  --g-text-muted: var(--text-muted) !important;
+  --g-text-light: var(--text-secondary) !important;
+  --g-tick-color: var(--border-subtle) !important;
+  --g-tick-color-thick: var(--border) !important;
+  --g-weekend-highlight-color: var(--surface-muted) !important;
+  --g-actions-background: var(--surface-muted) !important;
+  --g-bar-color: var(--card) !important;
+  --g-bar-border: var(--border) !important;
+  --g-today-highlight: var(--brand-primary) !important;
+  --g-popup-actions: var(--surface-muted) !important;
 }
 
 .gantt-container .gantt {
@@ -244,4 +262,25 @@
 
 .gantt .handle-group {
   display: none;
+}
+
+/* ============================================================
+   RTL SYSTEM OVERRIDE
+   Forces left-to-right coordinate system for SVG positioning
+   and text alignments inside the Gantt view.
+   ============================================================ */
+.gantt-container,
+.gantt-container * {
+  direction: ltr !important;
+  text-align: left !important;
+}
+
+/* Grab scroll styling */
+.gantt-container {
+  cursor: grab;
+}
+
+.gantt-container.dragging {
+  cursor: grabbing;
+  user-select: none;
 }
